@@ -2,7 +2,6 @@
 
 import { Command } from 'commander';
 import { Builder } from '../lib/builder.js';
-import { DevServer } from '../lib/dev-server.js';
 import { ConfigLoader } from '../lib/config-loader.js';
 import { resolve } from 'path';
 import fs from 'fs-extra';
@@ -120,6 +119,8 @@ program
         options.port = parseInt(options.port, 10);
       }
 
+      // Dynamically import DevServer to avoid loading dev dependencies for generate command
+      const { DevServer } = await import('../lib/dev-server.js');
       const devServer = new DevServer(options);
       
       // Handle graceful shutdown

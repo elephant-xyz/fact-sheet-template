@@ -12,6 +12,7 @@
     "watch": "tsc --watch",
     "test": "node test/test.js",
     "dev": "node bin/fact-sheet.js generate",
+    "dev:server": "node bin/fact-sheet.js dev",
     "prepublishOnly": "npm run build && npm run test",
     "example": "node bin/fact-sheet.js generate --input ./example-data --output ./example-output --verbose",
     "example-inline": "node bin/fact-sheet.js generate --input ./example-data --output ./example-output-inline --inline-css --inline-js --verbose"
@@ -62,6 +63,12 @@
     "express": "^5.1.0",
     "open": "^10.2.0",
     "typescript": "^5.8.3",
+    "ws": "^8.18.3"
+  },
+  "optionalDependencies": {
+    "chokidar": "^3.6.0",
+    "express": "^5.1.0",
+    "open": "^10.2.0",
     "ws": "^8.18.3"
   }
 }
