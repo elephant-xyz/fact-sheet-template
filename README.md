@@ -4,21 +4,43 @@ Generate beautiful, self-contained property fact sheets from your real estate da
 
 ## 🚀 Quick Start
 
-Since this repository is not published to npm, use it directly from GitHub:
+### Option 1: Install Globally (Recommended)
+
+Use our install script for a one-command setup:
 
 ```bash
-# Generate fact sheets using npx (recommended for basic usage)
-npx github:elephant-xyz/fact-sheet-template generate --input ./data --output ./websites
+# Download and run the installer
+curl -fsSL https://raw.githubusercontent.com/elephant-xyz/fact-sheet-template/main/install.sh | bash
 
-# For development with hot reload, clone the repository
-git clone https://github.com/elephant-xyz/fact-sheet-template.git
-cd fact-sheet-template
-npm install  # This installs all dependencies including dev dependencies
-npm run build
-npm run dev:server -- --input ./example-data --output ./dev-output --open
+# After installation, use the command anywhere
+fact-sheet generate --input ./data --output ./websites
 ```
 
-> **Note:** The `dev` command requires additional dependencies. Use the clone method if you need the development server with hot reload.
+The installer will:
+- Clone the repository to `~/.elephant-fact-sheet`
+- Install dependencies and build the project
+- Create a global `fact-sheet` command
+- Add `~/.local/bin` to your PATH if needed
+
+### Option 2: Manual Installation
+
+Clone and build manually for development:
+
+```bash
+# Clone the repository
+git clone https://github.com/elephant-xyz/fact-sheet-template.git
+cd fact-sheet-template
+
+# Install dependencies and build
+npm install
+npm run build
+
+# Run directly
+node bin/fact-sheet.js generate --input ./data --output ./websites
+
+# Or start development server
+npm run dev:server -- --input ./example-data --output ./dev-output --open
+```
 
 ## 📋 What You'll Need
 
@@ -325,6 +347,31 @@ Generated websites are self-contained and can be deployed anywhere:
 
 - Verify the `--domain` option matches your deployment URL
 - Use `--inline-css` and `--inline-js` for local file:// viewing
+
+### Updating
+
+To update to the latest version:
+
+```bash
+# If installed with the install script
+curl -fsSL https://raw.githubusercontent.com/elephant-xyz/fact-sheet-template/main/update.sh | bash
+
+# Or manually
+cd ~/.elephant-fact-sheet
+git pull origin main
+npm install
+npm run build
+```
+
+### Uninstalling
+
+If you installed using the install script:
+
+```bash
+# Remove the installation
+rm -rf ~/.elephant-fact-sheet
+rm ~/.local/bin/fact-sheet
+```
 
 ### License
 
