@@ -15,7 +15,7 @@ export class AssetManager {
 
   constructor(options: BuilderOptions) {
     this.options = options;
-    this.templatesPath = path.join(__dirname, '..', 'templates');
+    this.templatesPath = path.join(__dirname, '..', '..', 'templates');
     this.logger = new Logger({
       quiet: options.quiet,
       verbose: options.verbose,

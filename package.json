@@ -3,23 +3,24 @@
   "version": "1.0.0",
   "description": "CLI tool to generate self-contained property fact sheet websites from JSON data, optimized for IPFS deployment",
   "type": "module",
-  "main": "./lib/builder.js",
+  "main": "./dist/lib/builder.js",
   "bin": {
     "fact-sheet": "./bin/fact-sheet.js"
   },
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
+    "clean": "rm -rf dist",
     "test": "node test/test.js",
     "dev": "node bin/fact-sheet.js generate",
     "dev:server": "node bin/fact-sheet.js dev",
-    "prepublishOnly": "npm run build && npm run test",
+    "prepublishOnly": "npm run clean && npm run build && npm run test",
     "example": "node bin/fact-sheet.js generate --input ./example-data --output ./example-output --verbose",
     "example-inline": "node bin/fact-sheet.js generate --input ./example-data --output ./example-output-inline --inline-css --inline-js --verbose"
   },
   "files": [
     "bin/",
-    "lib/",
+    "dist/",
     "templates/",
     "README.md"
   ],

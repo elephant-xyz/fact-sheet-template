@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
-import { Builder } from '../lib/builder.js';
-import { ConfigLoader } from '../lib/config-loader.js';
+import { Builder } from '../dist/lib/builder.js';
+import { ConfigLoader } from '../dist/lib/config-loader.js';
 import { resolve } from 'path';
 import fs from 'fs-extra';
-import { Logger } from '../lib/logger.js';
+import { Logger } from '../dist/lib/logger.js';
 
 const program = new Command();
 
@@ -120,7 +120,7 @@ program
       }
 
       // Dynamically import DevServer to avoid loading dev dependencies for generate command
-      const { DevServer } = await import('../lib/dev-server.js');
+      const { DevServer } = await import('../dist/lib/dev-server.js');
       const devServer = new DevServer(options);
       
       // Handle graceful shutdown

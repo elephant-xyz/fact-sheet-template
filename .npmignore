@@ -1,3 +1,8 @@
+# Source files (TypeScript)
+lib/
+types/
+tsconfig.json
+
 # Development files
 test/
 example-data/
@@ -7,6 +12,8 @@ test-output/
 test-output-inline/
 websites/
 data/
+.elephant-dev/
+dev-output/
 
 # Development dependencies
 .eslintrc*

@@ -17,7 +17,7 @@ export class TemplateRenderer {
     this.options = options;
     
     // Set up Nunjucks environment
-    const templatesPath = path.join(__dirname, '..', 'templates');
+    const templatesPath = path.join(__dirname, '..', '..', 'templates');
     this.env = nunjucks.configure(templatesPath, {
       autoescape: true,
       throwOnUndefined: false
@@ -379,7 +379,7 @@ export class TemplateRenderer {
       const cssContents: string[] = [];
       
       for (const cssFile of cssFiles) {
-        const cssPath = path.join(__dirname, '..', 'templates', 'assets', 'css', cssFile);
+        const cssPath = path.join(__dirname, '..', '..', 'templates', 'assets', 'css', cssFile);
         if (await fs.pathExists(cssPath)) {
           const content = await fs.readFile(cssPath, 'utf8');
           cssContents.push(content);
@@ -395,7 +395,7 @@ export class TemplateRenderer {
       const jsContents: string[] = [];
       
       for (const jsFile of jsFiles) {
-        const jsPath = path.join(__dirname, '..', 'templates', 'assets', 'js', jsFile);
+        const jsPath = path.join(__dirname, '..', '..', 'templates', 'assets', 'js', jsFile);
         if (await fs.pathExists(jsPath)) {
           const content = await fs.readFile(jsPath, 'utf8');
           jsContents.push(content);
@@ -405,7 +405,7 @@ export class TemplateRenderer {
       // Also include external libraries if needed
       const libFiles = ['chart.min.js', 'chartjs-adapter-date-fns.bundle.min.js'];
       for (const libFile of libFiles) {
-        const libPath = path.join(__dirname, '..', 'templates', 'assets', 'js', libFile);
+        const libPath = path.join(__dirname, '..', '..', 'templates', 'assets', 'js', libFile);
         if (await fs.pathExists(libPath)) {
           const content = await fs.readFile(libPath, 'utf8');
           jsContents.push(content);

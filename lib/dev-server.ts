@@ -195,7 +195,7 @@ export class DevServer {
 
   private startFileWatcher(): void {
     const watchPaths = [
-      path.join(__dirname, '..', 'templates'),
+      path.join(__dirname, '..', '..', 'templates'),
       this.options.input
     ];
     
@@ -318,7 +318,7 @@ export class DevServer {
     this.logger.debug('Copying changed assets...');
     
     for (const file of assetFiles) {
-      const relativePath = path.relative(path.join(__dirname, '..', 'templates', 'assets'), file);
+      const relativePath = path.relative(path.join(__dirname, '..', '..', 'templates', 'assets'), file);
       const targetPath = path.join(this.options.output, relativePath);
       
       await fs.ensureDir(path.dirname(targetPath));
