@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <meta name="description" content="{{ description }}">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="{{ canonical }}">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="place">
+    <meta property="og:url" content="{{ og_url }}">
+    <meta property="og:title" content="{{ og_title }}">
+    <meta property="og:description" content="{{ og_description }}">
+    <meta property="og:image" content="{{ og_image }}">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ twitter_url }}">
+    <meta property="twitter:title" content="{{ twitter_title }}">
+    <meta property="twitter:description" content="{{ twitter_description }}">
+    <meta property="twitter:image" content="{{ twitter_image }}">
+
+    {% if config.inlineCss %}
+        <style>{{ config.inlineCssContent | safe }}</style>
+    {% else %}
+        {% if config.dev %}
+            <link rel="stylesheet" href="./css/root_style.css">
+        {% else %}
+            <link rel="stylesheet" href="{{ config.domain }}/css/root_style.css">
+        {% endif %}
+    {% endif %}
+    
+    <!-- Use web-safe fonts instead of Adobe Typekit -->
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    {{ content | safe }}
+    
+    {% if config.inlineJs %}
+        <script>{{ config.inlineJsContent | safe }}</script>
+    {% else %}
+        {% if config.dev %}
+            <script src="./js/property.js"></script>
+        {% else %}
+            <script src="{{ config.domain }}/js/property.js"></script>
+        {% endif %}
+    {% endif %}
+</body>
+</html>
