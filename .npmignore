@@ -1,8 +1,3 @@
-# Source files (TypeScript)
-lib/
-types/
-tsconfig.json
-
 # Development files
 test/
 example-data/

@@ -14,14 +14,17 @@
     "test": "node test/test.js",
     "dev": "node bin/fact-sheet.js generate",
     "dev:server": "node bin/fact-sheet.js dev",
+    "prepare": "npm run build",
     "prepublishOnly": "npm run clean && npm run build && npm run test",
     "example": "node bin/fact-sheet.js generate --input ./example-data --output ./example-output --verbose",
     "example-inline": "node bin/fact-sheet.js generate --input ./example-data --output ./example-output-inline --inline-css --inline-js --verbose"
   },
   "files": [
     "bin/",
-    "dist/",
+    "lib/",
+    "types/",
     "templates/",
+    "tsconfig.json",
     "README.md"
   ],
   "keywords": [
@@ -50,7 +53,8 @@
     "fs-extra": "^11.2.0",
     "glob": "^10.3.10",
     "luxon": "^3.6.1",
-    "nunjucks": "^3.2.4"
+    "nunjucks": "^3.2.4",
+    "typescript": "^5.8.3"
   },
   "devDependencies": {
     "@types/express": "^5.0.3",
@@ -63,7 +67,6 @@
     "eslint": "^8.57.0",
     "express": "^5.1.0",
     "open": "^10.2.0",
-    "typescript": "^5.8.3",
     "ws": "^8.18.3"
   },
   "optionalDependencies": {
