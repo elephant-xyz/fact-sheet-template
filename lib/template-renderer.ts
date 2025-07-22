@@ -339,10 +339,18 @@ export class TemplateRenderer {
         return `./${filename}`;
       }
       
-      // Use the domain from options, defaulting to elephant.xyz/homes/public
-      const baseUrl = this.options.domain || 'https://elephant.xyz/homes/public';
+      // Check if using default elephant.xyz domain
+      const isDefaultDomain = !this.options.domain || 
+                             this.options.domain === 'https://elephant.xyz' ||
+                             this.options.domain.includes('elephant.xyz');
       
-      // Ensure no double slashes
+      if (isDefaultDomain) {
+        // Use the specific elephant.xyz public assets path
+        return `https://elephant.xyz/homes/public/${filename}`;
+      }
+      
+      // For custom domains, use the provided domain
+      const baseUrl = this.options.domain!; // We know it's defined here
       const cleanBase = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
       
       // Return the full URL

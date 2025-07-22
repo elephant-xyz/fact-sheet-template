@@ -28,7 +28,7 @@
         {% if config.dev %}
             <link rel="stylesheet" href="./css/root_style.css">
         {% else %}
-            <link rel="stylesheet" href="{{ config.domain }}/css/root_style.css">
+            <link rel="stylesheet" href="{{ 'css/root_style.css' | assetUrl }}">
         {% endif %}
     {% endif %}
     
@@ -48,7 +48,7 @@
         {% if config.dev %}
             <script src="./js/property.js"></script>
         {% else %}
-            <script src="{{ config.domain }}/js/property.js"></script>
+            <script src="{{ 'js/property.js' | assetUrl }}"></script>
         {% endif %}
     {% endif %}
 </body>
