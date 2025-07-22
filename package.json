@@ -14,6 +14,7 @@
     "test": "node test/test.js",
     "dev": "node bin/fact-sheet.js generate",
     "dev:server": "node bin/fact-sheet.js dev",
+    "postinstall": "npm run build",
     "prepare": "npm run build",
     "prepublishOnly": "npm run clean && npm run build && npm run test",
     "example": "node bin/fact-sheet.js generate --input ./example-data --output ./example-output --verbose",
