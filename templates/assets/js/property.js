@@ -1311,11 +1311,11 @@ function togglePriceCardInfo(btn) {
   if (!expanded) {
     content.style.display = "block";
     btn.innerHTML =
-      'Less Info <img src="/public/dropdown-arrow.svg" alt="Collapse" class="expander-icon">';
+      'Less Info <img src="https://elephant.xyz/homes/public/dropdown-arrow.svg" alt="Collapse" class="expander-icon">';
   } else {
     content.style.display = "none";
     btn.innerHTML =
-      'More Info <img src="/public/dropdown-arrow.svg" alt="Expand" class="expander-icon">';
+      'More Info <img src="https://elephant.xyz/homes/public/dropdown-arrow.svg" alt="Expand" class="expander-icon">';
   }
 }
 
@@ -1329,12 +1329,12 @@ function toggleSalesEvents(btn) {
     hiddenEvents.forEach((ev) => (ev.style.display = "flex"));
     btn.classList.add("expanded");
     btn.innerHTML =
-      'Show Less <img src="/public/dropdown-arrow.svg" class="show-arrow rotated" alt="Collapse">';
+      'Show Less <img src="https://elephant.xyz/homes/public/dropdown-arrow.svg" class="show-arrow rotated" alt="Collapse">';
   } else {
     hiddenEvents.forEach((ev) => (ev.style.display = "none"));
     btn.classList.remove("expanded");
     btn.innerHTML =
-      'Show More <img src="/public/dropdown-arrow.svg" class="show-arrow" alt="Expand">';
+      'Show More <img src="https://elephant.xyz/homes/public/dropdown-arrow.svg" class="show-arrow" alt="Expand">';
   }
 }
 

@@ -177,3 +177,5 @@ dev-output/
 
 # Build logs
 fact-sheet-build.log
+collected-output/
+collected_data/
