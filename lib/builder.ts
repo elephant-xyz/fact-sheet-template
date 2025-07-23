@@ -104,7 +104,8 @@ export class Builder {
     this.logger.debug(`Generated index.html for ${propertyId}`);
 
     // Copy/manage assets
-    await this.assetManager.copyAssets(this.options.output, propertyId);
+    const propertyDataPath = path.join(this.options.input, propertyId);
+    await this.assetManager.copyAssets(this.options.output, propertyId, propertyDataPath);
 
     // Create manifest file
     await this.assetManager.createManifest(this.options.output, propertyId, propertyData);

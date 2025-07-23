@@ -333,9 +333,15 @@ export class TemplateRenderer {
     });
 
     // Add assetUrl filter for asset paths
-    this.env.addFilter("assetUrl", (filename: string) => {
+    this.env.addFilter("assetUrl", (filename: string, propertyImages?: string[]) => {
       // In dev mode, use relative paths
       if (this.options.dev) {
+        return `./${filename}`;
+      }
+      
+      // Check if this image exists in property data
+      if (propertyImages && propertyImages.includes(filename)) {
+        // Use local path for property-specific images
         return `./${filename}`;
       }
       
@@ -345,7 +351,7 @@ export class TemplateRenderer {
                              this.options.domain.includes('elephant.xyz');
       
       if (isDefaultDomain) {
-        // Use the specific elephant.xyz public assets path
+        // For default domain, all assets use CDN
         return `https://elephant.xyz/homes/public/${filename}`;
       }
       
@@ -366,12 +372,29 @@ export class TemplateRenderer {
   }
 
   async renderProperty(propertyId: string, propertyData: PropertyData): Promise<string> {
+    // Check for property-specific images
+    const propertyDataPath = path.join(this.options.input, propertyId);
+    const propertyImages: string[] = [];
+    
+    if (await fs.pathExists(propertyDataPath)) {
+      const files = await fs.readdir(propertyDataPath);
+      const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp'];
+      
+      for (const file of files) {
+        const ext = path.extname(file).toLowerCase();
+        if (imageExtensions.includes(ext)) {
+          propertyImages.push(file);
+        }
+      }
+    }
+    
     // Prepare template data
     const templateData: any = {
       propertyId,
       property: propertyData,
       property_id: propertyId, // For template compatibility
       homes: { [propertyId]: propertyData }, // For template compatibility
+      propertyImages, // List of available property-specific images
       config: {
         domain: this.options.domain || 'https://elephant.xyz/homes/public',
         inlineCss: this.options.inlineCss || false,

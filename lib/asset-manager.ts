@@ -24,7 +24,7 @@ export class AssetManager {
     });
   }
 
-  async copyAssets(outputDir: string, propertyId: string): Promise<void> {
+  async copyAssets(outputDir: string, propertyId: string, propertyDataPath?: string): Promise<void> {
     const propertyDir = path.join(outputDir, propertyId);
     
     this.logger.debug(`Copying assets for ${propertyId}...`);
@@ -48,6 +48,11 @@ export class AssetManager {
     if (!isDefaultDomain) {
       // Copy static assets only for custom domains
       await this.copyStaticAssets(propertyDir);
+    }
+
+    // Always copy property-specific images if they exist
+    if (propertyDataPath) {
+      await this.copyPropertyImages(propertyDir, propertyDataPath);
     }
   }
 
@@ -145,5 +150,24 @@ export class AssetManager {
   async optimizeAssets(_outputDir: string, _propertyId: string): Promise<void> {
     // Future: Add asset optimization (minification, compression, etc.)
     this.logger.debug(`Asset optimization not yet implemented`);
+  }
+
+  private async copyPropertyImages(propertyDir: string, propertyDataPath: string): Promise<void> {
+    // Copy any images from the property data directory
+    if (await fs.pathExists(propertyDataPath)) {
+      const files = await fs.readdir(propertyDataPath);
+      const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp'];
+      
+      for (const file of files) {
+        const ext = path.extname(file).toLowerCase();
+        if (imageExtensions.includes(ext)) {
+          const sourcePath = path.join(propertyDataPath, file);
+          const targetPath = path.join(propertyDir, file);
+          await fs.copy(sourcePath, targetPath);
+          
+          this.logger.debug(`Copied property image: ${file}`);
+        }
+      }
+    }
   }
 }
