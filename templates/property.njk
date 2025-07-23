@@ -23,13 +23,46 @@
 <nav class="navigation">
     <div class="nav-content">
                     <div class="nav-tabs">
+                {% set has_sales_data_nav = false %}
+                {% for sale in homes[property_id].all_sales %}
+                  {% if sale.data.purchase_price_amount %}
+                    {% set has_sales_data_nav = true %}
+                  {% endif %}
+                {% endfor %}
+                
+                {% if has_sales_data_nav or (homes[property_id].all_taxes | length > 0) %}
                 <a href="#property-history" class="nav-tab">Property History</a>
+                {% endif %}
+                
+                {% set bedroom_count_nav = property_config[property_id].bedroom_count or 0 %}
+                {% set bathroom_count_nav = property_config[property_id].bathroom_count or 0 %}
+                {% set has_floorplan_data_nav = (bedroom_count_nav > 0) or (bathroom_count_nav > 0) or property_config[property_id].has_size_data %}
+                
+                {% if has_floorplan_data_nav %}
                 <a href="#floorplan" class="nav-tab">Floorplan</a>
+                {% endif %}
+                
                 <a href="#building-details" class="nav-tab">Building Details</a>
+                
+                {% set has_features_nav = false %}
+                {% if homes[property_id].structure %}
+                  {% if homes[property_id].structure.flooring_material_primary or homes[property_id].structure.flooring_material_secondary or homes[property_id].structure.exterior_wall_material_primary or homes[property_id].structure.roof_covering_material %}
+                    {% set has_features_nav = true %}
+                  {% endif %}
+                {% endif %}
+                {% if homes[property_id].utility %}
+                  {% if homes[property_id].utility.cooling_system_type or homes[property_id].utility.heating_system_type %}
+                    {% set has_features_nav = true %}
+                  {% endif %}
+                {% endif %}
+                
+                {% if has_features_nav %}
                 <a href="#features" class="nav-tab">Property Features</a>
+                {% endif %}
             </div>
     </div>
 </nav>
+
 
 <div class="container">
     <div class="main-layout" id="main-content">
@@ -60,7 +93,6 @@
                         {% endif %}
                     </h1>
                     
-                    <img src="{{ './image.jpg' | assetUrl }}">
                     {% if homes[property_id].address %}
                         {% if homes[property_id].address.county_name %}
                         <div class="county-info">
@@ -94,6 +126,14 @@
             </header>
 
             <!-- Property History Section -->
+            {% set has_sales_data = false %}
+            {% for sale in homes[property_id].all_sales %}
+              {% if sale.data.purchase_price_amount %}
+                {% set has_sales_data = true %}
+              {% endif %}
+            {% endfor %}
+            
+            {% if has_sales_data or (homes[property_id].all_taxes | length > 0) %}
                 <section id="property-history" class="property-history-section scroll-offset-section">
                   <h2 class="section-title">Property History</h2>
 
@@ -484,10 +524,16 @@
                 </div>
                     {% endif %}
                 </section>
+            {% endif %}
 
             <!-- Add your content sections here -->
             
             <!-- Floorplan -->
+            {% set bedroom_count = property_config[property_id].bedroom_count or 0 %}
+            {% set bathroom_count = property_config[property_id].bathroom_count or 0 %}
+            {% set has_floorplan_data = (bedroom_count > 0) or (bathroom_count > 0) or property_config[property_id].has_size_data %}
+            
+            {% if has_floorplan_data %}
             <div id="floorplan" class="section scroll-offset-section">
                 <div class="floorplan-header">
                     <h2 class="section-title">Floorplan</h2>
@@ -628,6 +674,7 @@
                 </div>
                 {% endif %}
             </div>
+            {% endif %}
             <!-- Building Details -->
             <section id="building-details" class="building-details-section scroll-offset-section">
               <h2 class="section-title">Building Details</h2>
@@ -762,6 +809,25 @@
             #}
 
             <!-- Property Features -->
+            {% set has_interior_features = false %}
+            {% set has_exterior_features = false %}
+            
+            {% if homes[property_id].structure %}
+              {% if homes[property_id].structure.flooring_material_primary or homes[property_id].structure.flooring_material_secondary or homes[property_id].structure.interior_wall_surface_material_primary %}
+                {% set has_interior_features = true %}
+              {% endif %}
+              {% if homes[property_id].structure.exterior_wall_material_primary or homes[property_id].structure.roof_covering_material %}
+                {% set has_exterior_features = true %}
+              {% endif %}
+            {% endif %}
+            
+            {% if homes[property_id].utility %}
+              {% if homes[property_id].utility.cooling_system_type or homes[property_id].utility.heating_system_type %}
+                {% set has_interior_features = true %}
+              {% endif %}
+            {% endif %}
+            
+            {% if has_interior_features or has_exterior_features %}
             <section class="section" id="features">
                 <h2 class="section-title">Property Features</h2>
                 <div class="features-container">
@@ -1086,6 +1152,7 @@
                     </div>
                 </div>
             </section>
+            {% endif %}
         </div>
         <!-- Sidebar -->
         <div class="sidebar">
@@ -1223,10 +1290,10 @@
     {% endif %}
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 {% if config.inlineJs %}
 <!-- JS is inlined -->
 {% else %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="{{ 'js/property.js' | assetUrl }}"></script>
 {% endif %}
 <script>

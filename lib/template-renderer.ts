@@ -388,12 +388,22 @@ export class TemplateRenderer {
       }
     }
     
+    // Calculate bedroom/bathroom counts for property_config
+    const propertyConfig: any = {};
+    propertyConfig[propertyId] = {
+      bedroom_count: propertyData.building?.bedrooms || 0,
+      bathroom_count: propertyData.building?.bathrooms || 0,
+      has_size_data: !!propertyData.building?.living_area,
+      total_sqft: propertyData.building?.living_area || 0
+    };
+    
     // Prepare template data
     const templateData: any = {
       propertyId,
       property: propertyData,
       property_id: propertyId, // For template compatibility
       homes: { [propertyId]: propertyData }, // For template compatibility
+      property_config: propertyConfig, // For floorplan section
       propertyImages, // List of available property-specific images
       config: {
         domain: this.options.domain || 'https://elephant.xyz/homes/public',

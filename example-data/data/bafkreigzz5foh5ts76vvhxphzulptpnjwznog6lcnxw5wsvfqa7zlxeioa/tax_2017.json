@@ -1,0 +1,21 @@
+{
+  "source_http_request": {
+    "method": "GET",
+    "url": "https://pbcpao.gov/Property/Details",
+    "multiValueQueryString": {
+      "parcelId": [
+        "52434205310037080"
+      ]
+    }
+  },
+  "request_identifier": "52434205310037080",
+  "tax_year": 2017,
+  "property_assessed_value_amount": 240000.0,
+  "property_market_value_amount": 240000.0,
+  "property_building_amount": 240000.0,
+  "property_land_amount": null,
+  "property_taxable_value_amount": 240000.0,
+  "monthly_tax_amount": 5062.0,
+  "period_end_date": null,
+  "period_start_date": null
+}

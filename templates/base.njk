@@ -32,16 +32,13 @@
         {% endif %}
     {% endif %}
     
-    <!-- Use web-safe fonts instead of Adobe Typekit -->
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-        }
-    </style>
+    <!-- Adobe Typekit fonts -->
+    <link rel="stylesheet" href="https://use.typekit.net/vbh7qcn.css">
 </head>
 <body>
     {{ content | safe }}
     
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     {% if config.inlineJs %}
         <script>{{ config.inlineJsContent | safe }}</script>
     {% else %}
