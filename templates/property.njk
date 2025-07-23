@@ -74,6 +74,38 @@
                 </ol>
             </nav>
 
+            <!-- Image Carousel -->
+            {% if property.carousel_images and property.carousel_images | length > 0 %}
+            <div class="carousel-container" id="photos">
+                {% for image in property.carousel_images %}
+                <input type="radio" name="carousel-radio-{{ propertyId }}" id="carousel-radio-{{ propertyId }}-{{ loop.index }}" class="carousel-radio" {% if loop.first %}checked{% endif %}/>
+                {% endfor %}
+                
+                <div class="carousel-slides">
+                    {% for image in property.carousel_images %}
+                    <div class="carousel-item">
+                        {# Extract just the filename from ipfs_url for the assetUrl filter #}
+                        {% set filename = image.ipfs_url | replace("./", "") %}
+                        <img src="{{ filename | assetUrl(propertyImages) }}" alt="{{ image.name or 'Property Image' }}" class="carousel-image"
+                             loading="{% if loop.first %}eager{% else %}lazy{% endif %}" width="1120" height="615">
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="carousel-indicators">
+                    {% set total_images = property.carousel_images | length %}
+                    {% set indicators_count = 10 %}
+                    {% for i in range(1, indicators_count + 1) %}
+                        {% set image_index = ((i - 1) * total_images / indicators_count) | round(0, 'ceil') | int %}
+                        {% if image_index == 0 %}{% set image_index = 1 %}{% endif %}
+                        {% if image_index <= total_images %}
+                        <label for="carousel-radio-{{ propertyId }}-{{ image_index }}" class="indicator"></label>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
             <!-- Property Header -->
             <header class="property-header">
                 <div class="property-address">
@@ -719,7 +751,7 @@
                         <!-- Second Column -->
                         <div class="building-details-column">
                             <!-- Living Area -->
-                            {% if homes[property_id].property.livable_floor_area %}
+                            {% if homes[property_id].property.livable_floor_area > 0 %}
                             <div class="building-spec-item">
                                 <div class="building-spec-label">Living Area</div>
                                 <div class="building-spec-value">
@@ -1276,18 +1308,17 @@
         </div>
     </div>
     <div class="property-divider"></div>
-    {% if homes[property_id].address.source_http_request or homes[property_id].all_sales | length > 0 %}
     <div id="datasrc" class="data-footnotes">
       <div class="data-source-btn-row" style="font-size:12px; color:#8E8B8B; padding-left:0;">
         {% if homes[property_id].address.source_http_request %}
         <a id="addresssrc" href="https://pbcpao.gov/Property/Details?parcelId={{ property_id }}" target="_blank" rel="noopener noreferrer" class="data-source-btn" tabindex="-1">View Address Data Source</a>
         {% endif %}
-        {% if homes[property_id].all_sales | length > 0 and homes[property_id].all_sales[0].data.source_http_request %}
-          <a href="https://pbcpao.gov/Property/Details?parcelId={{ property_id }}" target="_blank" rel="noopener noreferrer" class="data-source-btn">View County Data Source</a>
+
+        {% if homes[property_id].property.sourceUrl %}
+          <a href="{{ homes[property_id].property.sourceUrl }}" target="_blank" rel="noopener noreferrer" class="data-source-btn">View County Data Source</a>
         {% endif %}
         </div>
     </div>
-    {% endif %}
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

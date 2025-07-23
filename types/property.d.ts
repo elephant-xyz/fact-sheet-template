@@ -77,6 +77,13 @@ export interface DataSource {
   description: string;
 }
 
+export interface CarouselImage {
+  ipfs_url: string;  // This will contain the relative path like "./003-2558GardensPkwy-PalmBeachGardens-FULL.jpg"
+  name?: string;     // Optional, for alt text
+  document_type?: string;
+  file_format?: string;
+}
+
 export interface PropertyData {
   address?: Address;
   property?: {
@@ -92,6 +99,7 @@ export interface PropertyData {
   all_sales: SalesEntry[];
   all_taxes: TaxEntry[];
   data_sources: DataSource[];
+  carousel_images?: CarouselImage[];
   [key: string]: any; // Allow for dynamic keys like sales_1, tax_1, etc.
 }
 

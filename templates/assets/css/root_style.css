@@ -116,13 +116,13 @@ option {
 
 .carousel-slides {
   display: flex;
-  width: 2500%;
+  width: 100%;
   transition: transform 0.3s ease-in-out;
   height: 615px;
 }
 
 .carousel-item {
-  width: 4%;
+  width: 100%;
   position: relative;
   flex-shrink: 0;
 }
@@ -142,6 +142,7 @@ option {
   overflow: hidden;
   object-fit: cover;
   display: block;
+  cursor: pointer;
 }
 
 .carousel-image img {
@@ -165,12 +166,209 @@ option {
 }
 
 .indicator {
-  width: 10px;
-  height: 10px;
+  width: 6px;
+  height: 6px;
   border-radius: 50px;
-  background-color: rgba(255, 255, 255, 0.7);
+  background-color: rgba(255, 255, 255, 0.5);
   cursor: pointer;
   transition: all 0.2s ease;
+}
+
+.indicator:hover {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+/* Carousel slide functionality - using attribute selectors for dynamic IDs */
+.carousel-radio[id*="carousel-radio-"][id$="-1"]:checked ~ .carousel-slides {
+  transform: translateX(0%);
+}
+
+.carousel-radio[id*="carousel-radio-"][id$="-2"]:checked ~ .carousel-slides {
+  transform: translateX(-100%);
+}
+
+.carousel-radio[id*="carousel-radio-"][id$="-3"]:checked ~ .carousel-slides {
+  transform: translateX(-200%);
+}
+
+.carousel-radio[id*="carousel-radio-"][id$="-4"]:checked ~ .carousel-slides {
+  transform: translateX(-300%);
+}
+
+.carousel-radio[id*="carousel-radio-"][id$="-5"]:checked ~ .carousel-slides {
+  transform: translateX(-400%);
+}
+
+.carousel-radio[id*="carousel-radio-"][id$="-6"]:checked ~ .carousel-slides {
+  transform: translateX(-500%);
+}
+
+.carousel-radio[id*="carousel-radio-"][id$="-7"]:checked ~ .carousel-slides {
+  transform: translateX(-600%);
+}
+
+.carousel-radio[id*="carousel-radio-"][id$="-8"]:checked ~ .carousel-slides {
+  transform: translateX(-700%);
+}
+
+.carousel-radio[id*="carousel-radio-"][id$="-9"]:checked ~ .carousel-slides {
+  transform: translateX(-800%);
+}
+
+.carousel-radio[id*="carousel-radio-"][id$="-10"]:checked ~ .carousel-slides {
+  transform: translateX(-900%);
+}
+
+.carousel-radio[id*="carousel-radio-"][id$="-11"]:checked ~ .carousel-slides {
+  transform: translateX(-1000%);
+}
+
+.carousel-radio[id*="carousel-radio-"][id$="-12"]:checked ~ .carousel-slides {
+  transform: translateX(-1100%);
+}
+
+.carousel-radio[id*="carousel-radio-"][id$="-13"]:checked ~ .carousel-slides {
+  transform: translateX(-1200%);
+}
+
+.carousel-radio[id*="carousel-radio-"][id$="-14"]:checked ~ .carousel-slides {
+  transform: translateX(-1300%);
+}
+
+.carousel-radio[id*="carousel-radio-"][id$="-15"]:checked ~ .carousel-slides {
+  transform: translateX(-1400%);
+}
+
+.carousel-radio[id*="carousel-radio-"][id$="-16"]:checked ~ .carousel-slides {
+  transform: translateX(-1500%);
+}
+
+.carousel-radio[id*="carousel-radio-"][id$="-17"]:checked ~ .carousel-slides {
+  transform: translateX(-1600%);
+}
+
+.carousel-radio[id*="carousel-radio-"][id$="-18"]:checked ~ .carousel-slides {
+  transform: translateX(-1700%);
+}
+
+.carousel-radio[id*="carousel-radio-"][id$="-19"]:checked ~ .carousel-slides {
+  transform: translateX(-1800%);
+}
+
+.carousel-radio[id*="carousel-radio-"][id$="-20"]:checked ~ .carousel-slides {
+  transform: translateX(-1900%);
+}
+
+.carousel-radio[id*="carousel-radio-"][id$="-21"]:checked ~ .carousel-slides {
+  transform: translateX(-2000%);
+}
+
+.carousel-radio[id*="carousel-radio-"][id$="-22"]:checked ~ .carousel-slides {
+  transform: translateX(-2100%);
+}
+
+.carousel-radio[id*="carousel-radio-"][id$="-23"]:checked ~ .carousel-slides {
+  transform: translateX(-2200%);
+}
+
+.carousel-radio[id*="carousel-radio-"][id$="-24"]:checked ~ .carousel-slides {
+  transform: translateX(-2300%);
+}
+
+.carousel-radio[id*="carousel-radio-"][id$="-25"]:checked ~ .carousel-slides {
+  transform: translateX(-2400%);
+}
+
+/* Active indicator styling */
+.carousel-radio:checked ~ .carousel-indicators .indicator {
+  background-color: rgba(255, 255, 255, 0.8);
+  width: 8px;
+  height: 8px;
+}
+
+/* Specific active indicator styling for each radio button */
+.carousel-radio[id*="carousel-radio-"][id$="-1"]:checked
+  ~ .carousel-indicators
+  label[for*="carousel-radio-"][for$="-1"],
+.carousel-radio[id*="carousel-radio-"][id$="-2"]:checked
+  ~ .carousel-indicators
+  label[for*="carousel-radio-"][for$="-2"],
+.carousel-radio[id*="carousel-radio-"][id$="-3"]:checked
+  ~ .carousel-indicators
+  label[for*="carousel-radio-"][for$="-3"],
+.carousel-radio[id*="carousel-radio-"][id$="-4"]:checked
+  ~ .carousel-indicators
+  label[for*="carousel-radio-"][for$="-4"],
+.carousel-radio[id*="carousel-radio-"][id$="-5"]:checked
+  ~ .carousel-indicators
+  label[for*="carousel-radio-"][for$="-5"],
+.carousel-radio[id*="carousel-radio-"][id$="-6"]:checked
+  ~ .carousel-indicators
+  label[for*="carousel-radio-"][for$="-6"],
+.carousel-radio[id*="carousel-radio-"][id$="-7"]:checked
+  ~ .carousel-indicators
+  label[for*="carousel-radio-"][for$="-7"],
+.carousel-radio[id*="carousel-radio-"][id$="-8"]:checked
+  ~ .carousel-indicators
+  label[for*="carousel-radio-"][for$="-8"],
+.carousel-radio[id*="carousel-radio-"][id$="-9"]:checked
+  ~ .carousel-indicators
+  label[for*="carousel-radio-"][for$="-9"],
+.carousel-radio[id*="carousel-radio-"][id$="-10"]:checked
+  ~ .carousel-indicators
+  label[for*="carousel-radio-"][for$="-10"],
+.carousel-radio[id*="carousel-radio-"][id$="-11"]:checked
+  ~ .carousel-indicators
+  label[for*="carousel-radio-"][for$="-11"],
+.carousel-radio[id*="carousel-radio-"][id$="-12"]:checked
+  ~ .carousel-indicators
+  label[for*="carousel-radio-"][for$="-12"],
+.carousel-radio[id*="carousel-radio-"][id$="-13"]:checked
+  ~ .carousel-indicators
+  label[for*="carousel-radio-"][for$="-13"],
+.carousel-radio[id*="carousel-radio-"][id$="-14"]:checked
+  ~ .carousel-indicators
+  label[for*="carousel-radio-"][for$="-14"],
+.carousel-radio[id*="carousel-radio-"][id$="-15"]:checked
+  ~ .carousel-indicators
+  label[for*="carousel-radio-"][for$="-15"],
+.carousel-radio[id*="carousel-radio-"][id$="-16"]:checked
+  ~ .carousel-indicators
+  label[for*="carousel-radio-"][for$="-16"],
+.carousel-radio[id*="carousel-radio-"][id$="-17"]:checked
+  ~ .carousel-indicators
+  label[for*="carousel-radio-"][for$="-17"],
+.carousel-radio[id*="carousel-radio-"][id$="-18"]:checked
+  ~ .carousel-indicators
+  label[for*="carousel-radio-"][for$="-18"],
+.carousel-radio[id*="carousel-radio-"][id$="-19"]:checked
+  ~ .carousel-indicators
+  label[for*="carousel-radio-"][for$="-19"],
+.carousel-radio[id*="carousel-radio-"][id$="-20"]:checked
+  ~ .carousel-indicators
+  label[for*="carousel-radio-"][for$="-20"],
+.carousel-radio[id*="carousel-radio-"][id$="-21"]:checked
+  ~ .carousel-indicators
+  label[for*="carousel-radio-"][for$="-21"],
+.carousel-radio[id*="carousel-radio-"][id$="-22"]:checked
+  ~ .carousel-indicators
+  label[for*="carousel-radio-"][for$="-22"],
+.carousel-radio[id*="carousel-radio-"][id$="-23"]:checked
+  ~ .carousel-indicators
+  label[for*="carousel-radio-"][for$="-23"],
+.carousel-radio[id*="carousel-radio-"][id$="-24"]:checked
+  ~ .carousel-indicators
+  label[for*="carousel-radio-"][for$="-24"],
+.carousel-radio[id*="carousel-radio-"][id$="-25"]:checked
+  ~ .carousel-indicators
+  label[for*="carousel-radio-"][for$="-25"] {
+  background-color: rgba(255, 255, 255, 0.8);
+  width: 8px;
+  height: 8px;
+}
+
+.carousel-radio:checked ~ .carousel-indicators .indicator:has(input:checked) {
+  background-color: rgba(255, 255, 255, 1);
 }
 
 .image-badge {

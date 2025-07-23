@@ -181,4 +181,10 @@ collected-output/
 collected_data/
 final-test/
 output/
+test-output/
 output-seed/
+example-data/photo-data/
+output-carousel-test/
+output-full/
+output-test-domain/
+output-test/

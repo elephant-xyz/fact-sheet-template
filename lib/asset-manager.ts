@@ -24,7 +24,7 @@ export class AssetManager {
     });
   }
 
-  async copyAssets(outputDir: string, propertyId: string, propertyDataPath?: string): Promise<void> {
+  async copyAssets(outputDir: string, propertyId: string, propertyDataPath?: string, propertyData?: PropertyData): Promise<void> {
     const propertyDir = path.join(outputDir, propertyId);
     
     this.logger.debug(`Copying assets for ${propertyId}...`);
@@ -50,9 +50,9 @@ export class AssetManager {
       await this.copyStaticAssets(propertyDir);
     }
 
-    // Always copy property-specific images if they exist
-    if (propertyDataPath) {
-      await this.copyPropertyImages(propertyDir, propertyDataPath);
+    // Copy property-specific images if they exist
+    if (propertyDataPath && propertyData) {
+      await this.copyPropertyImages(propertyDir, propertyDataPath, propertyData);
     }
   }
 
@@ -152,20 +152,20 @@ export class AssetManager {
     this.logger.debug(`Asset optimization not yet implemented`);
   }
 
-  private async copyPropertyImages(propertyDir: string, propertyDataPath: string): Promise<void> {
-    // Copy any images from the property data directory
-    if (await fs.pathExists(propertyDataPath)) {
-      const files = await fs.readdir(propertyDataPath);
-      const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp'];
-      
-      for (const file of files) {
-        const ext = path.extname(file).toLowerCase();
-        if (imageExtensions.includes(ext)) {
-          const sourcePath = path.join(propertyDataPath, file);
-          const targetPath = path.join(propertyDir, file);
+  private async copyPropertyImages(propertyDir: string, propertyDataPath: string, propertyData: PropertyData): Promise<void> {
+    // Only copy images that are referenced in carousel_images
+    if (await fs.pathExists(propertyDataPath) && propertyData.carousel_images) {
+      for (const image of propertyData.carousel_images) {
+        // Extract filename from ipfs_url
+        const filename = path.basename(image.ipfs_url);
+        const sourcePath = path.join(propertyDataPath, filename);
+        
+        // Check if the image file exists
+        if (await fs.pathExists(sourcePath)) {
+          const targetPath = path.join(propertyDir, filename);
           await fs.copy(sourcePath, targetPath);
           
-          this.logger.debug(`Copied property image: ${file}`);
+          this.logger.debug(`Copied carousel image: ${filename}`);
         }
       }
     }
