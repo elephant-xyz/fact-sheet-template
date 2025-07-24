@@ -74,8 +74,6 @@ export class IPLDDataLoader {
   }
 
   async loadPropertyData(rootCID: string): Promise<PropertyData> {
-    console.log(`Loading property data from CID: ${rootCID}`);
-
     // 1. Load the root directory
     const rootDir = path.join(this.dataDir, rootCID);
     if (!existsSync(rootDir)) {
@@ -621,35 +619,68 @@ export class IPLDDataLoader {
   ): Promise<CarouselImage[]> {
     const images: CarouselImage[] = [];
 
-    // Look for relationship files that indicate property_has_file
+    // Method 1: Find nodes that have relationships.property_has_file
     for (const node of graph.values()) {
-      if (node.data && node.data.type === "property_has_file") {
-        // This is a relationship node
-        const fromPath = node.data.from?.path;
-        const toPath = node.data.to?.path;
+      if (node.data?.relationships?.property_has_file) {
+        // This node contains property_has_file relationships
+        const propertyHasFileLinks = node.data.relationships.property_has_file;
+        
+        // Process each relationship link
+        for (const relationshipLink of propertyHasFileLinks) {
+          if (this.isIPLDLink(relationshipLink)) {
+            // Resolve the relationship node
+            const relationshipNode = this.resolveNodeFromLink(relationshipLink, graph);
+            
+            if (!relationshipNode) {
+              continue;
+            }
+            
+            if (relationshipNode?.data?.to) {
+              // Resolve the file metadata node
+              const fileNode = this.resolveNodeFromLink(relationshipNode.data.to, graph);
+              
+              if (!fileNode) {
+                continue;
+              }
+              
+              // Check if it's an image
+              if (fileNode?.data?.document_type === "PropertyImage" && fileNode.data.ipfs_url) {
+                images.push({
+                  ipfs_url: fileNode.data.ipfs_url,
+                  name: fileNode.data.name || "",
+                  document_type: fileNode.data.document_type,
+                  file_format: fileNode.data.file_format,
+                });
+              }
+            }
+          }
+        }
+      }
+    }
 
-        // Only process if this relationship is from property.json
-        if (
-          fromPath === "./property.json" &&
-          toPath &&
-          toPath.startsWith("./file_")
-        ) {
-          // Extract the file CID from the path
-          const fileCid = path.basename(toPath, ".json");
-          const fileNode = Array.from(graph.values()).find(
-            (n) => n.cid === fileCid,
-          );
-
-          if (
-            fileNode?.data?.document_type === "image" &&
-            fileNode.data.ipfs_url
-          ) {
-            images.push({
-              ipfs_url: fileNode.data.ipfs_url,
-              name: fileNode.data.name || "",
-              document_type: fileNode.data.document_type,
-              file_format: fileNode.data.file_format,
-            });
+    // Method 2: If no images found via aggregation, look for relationship nodes directly
+    if (images.length === 0) {
+      // Find all relationship nodes that match the pattern
+      for (const node of graph.values()) {
+        if (node.cid.startsWith("relationship_property_file_file_") || 
+            node.cid.includes("relationship_property_file")) {
+          
+          if (node.data?.from && node.data?.to) {
+            // Check if this is from property.json
+            const fromLink = node.data.from;
+            if (this.isIPLDLink(fromLink) && fromLink["/"] === "./property.json") {
+              // Resolve the file metadata node
+              const fileNode = this.resolveNodeFromLink(node.data.to, graph);
+              
+              if (fileNode?.data?.document_type === "PropertyImage" && fileNode.data.ipfs_url) {
+                images.push({
+                  ipfs_url: fileNode.data.ipfs_url,
+                  name: fileNode.data.name || "",
+                  document_type: fileNode.data.document_type,
+                  file_format: fileNode.data.file_format,
+                });
+              }
+            }
           }
         }
       }
@@ -671,5 +702,21 @@ export class IPLDDataLoader {
       .split(" ")
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join(" ");
+  }
+
+  private resolveNodeFromLink(link: any, graph: Map<string, DataNode>): DataNode | undefined {
+    if (!this.isIPLDLink(link)) return undefined;
+    
+    const linkedPath = link["/"];
+    
+    if (linkedPath.startsWith("./")) {
+      // Extract the CID from the path
+      const fileName = path.basename(linkedPath);
+      const cid = path.basename(fileName, ".json");
+      return graph.get(cid);
+    } else {
+      // Direct CID reference
+      return graph.get(linkedPath);
+    }
   }
 }
