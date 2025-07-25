@@ -54,6 +54,40 @@ interface CarouselImage {
   file_format?: string;
 }
 
+interface LayoutInfo {
+  space_type: string;
+  floor_level: string | number;
+  flooring_material_type?: string;
+  size_square_feet?: number;
+  has_windows?: boolean;
+  window_design_type?: string;
+  window_material_type?: string;
+  window_treatment_type?: string;
+  is_finished?: boolean;
+  furnished?: boolean;
+  paint_condition?: string;
+  flooring_wear?: string;
+  clutter_level?: string;
+  visible_damage?: string;
+  countertop_material?: string;
+  cabinet_style?: string;
+  fixture_finish_quality?: string;
+  design_style?: string;
+  natural_light_quality?: string;
+  decor_elements?: string;
+  pool_type?: string;
+  pool_equipment?: string;
+  spa_type?: string;
+  safety_features?: string;
+  view_type?: string;
+  lighting_features?: string;
+  condition_issues?: string;
+  is_exterior?: boolean;
+  pool_condition?: string;
+  pool_surface_type?: string;
+  pool_water_quality?: string;
+}
+
 export interface PropertyData {
   property: PropertyInfo;
   sales: SaleInfo[];
@@ -64,6 +98,7 @@ export interface PropertyData {
 
   providers?: any[];
   carousel_images?: CarouselImage[];
+  layouts?: LayoutInfo[];
 }
 
 export class IPLDDataLoader {
@@ -244,6 +279,9 @@ export class IPLDDataLoader {
     // Load carousel images
     const carousel_images = await this.loadCarouselImages(rootDir, graph);
 
+    // Load layout data
+    const layouts = await this.loadLayoutData(graph);
+
     return {
       property,
       sales,
@@ -252,6 +290,7 @@ export class IPLDDataLoader {
       structure: structureNode?.data || null,
       utility: utilityNode?.data || null,
       carousel_images,
+      layouts,
     };
   }
 
@@ -697,6 +736,89 @@ export class IPLDDataLoader {
     });
 
     return images;
+  }
+
+  private async loadLayoutData(
+    graph: Map<string, DataNode>,
+  ): Promise<LayoutInfo[]> {
+    const layouts: LayoutInfo[] = [];
+
+    // Method 1: Find nodes that have relationships.property_has_layout
+    for (const node of graph.values()) {
+      if (node.data?.relationships?.property_has_layout) {
+        // This node contains property_has_layout relationships
+        const propertyHasLayoutLinks = node.data.relationships.property_has_layout;
+        
+        // Process each relationship link
+        for (const relationshipLink of propertyHasLayoutLinks) {
+          if (this.isIPLDLink(relationshipLink)) {
+            // Resolve the relationship node
+            const relationshipNode = this.resolveNodeFromLink(relationshipLink, graph);
+            
+            if (!relationshipNode) {
+              continue;
+            }
+            
+            if (relationshipNode?.data?.to) {
+              // Resolve the layout node
+              const layoutNode = this.resolveNodeFromLink(relationshipNode.data.to, graph);
+              
+              if (!layoutNode) {
+                continue;
+              }
+              
+              // Extract layout data
+              if (layoutNode?.data?.space_type) {
+                layouts.push(layoutNode.data as LayoutInfo);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // Method 2: If no layouts found via aggregation, look for relationship nodes directly
+    if (layouts.length === 0) {
+      // Find all relationship nodes that match the pattern
+      for (const node of graph.values()) {
+        if (node.cid.startsWith("relationship_property_layout_") || 
+            node.cid.includes("relationship_property_layout")) {
+          
+          if (node.data?.from && node.data?.to) {
+            // Check if this is from property.json
+            const fromLink = node.data.from;
+            if (this.isIPLDLink(fromLink) && fromLink["/"] === "./property.json") {
+              // Resolve the layout node
+              const layoutNode = this.resolveNodeFromLink(node.data.to, graph);
+              
+              if (layoutNode?.data?.space_type) {
+                layouts.push(layoutNode.data as LayoutInfo);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // Sort layouts by floor level and then by space type
+    layouts.sort((a, b) => {
+      // Convert floor_level to number for sorting
+      const floorA = typeof a.floor_level === 'string' ? 
+        (a.floor_level.includes('1') ? 1 : a.floor_level.includes('2') ? 2 : 3) : 
+        (a.floor_level || 3);
+      const floorB = typeof b.floor_level === 'string' ? 
+        (b.floor_level.includes('1') ? 1 : b.floor_level.includes('2') ? 2 : 3) : 
+        (b.floor_level || 3);
+      
+      if (floorA !== floorB) {
+        return floorA - floorB;
+      }
+      
+      // Then sort by space type
+      return (a.space_type || '').localeCompare(b.space_type || '');
+    });
+
+    return layouts;
   }
 
   private capitalizeWords(str?: string): string {

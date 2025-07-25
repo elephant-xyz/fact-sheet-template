@@ -422,7 +422,14 @@ export class TemplateRenderer {
             livable_floor_area: propertyData.building?.living_area || propertyData.property?.livable_floor_area,
             property_type: propertyData.building?.property_type || propertyData.property?.property_type,
             number_of_units_type: propertyData.property?.number_of_units_type
-          }
+          },
+          // Add layouts array for new approach
+          layouts: propertyData.layouts || [],
+          // Add individual layout entries for backward compatibility
+          ...(propertyData.layouts ? propertyData.layouts.reduce((acc: any, layout: any, index: number) => {
+            acc[`layout_${index + 1}`] = layout;
+            return acc;
+          }, {} as any) : {})
         }
       }, // For template compatibility
       property_config: propertyConfig, // For floorplan section
