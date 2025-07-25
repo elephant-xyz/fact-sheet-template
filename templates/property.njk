@@ -121,25 +121,27 @@
                             {% if homes[property_id].address.unit_identifier and homes[property_id].address.unit_identifier != 'NA' %}, {{ homes[property_id].address.unit_identifier }}{% endif %}
                             {% if homes[property_id].address.city_name %}, {{ homes[property_id].address.city_name }}{% endif %}
                             {% if homes[property_id].address.state_code %}, {{ homes[property_id].address.state_code }}{% endif %}
-                            {% if homes[property_id].address.postal_code %}{{ homes[property_id].postCode }}{% endif %}{% if homes[property_id].address.source_http_request %}<sup class="data-footnote"><a href="#addresssrc" style="color:inherit;text-decoration:none;">1</a></sup>{% endif %}
+                            {% if homes[property_id].address.postal_code %} {{ homes[property_id].address.postal_code }}{% endif %}{% if homes[property_id].address.source_http_request %}<sup class="data-footnote"><a href="#addresssrc" style="color:inherit;text-decoration:none;">1</a></sup>{% endif %}
                         {% else %}
                             {{ homes[property_id].unormalized_address.full_address }}
                         {% endif %}
                     </h1>
                     
                     {% if homes[property_id].address %}
-                        {% if homes[property_id].address.county_name %}
-                        <div class="county-info">
-                            <span>{{ homes[property_id].address.county_name }} County</span>
-                            {% if homes[property_id].address.latitude or homes[property_id].address.longitude %}
+                        {% if homes[property_id].address.county_name or homes[property_id].address.latitude or homes[property_id].address.longitude %}
+                        <div class="location-details">
+                            {% if homes[property_id].address.county_name %}
+                            <span class="county-info">{{ homes[property_id].address.county_name }} County</span>
+                            {% endif %}
+                            {% if homes[property_id].address.county_name and (homes[property_id].address.latitude or homes[property_id].address.longitude) %}
                             <img src="{{ 'ellipse-7.svg' | assetUrl }}" alt="">
                             {% endif %}
-                        </div>
-                        {% endif %}
-                        {% if homes[property_id].address.latitude or homes[property_id].address.longitude %}
-                        <div class="address-coordinates">
-                            {% if homes[property_id].address.latitude %}{{ homes[property_id].address.latitude }}{% endif %}
-                            {% if homes[property_id].address.longitude %}, {{ homes[property_id].address.longitude }}{% endif %}
+                            {% if homes[property_id].address.latitude or homes[property_id].address.longitude %}
+                            <span class="address-coordinates">
+                                {% if homes[property_id].address.latitude %}{{ homes[property_id].address.latitude }}{% endif %}
+                                {% if homes[property_id].address.longitude %}, {{ homes[property_id].address.longitude }}{% endif %}
+                            </span>
+                            {% endif %}
                         </div>
                         {% endif %}
                     {% endif %}
@@ -621,13 +623,13 @@
                   <div class="floor-rooms collapsible-content">
                     {% for room in roomList %}
                       <div class="room-item collapbsible">
-                            <div class="room-header" onclick="toggleRoomDetails(this)" style="cursor: pointer; display: flex; align-items: center; padding: 8px 0;">
-                                <div style="width: 24px; flex-shrink: 0;">
+                            <div class="room-header" onclick="toggleRoomDetails(this)">
+                                <div class="room-icon-container">
                                     {% if room.space_type.iconName %}
                                         <img src="{{ room.space_type.iconName | assetUrl}}" alt="">
                                     {% endif %}
                                 </div>
-                                <span style="flex: 1;">{{ room.space_type.enumDescription or 'Room' }}</span>
+                                <span class="room-title">{{ room.space_type.enumDescription or 'Room' }}</span>
                                 <img src="{{ 'uiicons-1.svg' | assetUrl }}" alt="Expand" class="room-expand-icon">
                             </div>
                             <ul class="room-properties" style="display: none;">
@@ -647,13 +649,10 @@
                   <div class="floorplan-floors">
                     <!-- 1st Floor -->
                     {% if first_floor_rooms | length > 0 and first_floor_rooms | selectattr('space_type') | list | length > 0 %}
-                    <div class="floor-section collapsible">
-                        <div class="floor-header" onclick="toggleFloorSection(this)">
+                    <div class="floor-section">
+                        <div class="floor-header">
                             <img src="{{ 'featuresicons-13.svg' | assetUrl }}" alt="1st Floor" class="floor-header-icon">
                             <h3 class="section-subtitle">1st Floor</h3>
-                            <svg class="collapse-arrow rotated" width="12" height="12" viewBox="0 0 12 12" fill="none">
-                                <path d="M3 7.5L6 4.5L9 7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
                         </div>
                         {{ floorRooms(first_floor_rooms) }}
                     </div>
@@ -661,13 +660,10 @@
                     
                     <!-- 2nd Floor -->
                     {% if second_floor_rooms | length > 0 and second_floor_rooms | selectattr('space_type') | list | length > 0 %}
-                    <div class="floor-section collapsible">
-                        <div class="floor-header" onclick="toggleFloorSection(this)">
+                    <div class="floor-section">
+                        <div class="floor-header">
                             <img src="{{ 'featuresicons-5.svg' | assetUrl }}" alt="2nd Floor" class="floor-header-icon">
                             <h3 class="section-subtitle">2nd Floor</h3>
-                            <svg class="collapse-arrow rotated" width="12" height="12" viewBox="0 0 12 12" fill="none">
-                                <path d="M3 7.5L6 4.5L9 7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
                         </div>
                         {{ floorRooms(second_floor_rooms) }}
                     </div>
@@ -675,13 +671,10 @@
                     
                     <!-- Other Rooms -->
                     {% if other_rooms | length > 0 and other_rooms | selectattr('space_type') | list | length > 0 %}
-                    <div class="floor-section collapsible">
-                        <div class="floor-header" onclick="toggleFloorSection(this)">
+                    <div class="floor-section">
+                        <div class="floor-header">
                             <img src="{{ 'featuresicons-33.svg' | assetUrl }}" alt="Other Rooms" class="floor-header-icon">
                             <h3 class="section-subtitle">Other Rooms</h3>
-                            <svg class="collapse-arrow rotated" width="12" height="12" viewBox="0 0 12 12" fill="none">
-                                <path d="M3 7.5L6 4.5L9 7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
                         </div>
                         {{ floorRooms(other_rooms) }}
                     </div>

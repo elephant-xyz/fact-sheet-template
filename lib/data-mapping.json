@@ -794,126 +794,126 @@
     {
       "lexiconClass": "structure",
       "lexiconProperty": "roof_covering_material",
-      "iconName": "roofing",
+      "iconName": "roof",
       "enumValue": "3-Tab Asphalt Shingle",
       "enumDescription": "3-Tab Asphalt Shingles"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "roof_covering_material",
-      "iconName": "roofing",
+      "iconName": "roof",
       "enumValue": "Architectural Asphalt Shingle",
       "enumDescription": "Architectural Asphalt Shingles"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "roof_covering_material",
-      "iconName": "roofing",
+      "iconName": "roof",
       "enumValue": "Metal Standing Seam",
       "enumDescription": "Metal Standing Seam Roof"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "roof_covering_material",
-      "iconName": "roofing",
+      "iconName": "roof",
       "enumValue": "Metal Corrugated",
       "enumDescription": "Metal Corrugated Roof"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "roof_covering_material",
-      "iconName": "roofing",
+      "iconName": "roof",
       "enumValue": "Clay Tile",
       "enumDescription": "Clay Tile Roof"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "roof_covering_material",
-      "iconName": "roofing",
+      "iconName": "roof",
       "enumValue": "Concrete Tile",
       "enumDescription": "Concrete Tile Roof"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "roof_covering_material",
-      "iconName": "roofing",
+      "iconName": "roof",
       "enumValue": "Natural Slate",
       "enumDescription": "Natural Slate Roof"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "roof_covering_material",
-      "iconName": "roofing",
+      "iconName": "roof",
       "enumValue": "Synthetic Slate",
       "enumDescription": "Synthetic Slate roof"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "roof_covering_material",
-      "iconName": "roofing",
+      "iconName": "roof",
       "enumValue": "Wood Shake",
       "enumDescription": "Wood Shake Roof"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "roof_covering_material",
-      "iconName": "roofing",
+      "iconName": "roof",
       "enumValue": "Wood Shingle",
       "enumDescription": "Wood Shingles"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "roof_covering_material",
-      "iconName": "roofing",
+      "iconName": "roof",
       "enumValue": "TPO Membrane",
       "enumDescription": "TPO Membrane Roof"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "roof_covering_material",
-      "iconName": "roofing",
+      "iconName": "roof",
       "enumValue": "EPDM Membrane",
       "enumDescription": "EPDM Membrane Roof"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "roof_covering_material",
-      "iconName": "roofing",
+      "iconName": "roof",
       "enumValue": "Modified Bitumen",
       "enumDescription": "Modified Bitumen Roof"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "roof_covering_material",
-      "iconName": "roofing",
+      "iconName": "roof",
       "enumValue": "Built-Up Roof",
       "enumDescription": "Built-Up Roof"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "roof_covering_material",
-      "iconName": "roofing",
+      "iconName": "roof",
       "enumValue": "Green Roof System",
       "enumDescription": "Green Roof System"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "roof_covering_material",
-      "iconName": "roofing",
+      "iconName": "roof",
       "enumValue": "Solar Integrated Tiles",
       "enumDescription": "Solar Integrated Tile Roof"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "roof_covering_material",
-      "iconName": "roofing",
+      "iconName": "roof",
       "enumValue": "Tile",
       "enumDescription": "Tile Roof"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "roof_covering_material",
-      "iconName": "roofing",
+      "iconName": "roof",
       "enumValue": "Shingle",
       "enumDescription": "Shingles"
     },
