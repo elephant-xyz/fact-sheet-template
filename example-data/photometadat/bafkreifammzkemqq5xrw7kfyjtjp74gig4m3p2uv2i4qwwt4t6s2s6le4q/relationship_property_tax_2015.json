@@ -1,0 +1,8 @@
+{
+  "from": {
+    "/": "./property.json"
+  },
+  "to": {
+    "/": "./tax_2015.json"
+  }
+}

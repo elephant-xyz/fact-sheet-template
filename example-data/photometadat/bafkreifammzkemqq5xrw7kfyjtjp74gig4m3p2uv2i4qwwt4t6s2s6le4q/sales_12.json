@@ -1,0 +1,14 @@
+{
+  "source_http_request": {
+    "method": "GET",
+    "url": "https://pbcpao.gov/Property/Details",
+    "multiValueQueryString": {
+      "parcelId": [
+        "30434108090030050"
+      ]
+    }
+  },
+  "request_identifier": "30434108090030050",
+  "ownership_transfer_date": "1980-04-01",
+  "purchase_price_amount": 58500.0
+}

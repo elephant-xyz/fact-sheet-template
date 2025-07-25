@@ -1,0 +1,30 @@
+{
+  "source_http_request": {
+    "method": "GET",
+    "url": "https://pbcpao.gov/Property/Details",
+    "multiValueQueryString": {
+      "parcelId": [
+        "30434108090030050"
+      ]
+    }
+  },
+  "request_identifier": "30434108090030050",
+  "city_name": "JUPITER",
+  "country_code": "US",
+  "county_name": "palm beach",
+  "latitude": 26.921659,
+  "longitude": -80.0718655,
+  "plus_four_postal_code": null,
+  "postal_code": "33477",
+  "state_code": "FL",
+  "street_name": "US HIGHWAY 1",
+  "street_post_directional_text": null,
+  "street_pre_directional_text": "S",
+  "street_number": "1605",
+  "street_suffix_type": null,
+  "unit_identifier": "3E",
+  "township": null,
+  "range": null,
+  "section": null,
+  "block": null
+}
