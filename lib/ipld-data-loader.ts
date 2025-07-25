@@ -19,6 +19,7 @@ interface PropertyInfo {
   city: string;
   state: string;
   county: string;
+  postalCode: string;
   coordinates: string;
   parcelId: string;
   beds: number;
@@ -432,7 +433,7 @@ export class IPLDDataLoader {
       }
       if (addressData.street_name) {
         // Capitalize street name properly
-        parts.push(this.capitalizeWords(addressData.street_name));
+        parts.push((addressData.street_name));
       }
       if (addressData.street_suffix_type) {
         parts.push(addressData.street_suffix_type);
@@ -516,6 +517,7 @@ export class IPLDDataLoader {
       city: this.capitalizeWords(addressData.city_name) || "",
       state: addressData.state_code || "",
       county: this.capitalizeWords(addressData.county_name) || "",
+      postalCode: addressData.postal_code || "",
       coordinates,
       parcelId: propertyData.parcel_identifier,
       beds,
