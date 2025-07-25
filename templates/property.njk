@@ -628,17 +628,22 @@
                   <div class="floorplan-floors">
                     <!-- 1st Floor -->
                     {% if first_floor_rooms | length > 0 %}
-                    <div class="floor-section">
-                        <div class="floor-header">
+                    <div class="floor-section collapsible">
+                        <div class="floor-header" onclick="toggleFloorSection(this)">
                             <img src="{{ 'featuresicons-13.svg' | assetUrl }}" alt="1st Floor">
                             <h3 class="section-subtitle">1st Floor</h3>
+                            <svg class="collapse-arrow rotated" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                <path d="M3 7.5L6 4.5L9 7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
                         </div>
-                        <div class="floor-rooms">
+                        <div class="floor-rooms collapsible-content">
                             {% for room in first_floor_rooms %}
-                            <div class="room-item">
+                            <div class="room-item collapbsible">
                                 <div class="room-header" onclick="toggleRoomDetails(this)" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 8px 0;">
                                     <span>{{ room.space_type or 'Room' }}</span>
-                                    <img src="{{ 'uiicons-1.svg' | assetUrl }}" alt="Expand" class="room-expand-icon" style="width: 16px; height: 16px; transition: transform 0.3s;">
+                                    <svg class="collapse-arrow rotated" width="10" height="10" viewBox="0 0 10 10" fill="none">
+                                        <path d="M2.5 6.25L5 3.75L7.5 6.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
                                 </div>
                                 <ul class="room-properties" style="display: none;">
                                   {% if room.has_windows %}<li><img src="{{ 'type=windows.svg' | assetUrl }}" alt="Windows" class="room-property-icon">Has Windows</li>{% endif %}
@@ -658,14 +663,17 @@
                     
                     <!-- 2nd Floor -->
                     {% if second_floor_rooms | length > 0 %}
-                    <div class="floor-section">
-                        <div class="floor-header">
+                    <div class="floor-section collapsible">
+                        <div class="floor-header" onclick="toggleFloorSection(this)">
                             <img src="{{ 'featuresicons-5.svg' | assetUrl }}" alt="2nd Floor">
                             <h3 class="section-subtitle">2nd Floor</h3>
+                            <svg class="collapse-arrow rotated" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                <path d="M3 7.5L6 4.5L9 7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
                         </div>
-                        <div class="floor-rooms">
+                        <div class="floor-rooms collapsible-content">
                             {% for room in second_floor_rooms %}
-                            <div class="room-item">
+                            <div class="room-item collapsible">
                                 <div class="room-header" onclick="toggleRoomDetails(this)" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 8px 0;">
                                     <span>{{ room.space_type or 'Room' }}</span>
                                     <img src="{{ 'uiicons-1.svg' | assetUrl }}" alt="Expand" class="room-expand-icon" style="width: 16px; height: 16px; transition: transform 0.3s;">
@@ -688,14 +696,17 @@
                     
                     <!-- Other Rooms -->
                     {% if other_rooms | length > 0 %}
-                    <div class="floor-section">
-                        <div class="floor-header">
+                    <div class="floor-section collapsible">
+                        <div class="floor-header" onclick="toggleFloorSection(this)">
                             <img src="{{ 'featuresicons-33.svg' | assetUrl }}" alt="Other Rooms">
                             <h3 class="section-subtitle">Other Rooms</h3>
-                  </div>
-                        <div class="floor-rooms">
+                            <svg class="collapse-arrow rotated" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                <path d="M3 7.5L6 4.5L9 7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="floor-rooms collapsible-content">
                             {% for room in other_rooms %}
-                            <div class="room-item">
+                            <div class="room-item collapsible">
                                 <div class="room-header" onclick="toggleRoomDetails(this)" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 8px 0;">
                                     <span>{{ room.space_type or 'Room' }}</span>
                                     <img src="{{ 'uiicons-1.svg' | assetUrl }}" alt="Expand" class="room-expand-icon" style="width: 16px; height: 16px; transition: transform 0.3s;">

@@ -1366,6 +1366,19 @@ function toggleNavigationOnShortPage() {
 }
 
 /**
+ * Toggles the display of floor sections (1st Floor, 2nd Floor, Other Rooms)
+ * @param {HTMLElement} header - The floor header element that was clicked
+ */
+// eslint-disable-next-line no-unused-vars
+function toggleFloorSection(header) {
+  const content = header.nextElementSibling;
+  const arrow = header.querySelector(".collapse-arrow");
+
+  content.classList.toggle("expanded");
+  arrow.classList.toggle("rotated");
+}
+
+/**
  * Initializes all the JavaScript functionality when the DOM is loaded.
  */
 document.addEventListener("DOMContentLoaded", function () {
