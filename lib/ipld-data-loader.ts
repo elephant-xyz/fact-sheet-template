@@ -1,6 +1,6 @@
 import * as fs from "fs/promises";
 import * as path from "path";
-import { existsSync } from "fs";
+import { existsSync, readFileSync } from "fs";
 
 interface IPLDLink {
   "/": string;
@@ -43,8 +43,8 @@ interface TaxInfo {
 }
 
 interface PropertyFeatures {
-  interior: string[];
-  exterior: string[];
+  interior: EnumInfo[];
+  exterior: EnumInfo[];
 }
 
 interface CarouselImage {
@@ -89,16 +89,16 @@ interface LayoutInfo {
 }
 
 export interface LayoutSummary {
-  firstFloorLayouts: LayoutInfo[];
-  secondFloorLayouts: LayoutInfo[];
-  otherLayouts: LayoutInfo[];
+  firstFloorLayouts: RenderItem[];
+  secondFloorLayouts: RenderItem[];
+  otherLayouts: RenderItem[];
 }
 
 export interface PropertyData {
   property: PropertyInfo;
   sales: SaleInfo[];
   taxes: TaxInfo[];
-  features: PropertyFeatures;
+  features: PropertyFeatures | null;
   structure?: any;
   utility?: any;
 
@@ -107,12 +107,64 @@ export interface PropertyData {
   layouts?: LayoutSummary;
 }
 
+type EnumMappingRaw = {
+  lexiconClass: string;
+  lexiconProperty: string;
+  iconName: string;
+  enumValue: string;
+  enumDescription: string;
+};
+
+interface EnumInfo {
+  enumDescription: string;
+  iconName: string | null;
+}
+
+type RenderItem = Record<string, EnumInfo>;
+type LexiconPropertyMapping = Record<string, RenderItem>;
+type EnumMapping = Record<string, LexiconPropertyMapping>;
+
+const EXTERIOR_FEATURE_KEYS: Set<string> = new Set([
+  "exterior_wall_material_primary",
+  "exterior_wall_material_secondary",
+  "exterior_wall_insulation_type",
+  "roof_covering_material",
+  "roof_structure_material",
+  "roof_design_type",
+  "gutters_material",
+  "foundation_type",
+  "foundation_material",
+  "foundation_waterproofing",
+  "exterior_door_material",
+  "architectural_style_type",
+  "primary_framing_material",
+  "secondary_framing_material",
+]);
+
+const INTERIOR_FEATURE_KEYS: Set<string> = new Set([
+  "flooring_material_primary",
+  "flooring_material_secondary",
+  "subfloor_material",
+  "ceiling_height_average",
+  "ceiling_structure_material",
+  "ceiling_insulation_type",
+  "interior_door_material",
+  "window_frame_material",
+  "window_glazing_type",
+  "window_operation_type",
+  "window_screen_material",
+  "interior_wall_surface_material_primary",
+  "interior_wall_finish_primary",
+]);
+
 export class IPLDDataLoader {
   private cache: Map<string, DataNode> = new Map();
   private dataDir: string;
+  private enumMapping: EnumMapping;
 
   constructor(dataDir: string) {
     this.dataDir = dataDir;
+    this.enumMapping = this.parseEnumMapping("lib/data-mapping.json");
   }
 
   async loadPropertyData(rootCID: string): Promise<PropertyData> {
@@ -127,6 +179,34 @@ export class IPLDDataLoader {
 
     // 3. Transform graph into PropertyData structure
     return this.transformToPropertyData(graph, rootDir);
+  }
+
+  private parseEnumMapping(fileName: string): EnumMapping {
+    const result: EnumMapping = {};
+    const mappingRaw: EnumMappingRaw[] = JSON.parse(
+      readFileSync(fileName, "utf-8"),
+    );
+
+    for (const item of mappingRaw) {
+      if (!result[item.lexiconClass]) {
+        result[item.lexiconClass] = {};
+      }
+
+      if (!result[item.lexiconClass][item.lexiconProperty]) {
+        result[item.lexiconClass][item.lexiconProperty] = {};
+      }
+
+      result[item.lexiconClass][item.lexiconProperty][item.enumValue] = {
+        enumDescription: item.enumDescription,
+        iconName: existsSync(
+          `templates/assets/static/type=${item.iconName}.svg`,
+        )
+          ? `type=${item.iconName}.svg`
+          : null,
+      };
+    }
+
+    return result;
   }
 
   private async buildGraph(rootDir: string): Promise<Map<string, DataNode>> {
@@ -258,10 +338,8 @@ export class IPLDDataLoader {
       "full_address",
     );
 
-    // Load layout data
-    const layouts = await this.loadLayoutData(graph);
+    const layouts = this.loadLayoutData(graph);
 
-    // Extract property information with layout data for beds/baths
     const property = this.extractPropertyInfo(
       propertyNode,
       addressNode,
@@ -271,21 +349,20 @@ export class IPLDDataLoader {
       unnormalizedAddressNode,
     );
 
-    // Extract sales history with person information
     const sales = this.extractSalesHistory(salesNodes, graph);
 
-    // Extract tax history
     const taxes = this.extractTaxHistory(taxNodes);
 
-    // Extract features
-    const features = this.extractFeatures(
-      propertyNode,
-      structureNode,
-      utilityNode,
-    );
+    let features = null;
+    if (structureNode) {
+      features = this.extractFeatures(structureNode);
+    }
 
-    // Load carousel images
     const carousel_images = await this.loadCarouselImages(rootDir, graph);
+    let utility = null;
+    if (utilityNode) {
+      utility = this.convertNodeToRenderItem(utilityNode, "utility");
+    }
 
     return {
       property,
@@ -293,7 +370,7 @@ export class IPLDDataLoader {
       taxes,
       features,
       structure: structureNode?.data || null,
-      utility: utilityNode?.data || null,
+      utility,
       carousel_images,
       layouts,
     };
@@ -379,10 +456,11 @@ export class IPLDDataLoader {
 
     if (layoutNodes) {
       for (const layoutGroup of Object.values(layoutNodes)) {
-        layoutGroup.forEach((node: LayoutInfo) => {
+        layoutGroup.forEach((node: RenderItem) => {
+          console.log(node);
           const spaceType = node.space_type;
           if (spaceType) {
-            const lowerSpaceType = spaceType.toLowerCase();
+            const lowerSpaceType = spaceType.enumDescription.toLowerCase();
 
             // Count bedrooms
             if (
@@ -594,66 +672,20 @@ export class IPLDDataLoader {
     return taxes.sort((a, b) => a.year - b.year);
   }
 
-  private extractFeatures(
-    _propertyNode?: DataNode,
-    structureNode?: DataNode,
-    utilityNode?: DataNode,
-  ): PropertyFeatures {
+  private extractFeatures(structureNode: DataNode): PropertyFeatures {
     const features: PropertyFeatures = {
       interior: [],
       exterior: [],
     };
-
-    // Extract interior features from structure data
-    if (structureNode?.data) {
-      const data = structureNode.data;
-
-      // Flooring materials
-      if (data.flooring_material_primary) {
-        features.interior.push(`${data.flooring_material_primary} Flooring`);
-      }
-
-      if (data.flooring_material_secondary) {
-        features.interior.push(data.flooring_material_secondary);
-      }
-    }
-
-    // Extract interior features from utility data
-    if (utilityNode?.data) {
-      const data = utilityNode.data;
-
-      // Cooling system
-      if (data.cooling_system_type === "CentralAir") {
-        features.interior.push("Central Air");
-      }
-
-      // Heating system
-      if (data.heating_system_type === "ElectricFurnace") {
-        features.interior.push("Electric Heating");
-      }
-    }
-
-    // Extract exterior features from structure data
-    if (structureNode?.data) {
-      const data = structureNode.data;
-
-      // Exterior wall materials
-      if (data.exterior_wall_material_primary) {
-        features.exterior.push(data.exterior_wall_material_primary);
-      }
-
-      if (data.exterior_wall_material_secondary) {
-        features.exterior.push(data.exterior_wall_material_secondary);
-      }
-
-      // Roof material
-      if (data.roof_covering_material) {
-        features.exterior.push(`${data.roof_covering_material} Roof`);
-      }
-
-      // Attachment type
-      if (data.attachment_type) {
-        features.exterior.push(data.attachment_type);
+    const renderItem: RenderItem = this.convertNodeToRenderItem(
+      structureNode,
+      "structure",
+    );
+    for (const [key, item] of Object.entries(renderItem)) {
+      if (EXTERIOR_FEATURE_KEYS.has(key)) {
+        features.exterior.push(item);
+      } else if (INTERIOR_FEATURE_KEYS.has(key)) {
+        features.interior.push(item);
       }
     }
 
@@ -759,9 +791,14 @@ export class IPLDDataLoader {
     return images;
   }
 
-  private async loadLayoutData(
-    graph: Map<string, DataNode>,
-  ): Promise<LayoutSummary> {
+  private convertNodeToRenderItem(
+    node: DataNode,
+    className: string,
+  ): RenderItem {
+    return this.buildRenderItem(node.data, className);
+  }
+
+  private loadLayoutData(graph: Map<string, DataNode>): LayoutSummary {
     const layoutsByDataGroup: Record<string, LayoutInfo[]> = {};
     // Method 1: Find nodes that have relationships.property_has_layout
     for (const node of graph.values()) {
@@ -820,11 +857,13 @@ export class IPLDDataLoader {
 
     const firstFloorLayouts = layouts
       .filter((layout) => layout["floor_level"] === "1st Floor")
-      .sort((a, b) => a.space_type.localeCompare(b.space_type));
+      .sort((a, b) => a.space_type.localeCompare(b.space_type))
+      .map((layout) => this.buildRenderItem(layout, "layout"));
 
     const secondFloorLayouts = layouts
       .filter((layout) => layout["floor_level"] === "2nd Floor")
-      .sort((a, b) => a.space_type.localeCompare(b.space_type));
+      .sort((a, b) => a.space_type.localeCompare(b.space_type))
+      .map((layout) => this.buildRenderItem(layout, "layout"));
 
     const otherLayouts = layouts
       .filter(
@@ -832,13 +871,31 @@ export class IPLDDataLoader {
           layout["floor_level"] !== "1st Floor" &&
           layout["floor_level"] !== "2nd Floor",
       )
-      .sort((a, b) => a.space_type.localeCompare(b.space_type));
+      .sort((a, b) => a.space_type.localeCompare(b.space_type))
+      .map((layout) => this.buildRenderItem(layout, "layout"));
 
     return {
       firstFloorLayouts,
       secondFloorLayouts,
       otherLayouts,
     };
+  }
+
+  private buildRenderItem(item: Object, className: string): RenderItem {
+    const renderItem: RenderItem = {};
+    const classMapping = this.enumMapping[className] || {};
+    for (const [key, value] of Object.entries(item)) {
+      const propertyMapping = classMapping[key];
+      if (!propertyMapping) {
+        continue;
+      }
+      const valueMapping = propertyMapping[value];
+      if (!valueMapping) {
+        continue;
+      }
+      renderItem[key] = valueMapping;
+    }
+    return renderItem;
   }
 
   private capitalizeWords(str?: string): string {
