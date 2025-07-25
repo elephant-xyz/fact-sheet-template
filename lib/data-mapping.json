@@ -969,6 +969,13 @@
     {
       "lexiconClass": "layout",
       "lexiconProperty": "space_type",
+      "iconName": "closet",
+      "enumValue": "Walk-in Closet",
+      "enumDescription": "Walk-in Closet"
+    },
+    {
+      "lexiconClass": "layout",
+      "lexiconProperty": "space_type",
       "iconName": "balcony",
       "enumValue": "Balcony",
       "enumDescription": "Balcony"
@@ -993,6 +1000,13 @@
       "iconName": "patio",
       "enumValue": "Porch",
       "enumDescription": "Porch"
+    },
+    {
+      "lexiconClass": "layout",
+      "lexiconProperty": "space_type",
+      "iconName": "patio",
+      "enumValue": "Patio",
+      "enumDescription": "Patio"
     },
     {
       "lexiconClass": "layout",
@@ -1819,5 +1833,55 @@
       "iconName": "deck",
       "enumValue": "Deck",
       "enumDescription": "Deck"
+    },
+
+    {
+      "lexiconClass": "appliance",
+      "lexiconProperty": "appliance_type",
+      "iconName": "refrigerator",
+      "enumValue": "Refrigerator",
+      "enumDescription": "Refrigerator"
+    },
+  
+    {
+      "lexiconClass": "appliance",
+      "lexiconProperty": "appliance_type",
+      "iconName": "microwave",
+      "enumValue": "Microwave",
+      "enumDescription": "Microwave"
+    },
+ 
+    {
+      "lexiconClass": "appliance",
+      "lexiconProperty": "appliance_type",
+      "iconName": "oven",
+      "enumValue": "Oven",
+      "enumDescription": "Oven"
+    },
+    {
+      "lexiconClass": "appliance",
+      "lexiconProperty": "appliance_type",
+      "iconName": "toaster-oven",
+      "enumValue": "Toaster Oven",
+      "enumDescription": "Toaster Oven"
+    },
+    {
+      "lexiconClass": "appliance",
+      "lexiconProperty": "appliance_type",
+      "iconName": "laundry",
+      "enumValue": "Washing Machine",
+      "enumDescription": "Washing Machine"
+    },
+    {
+      "lexiconClass": "appliance",
+      "lexiconProperty": "finish",
+      "enumValue": "White",
+      "enumDescription": "White"
+    },
+    {
+      "lexiconClass": "appliance",
+      "lexiconProperty": "finish",
+      "enumValue": "Stainless Steel",
+      "enumDescription": "Stainless Steel"
     }
   ]

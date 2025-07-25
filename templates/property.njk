@@ -65,51 +65,52 @@
 
 
 <div class="container">
-    <!-- Breadcrumb - Moved to top above carousel -->
-    <nav class="breadcrumb" aria-label="Breadcrumb">
-        <ol class="breadcrumb">
-            <li><a href="/" class="elephant-link">elephant.xyz</a></li>
-        </ol>
-    </nav>
-
-    <!-- Image Carousel - Moved outside main layout to appear above content and sidebar -->
-    {% if homes[property_id].carousel_images and homes[property_id].carousel_images | length > 0 %}
-    <div class="carousel-container" id="photos">
-        {% for image in homes[property_id].carousel_images %}
-        <input type="radio" name="carousel-radio-{{ property_id }}" id="carousel-radio-{{ property_id }}-{{ loop.index }}" class="carousel-radio" {% if loop.first %}checked{% endif %}/>
-        {% endfor %}
-        
-        <div class="carousel-slides">
-            {% for image in homes[property_id].carousel_images %}
-            <div class="carousel-item">
-                {# Extract just the filename from ipfs_url for the assetUrl filter #}
-                {% set filename = image.ipfs_url | replace("./", "") %}
-                <img src="{{ filename | assetUrl(propertyImages) }}" alt="{{ image.name or 'Property Image' }}" class="carousel-image"
-                     loading="{% if loop.first %}eager{% else %}lazy{% endif %}" width="1120" height="615">
-            </div>
-            {% endfor %}
-        </div>
-
-        <div class="carousel-indicators">
-            {% set total_images = homes[property_id].carousel_images | length %}
-            {% set indicators_count = 10 %}
-            {% for i in range(1, indicators_count + 1) %}
-                {% set image_index = ((i - 1) * total_images / indicators_count) | round(0, 'ceil') | int %}
-                {% if image_index == 0 %}{% set image_index = 1 %}{% endif %}
-                {% if image_index <= total_images %}
-                <label for="carousel-radio-{{ property_id }}-{{ image_index }}" class="indicator"></label>
-                {% endif %}
-            {% endfor %}
-        </div>
-    </div>
-    {% endif %}
-
     <div class="main-layout" id="main-content">
         <!-- Main Content -->
         <div class="main-content">
+            <!-- Header section wrapper for breadcrumb, carousel, and address -->
+            <div class="header-section">
+                <nav class="breadcrumb" aria-label="Breadcrumb">
+                    <ol class="breadcrumb">
+                        <li><a href="/" class="elephant-link">elephant.xyz</a></li>
+                    </ol>
+                </nav>
 
-            <!-- Property Header -->
-            <header class="property-header">
+                <!-- Image Carousel -->
+                {% if homes[property_id].carousel_images and homes[property_id].carousel_images | length > 0 %}
+                <div class="carousel-container" id="photos">
+                    {% for image in homes[property_id].carousel_images %}
+                    <input type="radio" name="carousel-radio-{{ property_id }}" id="carousel-radio-{{ property_id }}-{{ loop.index }}" class="carousel-radio" {% if loop.first %}checked{% endif %}/>
+                    {% endfor %}
+                    
+                    <div class="carousel-slides">
+                        {% for image in homes[property_id].carousel_images %}
+                        <div class="carousel-item">
+                            {# Extract just the filename from ipfs_url for the assetUrl filter #}
+                            {% set filename = image.ipfs_url | replace("./", "") %}
+                            <img src="{{ filename | assetUrl(propertyImages) }}" alt="{{ image.name or 'Property Image' }}" class="carousel-image"
+                                 loading="{% if loop.first %}eager{% else %}lazy{% endif %}" width="1120" height="615">
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="carousel-navigation">
+                        <button class="carousel-arrow carousel-arrow-left" onclick="previousSlide('{{ property_id }}')" aria-label="Previous image">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <button class="carousel-arrow carousel-arrow-right" onclick="nextSlide('{{ property_id }}')" aria-label="Next image">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 6L15 12L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Property Header -->
+                <header class="property-header">
                 <div class="property-address">
                     <h1>
                         {% if homes[property_id].address %}
@@ -160,6 +161,7 @@
                     {% endif %}
                 </div>
             </header>
+            </div>
 
             <!-- Property History Section -->
             {% set has_sales_data = false %}
@@ -607,7 +609,7 @@
                 <!-- Property Type and Units Info -->
                 {% if homes[property_id].property.property_type %}
                 <div class="property-type-info">
-                    <span class="property-type-value">{{ homes[property_id].property.property_type | replace('_', ' ') | title }}</span>
+                    <span class="property-type-value">{{ homes[property_id].property.property_type | replace('_', ' ') }}</span>
                     {% if homes[property_id].property.number_of_units_type and homes[property_id].property.number_of_units_type != 'null' %}, <span class="property-type-value">
                         {% if homes[property_id].property.number_of_units_type == 'One' %}One Unit{% elif homes[property_id].property.number_of_units_type == 'Two' %}Two Units{% elif homes[property_id].property.number_of_units_type == 'Three' %}Three Units{% elif homes[property_id].property.number_of_units_type == 'Four' %}Four Units{% else %}{{ homes[property_id].property.number_of_units_type }} Units{% endif %}
                     </span>{% endif %}
@@ -748,7 +750,7 @@
                                         {% elif homes[property_id].lot.lot_type == 'GreaterThanOneQuarterAcre' %}
                                             Greater than 1/4 acre
                                         {% else %}
-                                            {{ homes[property_id].lot.lot_type | replace('_', ' ') | title }}
+                                            {{ homes[property_id].lot.lot_type | replace('_', ' ') }}
                                         {% endif %}
                                     </div>
                                 </div>
@@ -910,6 +912,7 @@
                     <div class="providers-list">
                         {% if homes[property_id].service_providers %}
                         {% for provider in homes[property_id].service_providers %}
+                        {% if loop.index == 1 %}
                         <div class="provider-item">
                             <div class="provider-avatar">
                                 <img src="{{ 'annette.jpg' | assetUrl }}" alt="Annette Santiago">
@@ -943,6 +946,7 @@
                                 </div>
                             </div>
                         </div>
+                        {% endif %}
                         {% endfor %}
                         {% else %}
                         <!-- Default providers -->
@@ -979,6 +983,8 @@
                                 </div>
                             </div>
                         </div>
+
+
                         {% endif %}
                     </div>
                 </div>
@@ -1027,6 +1033,37 @@
       properties.style.display = 'none';
       expandIcon.style.transform = 'rotate(0deg)';
     }
+  }
+
+  function getCurrentSlide(propertyId) {
+    const radioButtons = document.querySelectorAll(`input[name="carousel-radio-${propertyId}"]`);
+    for (let i = 0; i < radioButtons.length; i++) {
+      if (radioButtons[i].checked) {
+        return i;
+      }
+    }
+    return 0;
+  }
+
+  function setSlide(propertyId, index) {
+    const radioButtons = document.querySelectorAll(`input[name="carousel-radio-${propertyId}"]`);
+    if (radioButtons[index]) {
+      radioButtons[index].checked = true;
+    }
+  }
+
+  function nextSlide(propertyId) {
+    const radioButtons = document.querySelectorAll(`input[name="carousel-radio-${propertyId}"]`);
+    const currentIndex = getCurrentSlide(propertyId);
+    const nextIndex = (currentIndex + 1) % radioButtons.length;
+    setSlide(propertyId, nextIndex);
+  }
+
+  function previousSlide(propertyId) {
+    const radioButtons = document.querySelectorAll(`input[name="carousel-radio-${propertyId}"]`);
+    const currentIndex = getCurrentSlide(propertyId);
+    const prevIndex = currentIndex === 0 ? radioButtons.length - 1 : currentIndex - 1;
+    setSlide(propertyId, prevIndex);
   }
 </script>
 {% endset %}
