@@ -84,6 +84,8 @@ export interface CarouselImage {
   file_format?: string;
 }
 
+
+
 export interface PropertyData {
   address?: Address;
   property?: {
@@ -100,6 +102,12 @@ export interface PropertyData {
   all_taxes: TaxEntry[];
   data_sources: DataSource[];
   carousel_images?: CarouselImage[];
+
+  processed_features?: {
+    interior: Array<{ property: string; value: string; info: any }>;
+    exterior: Array<{ property: string; value: string; info: any }>;
+    utility: Array<{ property: string; value: string; info: any }>;
+  };
   [key: string]: any; // Allow for dynamic keys like sales_1, tax_1, etc.
 }
 

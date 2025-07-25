@@ -12,7 +12,7 @@
   "space_type": "Bedroom",
   "flooring_material_type": null,
   "size_square_feet": null,
-  "floor_level": null,
+  "floor_level": "1st Floor",
   "has_windows": null,
   "window_design_type": null,
   "window_material_type": null,

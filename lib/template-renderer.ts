@@ -5,6 +5,7 @@ import fs from 'fs-extra';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { BuilderOptions, PropertyData } from '../types/property.js';
+import { FeatureMapper } from './feature-mapper.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -12,9 +13,11 @@ const __dirname = dirname(__filename);
 export class TemplateRenderer {
   private options: BuilderOptions;
   private env: nunjucks.Environment;
+  private featureMapper: FeatureMapper;
 
   constructor(options: BuilderOptions) {
     this.options = options;
+    this.featureMapper = new FeatureMapper();
     
     // Set up Nunjucks environment
     const templatesPath = path.join(__dirname, '..', '..', 'templates');
@@ -369,6 +372,11 @@ export class TemplateRenderer {
       if (isNaN(num)) return value;
       return new Intl.NumberFormat("en-US").format(num);
     });
+
+    // Add icon path filter
+    this.env.addFilter("getIconPath", (iconName: string) => {
+      return this.featureMapper.getIconPath(iconName);
+    });
   }
 
   async renderProperty(propertyId: string, propertyData: PropertyData): Promise<string> {
@@ -391,10 +399,10 @@ export class TemplateRenderer {
     // Calculate bedroom/bathroom counts for property_config
     const propertyConfig: any = {};
     propertyConfig[propertyId] = {
-      bedroom_count: propertyData.building?.bedrooms || 0,
-      bathroom_count: propertyData.building?.bathrooms || 0,
-      has_size_data: !!propertyData.building?.living_area,
-      total_sqft: propertyData.building?.living_area || 0
+      bedroom_count: propertyData.property?.beds || propertyData.building?.bedrooms || 0,
+      bathroom_count: propertyData.property?.baths || propertyData.building?.bathrooms || 0,
+      has_size_data: !!propertyData.building?.living_area || !!propertyData.property?.sqft,
+      total_sqft: propertyData.building?.living_area || propertyData.property?.sqft || 0
     };
     
     // Prepare template data
@@ -402,7 +410,21 @@ export class TemplateRenderer {
       propertyId,
       property: propertyData,
       property_id: propertyId, // For template compatibility
-      homes: { [propertyId]: propertyData }, // For template compatibility
+      homes: { 
+        [propertyId]: {
+          ...propertyData,
+          property: {
+            ...propertyData.property, // Preserve existing property data
+            property_structure_built_year: propertyData.building?.year_built || propertyData.property?.property_structure_built_year,
+            builder_name: propertyData.building?.builder_name || propertyData.property?.builder_name,
+            property_legal_description_text: propertyData.property?.legalDescription || propertyData.property?.property_legal_description_text,
+            parcel_identifier: propertyData.property?.parcelId || propertyData.property?.parcel_identifier,
+            livable_floor_area: propertyData.building?.living_area || propertyData.property?.livable_floor_area,
+            property_type: propertyData.building?.property_type || propertyData.property?.property_type,
+            number_of_units_type: propertyData.property?.number_of_units_type
+          }
+        }
+      }, // For template compatibility
       property_config: propertyConfig, // For floorplan section
       propertyImages, // List of available property-specific images
       config: {
@@ -413,7 +435,7 @@ export class TemplateRenderer {
       },
       buildTime: new Date().toISOString()
     };
-
+    
     // Handle inline CSS if requested
     if (this.options.inlineCss) {
       const cssFiles = ['root_style.css', 'property.css'];
