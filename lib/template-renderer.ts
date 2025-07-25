@@ -5,7 +5,6 @@ import fs from "fs-extra";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import { BuilderOptions, PropertyData } from "../types/property.js";
-import { FeatureMapper } from "./feature-mapper.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -13,11 +12,9 @@ const __dirname = dirname(__filename);
 export class TemplateRenderer {
   private options: BuilderOptions;
   private env: nunjucks.Environment;
-  private featureMapper: FeatureMapper;
 
   constructor(options: BuilderOptions) {
     this.options = options;
-    this.featureMapper = new FeatureMapper();
 
     // Set up Nunjucks environment
     const templatesPath = path.join(__dirname, "..", "..", "templates");
@@ -403,11 +400,6 @@ export class TemplateRenderer {
       if (isNaN(num)) return value;
       return new Intl.NumberFormat("en-US").format(num);
     });
-
-    // Add icon path filter
-    this.env.addFilter("getIconPath", (iconName: string) => {
-      return this.featureMapper.getIconPath(iconName);
-    });
   }
 
   async renderProperty(
@@ -495,6 +487,8 @@ export class TemplateRenderer {
       buildTime: new Date().toISOString(),
     };
 
+    console.log("propertyData", propertyData);
+
     // Handle inline CSS if requested
     if (this.options.inlineCss) {
       const cssFiles = ["root_style.css", "property.css"];
@@ -568,4 +562,3 @@ export class TemplateRenderer {
     return this.env.render("property.njk", templateData);
   }
 }
-

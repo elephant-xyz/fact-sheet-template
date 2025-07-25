@@ -615,7 +615,30 @@
                 {% set first_floor_rooms = all_layouts.firstFloorLayouts %}
                 {% set second_floor_rooms = all_layouts.secondFloorLayouts %}
                 {% set other_rooms = all_layouts.otherLayouts %}
-                
+                {% macro floorRooms(roomList) %}
+                  <div class="floor-rooms collapsible-content">
+                    {% for room in roomList %}
+                      <div class="room-item collapbsible">
+                            <div class="room-header" onclick="toggleRoomDetails(this)" style="cursor: pointer; display: flex; align-items: center; padding: 8px 0;">
+                                <div style="width: 24px; flex-shrink: 0;">
+                                    {% if room.space_type.iconName %}
+                                        <img src="{{ room.space_type.iconName | assetUrl}}" alt="">
+                                    {% endif %}
+                                </div>
+                                <span style="flex: 1;">{{ room.space_type.enumDescription or 'Room' }}</span>
+                                <img src="{{ 'uiicons-1.svg' | assetUrl }}" alt="Expand" class="room-expand-icon" style="width: 16px; height: 16px; transition: transform 0.3s;">
+                            </div>
+                            <ul class="room-properties" style="display: none;">
+                            {% for key, value in room %}
+                              {% if key != 'space_type' and key != 'floor_level' %} 
+                                <li>{% if value.iconName %}<img src="{{ value.iconName | assetUrl}}" alt="{{ value.enumDescription }}"> {% endif %} {{ value.enumDescription }} </li>
+                              {% endif %}
+                            {% endfor %}
+                          </ul>
+                      </div>
+                    {% endfor %}
+                  </div>
+                {% endmacro %}
 
                 {% if first_floor_rooms | length > 0 or second_floor_rooms | length > 0 or other_rooms | length > 0 %}
                 <div class="floorplan-layout">
@@ -630,28 +653,7 @@
                                 <path d="M3 7.5L6 4.5L9 7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </div>
-                        <div class="floor-rooms collapsible-content">
-                            {% for room in first_floor_rooms %}
-                            <div class="room-item collapbsible">
-                                <div class="room-header" onclick="toggleRoomDetails(this)" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 8px 0;">
-                                    <span>{{ room.space_type or 'Room' }}</span>
-                                    <svg class="collapse-arrow rotated" width="10" height="10" viewBox="0 0 10 10" fill="none">
-                                        <path d="M2.5 6.25L5 3.75L7.5 6.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                </div>
-                                <ul class="room-properties" style="display: none;">
-                                  {% if room.has_windows %}<li><img src="{{ 'type=windows.svg' | assetUrl }}" alt="Windows" class="room-property-icon">Has Windows</li>{% endif %}
-                                  {% if room.window_design_type %}<li><img src="{{ 'type=texture.svg' | assetUrl }}" alt="Window Design" class="room-property-icon">Window Type: {{ room.window_design_type }}</li>{% endif %}
-                                  {% if room.flooring_material_type %}<li><img src="{{ 'type=texture.svg' | assetUrl }}" alt="Flooring" class="room-property-icon">Flooring: {{ room.flooring_material_type }}</li>{% endif %}
-                                  {% if room.size_square_feet %}<li><img src="{{ 'type=measure.svg' | assetUrl }}" alt="Size" class="room-property-icon">Size: {{ room.size_square_feet }} sqft</li>{% endif %}
-                                  {% if room.is_finished %}<li><img src="{{ 'type=sparkle.svg' | assetUrl }}" alt="Finished" class="room-property-icon">Finished</li>{% endif %}
-                                  {% if room.countertop_material %}<li><img src="{{ 'type=texture.svg' | assetUrl }}" alt="Countertop" class="room-property-icon">Countertop: {{ room.countertop_material }}</li>{% endif %}
-                                  {% if room.cabinet_style %}<li><img src="{{ 'type=texture.svg' | assetUrl }}" alt="Cabinet" class="room-property-icon">Cabinet Style: {{ room.cabinet_style }}</li>{% endif %}
-                                  {% if room.natural_light_quality %}<li><img src="{{ 'type=windows.svg' | assetUrl }}" alt="Light" class="room-property-icon">Natural Light: {{ room.natural_light_quality }}</li>{% endif %}
-                                </ul>
-                            </div>
-                            {% endfor %}
-                        </div>
+                        {{ floorRooms(first_floor_rooms) }}
                     </div>
                     {% endif %}
                     
@@ -665,26 +667,7 @@
                                 <path d="M3 7.5L6 4.5L9 7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </div>
-                        <div class="floor-rooms collapsible-content">
-                            {% for room in second_floor_rooms %}
-                            <div class="room-item collapsible">
-                                <div class="room-header" onclick="toggleRoomDetails(this)" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 8px 0;">
-                                    <span>{{ room.space_type or 'Room' }}</span>
-                                    <img src="{{ 'uiicons-1.svg' | assetUrl }}" alt="Expand" class="room-expand-icon" style="width: 16px; height: 16px; transition: transform 0.3s;">
-                                </div>
-                                <ul class="room-properties" style="display: none;">
-                                  {% if room.has_windows %}<li><img src="{{ 'type=windows.svg' | assetUrl }}" alt="Windows" class="room-property-icon">Has Windows</li>{% endif %}
-                                  {% if room.window_design_type %}<li><img src="{{ 'type=texture.svg' | assetUrl }}" alt="Window Design" class="room-property-icon">Window Type: {{ room.window_design_type }}</li>{% endif %}
-                                  {% if room.flooring_material_type %}<li><img src="{{ 'type=texture.svg' | assetUrl }}" alt="Flooring" class="room-property-icon">Flooring: {{ room.flooring_material_type }}</li>{% endif %}
-                                  {% if room.size_square_feet %}<li><img src="{{ 'type=measure.svg' | assetUrl }}" alt="Size" class="room-property-icon">Size: {{ room.size_square_feet }} sqft</li>{% endif %}
-                                  {% if room.is_finished %}<li><img src="{{ 'type=sparkle.svg' | assetUrl }}" alt="Finished" class="room-property-icon">Finished</li>{% endif %}
-                                  {% if room.countertop_material %}<li><img src="{{ 'type=texture.svg' | assetUrl }}" alt="Countertop" class="room-property-icon">Countertop: {{ room.countertop_material }}</li>{% endif %}
-                                  {% if room.cabinet_style %}<li><img src="{{ 'type=texture.svg' | assetUrl }}" alt="Cabinet" class="room-property-icon">Cabinet Style: {{ room.cabinet_style }}</li>{% endif %}
-                                  {% if room.natural_light_quality %}<li><img src="{{ 'type=windows.svg' | assetUrl }}" alt="Light" class="room-property-icon">Natural Light: {{ room.natural_light_quality }}</li>{% endif %}
-                                </ul>
-                            </div>
-                            {% endfor %}
-                        </div>
+                        {{ floorRooms(second_floor_rooms) }}
                     </div>
                     {% endif %}
                     
@@ -698,27 +681,7 @@
                                 <path d="M3 7.5L6 4.5L9 7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </div>
-                        <div class="floor-rooms collapsible-content">
-                            {% for room in other_rooms %}
-                            <div class="room-item collapsible">
-                                <div class="room-header" onclick="toggleRoomDetails(this)" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 8px 0;">
-                                    <span>{{ room.space_type or 'Room' }}</span>
-                                    <img src="{{ 'uiicons-1.svg' | assetUrl }}" alt="Expand" class="room-expand-icon" style="width: 16px; height: 16px; transition: transform 0.3s;">
-                                </div>
-                                <ul class="room-properties" style="display: none;">
-                                  {% if room.has_windows %}<li><img src="{{ 'type=windows.svg' | assetUrl }}" alt="Windows" class="room-property-icon">Has Windows</li>{% endif %}
-                                  {% if room.window_design_type %}<li><img src="{{ 'type=texture.svg' | assetUrl }}" alt="Window Design" class="room-property-icon">Window Type: {{ room.window_design_type }}</li>{% endif %}
-                                  {% if room.flooring_material_type %}<li><img src="{{ 'type=texture.svg' | assetUrl }}" alt="Flooring" class="room-property-icon">Flooring: {{ room.flooring_material_type }}</li>{% endif %}
-                                  {% if room.size_square_feet %}<li><img src="{{ 'type=measure.svg' | assetUrl }}" alt="Size" class="room-property-icon">Size: {{ room.size_square_feet }} sqft</li>{% endif %}
-                                  {% if room.is_finished %}<li><img src="{{ 'type=sparkle.svg' | assetUrl }}" alt="Finished" class="room-property-icon">Finished</li>{% endif %}
-                                  {% if room.floor_level %}<li><img src="{{ 'featuresicons-13.svg' | assetUrl }}" alt="Floor Level" class="room-property-icon">Floor: {{ room.floor_level }}</li>{% endif %}
-                                  {% if room.countertop_material %}<li><img src="{{ 'type=texture.svg' | assetUrl }}" alt="Countertop" class="room-property-icon">Countertop: {{ room.countertop_material }}</li>{% endif %}
-                                  {% if room.cabinet_style %}<li><img src="{{ 'type=texture.svg' | assetUrl }}" alt="Cabinet" class="room-property-icon">Cabinet Style: {{ room.cabinet_style }}</li>{% endif %}
-                                  {% if room.natural_light_quality %}<li><img src="{{ 'type=windows.svg' | assetUrl }}" alt="Light" class="room-property-icon">Natural Light: {{ room.natural_light_quality }}</li>{% endif %}
-                                </ul>
-                            </div>
-                            {% endfor %}
-                        </div>
+                        {{ floorRooms(other_rooms) }}
                     </div>
                     {% endif %}
                   </div>
@@ -829,25 +792,25 @@
             </section>
 
             <!-- Utility Systems -->
-            {% set has_utility_features = homes[property_id].processed_features and homes[property_id].processed_features.utility | length > 0 %}
+            {% set utilities = homes[property_id].utility %}
             
-            {% if has_utility_features %}
+            {% if utilities is defined %}
             <section class="section" id="utilities">
                 <h2 class="section-title">Utility Systems</h2>
                 <div class="features-container">
                     <div class="features-grid">
                         <div class="features-section">
                             <div class="features-list">
-                                {% for feature in homes[property_id].processed_features.utility %}
+                                {% for key, util in utilities %}
                                 <div class="feature-item-detailed">
                                     <div class="feature-row">
-                                        {% set iconPath = feature.info.iconName | getIconPath %}
-                                        {% if iconPath %}
+                                      {% set iconPath = util.iconName %}
+                                      {% if iconPath %}
                                         <img src="{{ iconPath | assetUrl }}" alt="{{ feature.info.description }}">
-                                        {% endif %}
-                                        <div class="feature-text-content">
-                                            <div class="feature-main-text">{{ feature.info.displayText }}</div>
-                                        </div>
+                                      {% endif %}
+                                      <div class="feature-text-content">
+                                          <div class="feature-main-text">{{ util.enumDescription }}</div>
+                                      </div>
                                     </div>
                                 </div>
                                 {% endfor %}
@@ -859,106 +822,51 @@
             {% endif %}
 
             <!-- Property Features -->
-            {% set has_interior_features = homes[property_id].processed_features and homes[property_id].processed_features.interior | length > 0 %}
-            {% set has_exterior_features = homes[property_id].processed_features and homes[property_id].processed_features.exterior | length > 0 %}
+            {% set interior_features = homes[property_id].features.interior %}
+            {% set exterior_features = homes[property_id].features.exterior %}
+
+            {% macro renderFeature(features) %}
+              <div class="features-list">
+                  {% for feature in features %}
+                  <div class="feature-item-detailed">
+                      <div class="feature-row">
+                        {% set iconPath = feature.iconName %}
+                        {% if iconPath %}
+                          <img src="{{ iconPath | assetUrl }}" alt="{{ feature.info.description }}">
+                        {% endif %}
+                        <div class="feature-text-content">
+                            <div class="feature-main-text">{{ feature.enumDescription }}</div>
+                        </div>
+                      </div>
+                  </div>
+                  {% endfor %}
+              </div>
+            {% endmacro %}
             
-            {% if has_interior_features or has_exterior_features %}
+            {% if interior_features | length > 0 or exterior_features | length > 0 %}
             <section class="section" id="features">
                 <h2 class="section-title">Property Features</h2>
                 <div class="features-container">
                     <div class="features-grid">
                         <!-- Interior Features -->
-                        {% if has_interior_features %}
+                        {% if interior_features | length > 0 %}
                         <div class="features-section">
                             <h3 class="section-subtitle">Interior Features</h3>
-                            <div class="features-list">
-                                {% for feature in homes[property_id].processed_features.interior %}
-                                <div class="feature-item-detailed">
-                                    <div class="feature-row">
-                                        {% set iconPath = feature.info.iconName | getIconPath %}
-                                        {% if iconPath %}
-                                        <img src="{{ iconPath | assetUrl }}" alt="{{ feature.info.description }}">
-                                        {% endif %}
-                                        <div class="feature-text-content">
-                                            <div class="feature-main-text">{{ feature.info.displayText }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                {% endfor %}
-                            </div>
+                            {{ renderFeature(interior_features) }}
                         </div>
                         {% endif %}
 
                         <!-- Exterior Features -->
-                        {% if has_exterior_features %}
+                        {% if exterior_features | length > 0  %}
                         <div class="features-section">
                             <h3 class="section-subtitle">Exterior Features</h3>
-                            <div class="features-list">
-                                {% for feature in homes[property_id].processed_features.exterior %}
-                                <div class="feature-item-detailed">
-                                    <div class="feature-row">
-                                        {% set iconPath = feature.info.iconName | getIconPath %}
-                                        {% if iconPath %}
-                                        <img src="{{ iconPath | assetUrl }}" alt="{{ feature.info.description }}">
-                                        {% endif %}
-                                        <div class="feature-text-content">
-                                            <div class="feature-main-text">{{ feature.info.displayText }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                {% endfor %}
-                                
-                                <!-- Custom exterior features -->
-                                {% if homes[property_id].property_features and homes[property_id].property_features.exterior %}
-                                {% for feature in homes[property_id].property_features.exterior %}
-                                <div class="feature-item-detailed">
-                                    <div class="feature-row">
-                                        <img src="{{ 'featuresicons.svg' | assetUrl }}" alt="{{ feature.name }}">
-                                        <div class="feature-text-content">
-                                            <div class="feature-main-text">{{ feature.name }}</div>
-                                            {% if feature.description %}<div class="feature-sub-text">{{ feature.description }}</div>{% endif %}
-                                        </div>
-                                    </div>
-                                </div>
-                                {% endfor %}
-                                {% endif %}
-                            </div>
+                            {{ renderFeature(exterior_features) }}
                         </div>
                         {% endif %}
                     </div>
                 </div>
             </section>
             {% endif %}
-
-            <!-- Key Features -->
-            {#
-            <div class="key-features">
-                <div class="feature-item">
-                    <img src="{{ 'featuresicons-39.svg' | assetUrl }}" alt="Renovated Icon">
-                    <div class="feature-content">
-                        <div class="feature-title">Fully Renovated Coastal Loft</div>
-                        <div class="feature-description">Updated kitchen, baths, flooring & fixtures with vaulted ceilings and luxury vinyl plank — fully redone prior to 2024 sale.</div>
-                    </div>
-                </div>
-                <div class="separator-line"></div>
-                <div class="feature-item">
-                    <img src="{{ 'featuresicons-1.svg' | assetUrl }}" alt="Courtyard Icon">
-                    <div class="feature-content">
-                        <div class="feature-title">Private Courtyard Entry</div>
-                        <div class="feature-description">Ground-level fenced courtyard with outdoor storage and BBQ space</div>
-                    </div>
-                </div>
-                <div class="separator-line"></div>
-                <div class="feature-item">
-                    <img src="{{ 'featuresicons-2.svg' | assetUrl }}" alt="Beach Icon">
-                    <div class="feature-content">
-                        <div class="feature-title">Walkable To Nearby Beach</div>
-                        <div class="feature-description">Just 0.3 miles to Jupiter's dog-friendly beach</div>
-                    </div>
-                </div>
-            </div>
-            #}
-
 
         </div>
         <!-- Sidebar -->
