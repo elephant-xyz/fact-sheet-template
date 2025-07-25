@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="c7512ae0-ce21-4060-b688-6340c7b8594c" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/fix-name.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/appraiser.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/arcitecture.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/balcony.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/bathroom.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/bedroom.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/builder.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/cabinet.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/carat-down.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/ceiling.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/closet.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/clutter.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/cooling.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/countertops.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/deck.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/decor-elements.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/dining-room.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/driveway.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/electric-capacity.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/electricity.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/email.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/exterior-door.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/exterior-material.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/exteriorsvg.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/fan.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/faucet.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/fence.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/floor-1of2.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/floor-1of3.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/floor-2of2.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/floor-2of3.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/floor-3of3.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/flooring-wear.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/flooring.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/floorplan.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/foundation.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/fridge.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/garage.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/glass-type.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/heating.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/hvac.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/in-demand.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/inspector.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/insurance-broker.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/interior-door.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/landscaping.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/laundry.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/lighting.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/living.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/mortgage-broker.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/natural-light.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/paint.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/patio.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/phone.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/photographer.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/plumbing.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/pool.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/price.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/rain.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/real-estate-agent.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/roof-structure.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/roof.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/safety.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/sewer.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/smart-home.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/solar.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/style.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/subfloor.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/texture.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/title-agent.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/utilities.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/view.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/wall-structure.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/warning.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/water.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/window-operation.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/window-treatment.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/windows.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/assets/static/wood-floor.svg" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;samandun&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/elephant-xyz/fact-sheet-template.git&quot;,
+    &quot;accountId&quot;: &quot;252abe9d-f50c-481d-82f4-3de6f2a94941&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6
+}</component>
+  <component name="ProjectId" id="30NeriyxnxZk2MdszfCT85YU4N3" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;mapping-update&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-f27c65a3e318-JavaScript-PY-251.23774.444" />
+        <option value="bundled-python-sdk-890ed5b35930-d9c5bdb153f4-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-251.23774.444" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c7512ae0-ce21-4060-b688-6340c7b8594c" name="Changes" comment="" />
+      <created>1753472658967</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1753472658967</updated>
+      <workItem from="1753472660003" duration="75000" />
+      <workItem from="1753473078154" duration="115000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
