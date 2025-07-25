@@ -1,11 +1,11 @@
-import nunjucks from 'nunjucks';
+import nunjucks from "nunjucks";
 import { DateTime } from "luxon";
-import path from 'path';
-import fs from 'fs-extra';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-import { BuilderOptions, PropertyData } from '../types/property.js';
-import { FeatureMapper } from './feature-mapper.js';
+import path from "path";
+import fs from "fs-extra";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+import { BuilderOptions, PropertyData } from "../types/property.js";
+import { FeatureMapper } from "./feature-mapper.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -18,14 +18,14 @@ export class TemplateRenderer {
   constructor(options: BuilderOptions) {
     this.options = options;
     this.featureMapper = new FeatureMapper();
-    
+
     // Set up Nunjucks environment
-    const templatesPath = path.join(__dirname, '..', '..', 'templates');
+    const templatesPath = path.join(__dirname, "..", "..", "templates");
     this.env = nunjucks.configure(templatesPath, {
       autoescape: true,
-      throwOnUndefined: false
+      throwOnUndefined: false,
     });
-    
+
     this.setupFilters();
   }
 
@@ -43,7 +43,9 @@ export class TemplateRenderer {
     });
 
     this.env.addFilter("htmlDateString", (dateObj: Date) => {
-      return DateTime.fromJSDate(dateObj, { zone: "utc" }).toFormat("yyyy-LL-dd");
+      return DateTime.fromJSDate(dateObj, { zone: "utc" }).toFormat(
+        "yyyy-LL-dd",
+      );
     });
 
     this.env.addFilter("head", (array: any[], n: number) => {
@@ -163,7 +165,10 @@ export class TemplateRenderer {
     this.env.addFilter("sum", (array: any[], key?: string) => {
       if (!Array.isArray(array)) return 0;
       if (key) {
-        return array.reduce((sum, item) => sum + (parseFloat(item[key]) || 0), 0);
+        return array.reduce(
+          (sum, item) => sum + (parseFloat(item[key]) || 0),
+          0,
+        );
       }
       return array.reduce((sum, item) => sum + (parseFloat(item) || 0), 0);
     });
@@ -176,12 +181,15 @@ export class TemplateRenderer {
 
     this.env.addFilter("groupBy", (array: any[], key: string) => {
       if (!Array.isArray(array)) return {};
-      return array.reduce((groups, item) => {
-        const group = item[key];
-        if (!groups[group]) groups[group] = [];
-        groups[group].push(item);
-        return groups;
-      }, {} as Record<string, any[]>);
+      return array.reduce(
+        (groups, item) => {
+          const group = item[key];
+          if (!groups[group]) groups[group] = [];
+          groups[group].push(item);
+          return groups;
+        },
+        {} as Record<string, any[]>,
+      );
     });
 
     this.env.addFilter("where", (array: any[], key: string, value: any) => {
@@ -248,21 +256,27 @@ export class TemplateRenderer {
       return str.includes(substring);
     });
 
-    this.env.addFilter("padStart", (str: string, length: number, char = " ") => {
-      if (typeof str !== "string") str = String(str);
-      return str.padStart(length, char);
-    });
+    this.env.addFilter(
+      "padStart",
+      (str: string, length: number, char = " ") => {
+        if (typeof str !== "string") str = String(str);
+        return str.padStart(length, char);
+      },
+    );
 
     this.env.addFilter("padEnd", (str: string, length: number, char = " ") => {
       if (typeof str !== "string") str = String(str);
       return str.padEnd(length, char);
     });
 
-    this.env.addFilter("truncate", (str: string, length: number, suffix = "...") => {
-      if (typeof str !== "string") return str;
-      if (str.length <= length) return str;
-      return str.slice(0, length - suffix.length) + suffix;
-    });
+    this.env.addFilter(
+      "truncate",
+      (str: string, length: number, suffix = "...") => {
+        if (typeof str !== "string") return str;
+        if (str.length <= length) return str;
+        return str.slice(0, length - suffix.length) + suffix;
+      },
+    );
 
     this.env.addFilter("slugify", (str: string) => {
       if (typeof str !== "string") return str;
@@ -312,9 +326,16 @@ export class TemplateRenderer {
     this.env.addFilter("isString", (value: any) => typeof value === "string");
     this.env.addFilter("isNumber", (value: any) => typeof value === "number");
     this.env.addFilter("isArray", (value: any) => Array.isArray(value));
-    this.env.addFilter("isObject", (value: any) => typeof value === "object" && value !== null && !Array.isArray(value));
+    this.env.addFilter(
+      "isObject",
+      (value: any) =>
+        typeof value === "object" && value !== null && !Array.isArray(value),
+    );
     this.env.addFilter("isBoolean", (value: any) => typeof value === "boolean");
-    this.env.addFilter("isFunction", (value: any) => typeof value === "function");
+    this.env.addFilter(
+      "isFunction",
+      (value: any) => typeof value === "function",
+    );
     this.env.addFilter("isNull", (value: any) => value === null);
     this.env.addFilter("isUndefined", (value: any) => value === undefined);
     this.env.addFilter("isDefined", (value: any) => value !== undefined);
@@ -322,7 +343,8 @@ export class TemplateRenderer {
     this.env.addFilter("isFalsy", (value: any) => !value);
     this.env.addFilter("isEmpty", (value: any) => {
       if (value === null || value === undefined) return true;
-      if (typeof value === "string" || Array.isArray(value)) return value.length === 0;
+      if (typeof value === "string" || Array.isArray(value))
+        return value.length === 0;
       if (typeof value === "object") return Object.keys(value).length === 0;
       return false;
     });
@@ -331,40 +353,49 @@ export class TemplateRenderer {
       return value !== undefined && value !== null ? value : defaultValue;
     });
 
-    this.env.addFilter("ternary", (condition: any, trueValue: any, falseValue: any) => {
-      return condition ? trueValue : falseValue;
-    });
+    this.env.addFilter(
+      "ternary",
+      (condition: any, trueValue: any, falseValue: any) => {
+        return condition ? trueValue : falseValue;
+      },
+    );
 
     // Add assetUrl filter for asset paths
-    this.env.addFilter("assetUrl", (filename: string, propertyImages?: string[]) => {
-      // In dev mode, use relative paths
-      if (this.options.dev) {
-        return `./${filename}`;
-      }
-      
-      // Check if this image exists in property data
-      if (propertyImages && propertyImages.includes(filename)) {
-        // Use local path for property-specific images
-        return `./${filename}`;
-      }
-      
-      // Check if using default elephant.xyz domain
-      const isDefaultDomain = !this.options.domain || 
-                             this.options.domain === 'https://elephant.xyz' ||
-                             this.options.domain.includes('elephant.xyz');
-      
-      if (isDefaultDomain) {
-        // For default domain, all assets use CDN
-        return `https://elephant.xyz/homes/public/${filename}`;
-      }
-      
-      // For custom domains, use the provided domain
-      const baseUrl = this.options.domain!; // We know it's defined here
-      const cleanBase = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
-      
-      // Return the full URL
-      return `${cleanBase}/${filename}`;
-    });
+    this.env.addFilter(
+      "assetUrl",
+      (filename: string, propertyImages?: string[]) => {
+        // In dev mode, use relative paths
+        if (this.options.dev) {
+          return `./${filename}`;
+        }
+
+        // Check if this image exists in property data
+        if (propertyImages && propertyImages.includes(filename)) {
+          // Use local path for property-specific images
+          return `./${filename}`;
+        }
+
+        // Check if using default elephant.xyz domain
+        const isDefaultDomain =
+          !this.options.domain ||
+          this.options.domain === "https://elephant.xyz" ||
+          this.options.domain.includes("elephant.xyz");
+
+        if (isDefaultDomain) {
+          // For default domain, all assets use CDN
+          return `https://elephant.xyz/homes/public/${filename}`;
+        }
+
+        // For custom domains, use the provided domain
+        const baseUrl = this.options.domain!; // We know it's defined here
+        const cleanBase = baseUrl.endsWith("/")
+          ? baseUrl.slice(0, -1)
+          : baseUrl;
+
+        // Return the full URL
+        return `${cleanBase}/${filename}`;
+      },
+    );
 
     // Add number filter for numeric formatting
     this.env.addFilter("number", (value: any) => {
@@ -379,15 +410,25 @@ export class TemplateRenderer {
     });
   }
 
-  async renderProperty(propertyId: string, propertyData: PropertyData): Promise<string> {
+  async renderProperty(
+    propertyId: string,
+    propertyData: PropertyData,
+  ): Promise<string> {
     // Check for property-specific images
     const propertyDataPath = path.join(this.options.input, propertyId);
     const propertyImages: string[] = [];
-    
+
     if (await fs.pathExists(propertyDataPath)) {
       const files = await fs.readdir(propertyDataPath);
-      const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp'];
-      
+      const imageExtensions = [
+        ".jpg",
+        ".jpeg",
+        ".png",
+        ".gif",
+        ".webp",
+        ".bmp",
+      ];
+
       for (const file of files) {
         const ext = path.extname(file).toLowerCase();
         if (imageExtensions.includes(ext)) {
@@ -395,97 +436,136 @@ export class TemplateRenderer {
         }
       }
     }
-    
+
     // Calculate bedroom/bathroom counts for property_config
     const propertyConfig: any = {};
     propertyConfig[propertyId] = {
-      bedroom_count: propertyData.property?.beds || propertyData.building?.bedrooms || 0,
-      bathroom_count: propertyData.property?.baths || propertyData.building?.bathrooms || 0,
-      has_size_data: !!propertyData.building?.living_area || !!propertyData.property?.sqft,
-      total_sqft: propertyData.building?.living_area || propertyData.property?.sqft || 0
+      bedroom_count:
+        propertyData.property?.beds || propertyData.building?.bedrooms || 0,
+      bathroom_count:
+        propertyData.property?.baths || propertyData.building?.bathrooms || 0,
+      has_size_data:
+        !!propertyData.building?.living_area || !!propertyData.property?.sqft,
+      total_sqft:
+        propertyData.building?.living_area || propertyData.property?.sqft || 0,
     };
-    
+
     // Prepare template data
     const templateData: any = {
       propertyId,
       property: propertyData,
       property_id: propertyId, // For template compatibility
-      homes: { 
+      homes: {
         [propertyId]: {
           ...propertyData,
           property: {
             ...propertyData.property, // Preserve existing property data
-            property_structure_built_year: propertyData.building?.year_built || propertyData.property?.property_structure_built_year,
-            builder_name: propertyData.building?.builder_name || propertyData.property?.builder_name,
-            property_legal_description_text: propertyData.property?.legalDescription || propertyData.property?.property_legal_description_text,
-            parcel_identifier: propertyData.property?.parcelId || propertyData.property?.parcel_identifier,
-            livable_floor_area: propertyData.building?.living_area || propertyData.property?.livable_floor_area,
-            property_type: propertyData.building?.property_type || propertyData.property?.property_type,
-            number_of_units_type: propertyData.property?.number_of_units_type
+            property_structure_built_year:
+              propertyData.building?.year_built ||
+              propertyData.property?.property_structure_built_year,
+            builder_name:
+              propertyData.building?.builder_name ||
+              propertyData.property?.builder_name,
+            property_legal_description_text:
+              propertyData.property?.legalDescription ||
+              propertyData.property?.property_legal_description_text,
+            parcel_identifier:
+              propertyData.property?.parcelId ||
+              propertyData.property?.parcel_identifier,
+            livable_floor_area:
+              propertyData.building?.living_area ||
+              propertyData.property?.livable_floor_area,
+            property_type:
+              propertyData.building?.property_type ||
+              propertyData.property?.property_type,
+            number_of_units_type: propertyData.property?.number_of_units_type,
           },
           // Add layouts array for new approach
           layouts: propertyData.layouts || [],
-          // Add individual layout entries for backward compatibility
-          ...(propertyData.layouts ? propertyData.layouts.reduce((acc: any, layout: any, index: number) => {
-            acc[`layout_${index + 1}`] = layout;
-            return acc;
-          }, {} as any) : {})
-        }
+        },
       }, // For template compatibility
       property_config: propertyConfig, // For floorplan section
       propertyImages, // List of available property-specific images
       config: {
-        domain: this.options.domain || 'https://elephant.xyz/homes/public',
+        domain: this.options.domain || "https://elephant.xyz/homes/public",
         inlineCss: this.options.inlineCss || false,
         inlineJs: this.options.inlineJs || false,
-        dev: this.options.dev || false
+        dev: this.options.dev || false,
       },
-      buildTime: new Date().toISOString()
+      buildTime: new Date().toISOString(),
     };
-    
+
     // Handle inline CSS if requested
     if (this.options.inlineCss) {
-      const cssFiles = ['root_style.css', 'property.css'];
+      const cssFiles = ["root_style.css", "property.css"];
       const cssContents: string[] = [];
-      
+
       for (const cssFile of cssFiles) {
-        const cssPath = path.join(__dirname, '..', '..', 'templates', 'assets', 'css', cssFile);
+        const cssPath = path.join(
+          __dirname,
+          "..",
+          "..",
+          "templates",
+          "assets",
+          "css",
+          cssFile,
+        );
         if (await fs.pathExists(cssPath)) {
-          const content = await fs.readFile(cssPath, 'utf8');
+          const content = await fs.readFile(cssPath, "utf8");
           cssContents.push(content);
         }
       }
-      
-      templateData.config.inlineCssContent = cssContents.join('\n');
+
+      templateData.config.inlineCssContent = cssContents.join("\n");
     }
 
     // Handle inline JS if requested
     if (this.options.inlineJs) {
-      const jsFiles = ['property.js'];
+      const jsFiles = ["property.js"];
       const jsContents: string[] = [];
-      
+
       for (const jsFile of jsFiles) {
-        const jsPath = path.join(__dirname, '..', '..', 'templates', 'assets', 'js', jsFile);
+        const jsPath = path.join(
+          __dirname,
+          "..",
+          "..",
+          "templates",
+          "assets",
+          "js",
+          jsFile,
+        );
         if (await fs.pathExists(jsPath)) {
-          const content = await fs.readFile(jsPath, 'utf8');
+          const content = await fs.readFile(jsPath, "utf8");
           jsContents.push(content);
         }
       }
-      
+
       // Also include external libraries if needed
-      const libFiles = ['chart.min.js', 'chartjs-adapter-date-fns.bundle.min.js'];
+      const libFiles = [
+        "chart.min.js",
+        "chartjs-adapter-date-fns.bundle.min.js",
+      ];
       for (const libFile of libFiles) {
-        const libPath = path.join(__dirname, '..', '..', 'templates', 'assets', 'js', libFile);
+        const libPath = path.join(
+          __dirname,
+          "..",
+          "..",
+          "templates",
+          "assets",
+          "js",
+          libFile,
+        );
         if (await fs.pathExists(libPath)) {
-          const content = await fs.readFile(libPath, 'utf8');
+          const content = await fs.readFile(libPath, "utf8");
           jsContents.push(content);
         }
       }
-      
-      templateData.config.inlineJsContent = jsContents.join('\n');
+
+      templateData.config.inlineJsContent = jsContents.join("\n");
     }
 
     // Render the template
-    return this.env.render('property.njk', templateData);
+    return this.env.render("property.njk", templateData);
   }
 }
+
