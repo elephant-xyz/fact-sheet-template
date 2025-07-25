@@ -44,16 +44,11 @@
                 
                 <a href="#building-details" class="nav-tab">Building Details</a>
                 
-                {% set has_features_nav = false %}
-                {% if homes[property_id].structure %}
-                  {% if homes[property_id].structure.flooring_material_primary or homes[property_id].structure.flooring_material_secondary or homes[property_id].structure.exterior_wall_material_primary or homes[property_id].structure.roof_covering_material %}
-                    {% set has_features_nav = true %}
-                  {% endif %}
-                {% endif %}
-                {% if homes[property_id].utility %}
-                  {% if homes[property_id].utility.cooling_system_type or homes[property_id].utility.heating_system_type %}
-                    {% set has_features_nav = true %}
-                  {% endif %}
+                {% set has_features_nav = homes[property_id].processed_features and (homes[property_id].processed_features.interior | length > 0 or homes[property_id].processed_features.exterior | length > 0) %}
+                {% set has_utilities_nav = homes[property_id].processed_features and homes[property_id].processed_features.utility | length > 0 %}
+                
+                {% if has_utilities_nav %}
+                <a href="#utilities" class="nav-tab">Utility Systems</a>
                 {% endif %}
                 
                 {% if has_features_nav %}
@@ -717,7 +712,7 @@
                             <!-- Year Built -->
                             {% if homes[property_id].property.property_structure_built_year or homes[property_id].property.builder_name %}
                             <div class="building-spec-item">
-                                <div class="building-spec-label">Year Built</div>
+                                <div class="building-spec-value">
                                 <div class="building-spec-value">
                                     <div class="building-spec-text">{{ homes[property_id].property.property_structure_built_year or 'Unknown' }}</div>
                                     {% if homes[property_id].property.builder_name %}
@@ -730,7 +725,7 @@
                             <!-- Legal Description -->
                             {% if homes[property_id].property.property_legal_description_text and homes[property_id].property.property_legal_description_text != 'null' %}
                             <div class="building-spec-item">
-                                <div class="building-spec-label">Legal Description</div>
+                                <div class="building-spec-value">
                                 <div class="building-spec-value">
                                     <div class="building-spec-text">{{ homes[property_id].property.property_legal_description_text | trim }}</div>
                                 </div>
@@ -740,7 +735,7 @@
                             <!-- Parcel ID -->
                             {% if homes[property_id].property.parcel_identifier %}
                             <div class="building-spec-item">
-                                <div class="building-spec-label">Parcel ID (APN)</div>
+                                <div class="building-spec-value">
                                 <div class="building-spec-value">
                                     <div class="building-spec-text">{{ homes[property_id].property.parcel_identifier }}</div>
                                 </div>
@@ -763,13 +758,11 @@
                             <!-- Lot Type -->
                             {% if homes[property_id].lot and homes[property_id].lot.lot_type and homes[property_id].lot.lot_type != 'null' %}
                             <div class="building-spec-item">
-                                <div class="building-spec-label">Lot Type</div>
+                                <div class="building-spec-value">
                                 <div class="building-spec-value">
                                     <div class="building-spec-text">
                                         {% if homes[property_id].lot.lot_type == 'LessThanOrEqualToOneQuarterAcre' %}
-                                            Less than or equal to 1/4 acre
                                         {% elif homes[property_id].lot.lot_type == 'GreaterThanOneQuarterAcre' %}
-                                            Greater than 1/4 acre
                                         {% else %}
                                             {{ homes[property_id].lot.lot_type | replace('_', ' ') | title }}
                                         {% endif %}
@@ -809,10 +802,7 @@
                 </div>
             </section>
 
-            <!-- Utility Systems -->
-            {% set has_utility_features = homes[property_id].processed_features and homes[property_id].processed_features.utility | length > 0 %}
-            
-            {% if has_utility_features %}
+            {% if homes[property_id].processed_features and homes[property_id].processed_features.utility | length > 0 %}
             <section class="section" id="utilities">
                 <h2 class="section-title">Utility Systems</h2>
                 <div class="features-container">
@@ -839,9 +829,39 @@
             </section>
             {% endif %}
 
+
+            <!-- Key Features -->
+            {#
+            <div class="key-features">
+                <div class="feature-item">
+                    <img src="{{ 'featuresicons-39.svg' | assetUrl }}" alt="Renovated Icon">
+                    <div class="feature-content">
+                        <div class="feature-title">Fully Renovated Coastal Loft</div>
+                        <div class="feature-description">Updated kitchen, baths, flooring & fixtures with vaulted ceilings and luxury vinyl plank — fully redone prior to 2024 sale.</div>
+                    </div>
+                </div>
+                <div class="separator-line"></div>
+                <div class="feature-item">
+                    <img src="{{ 'featuresicons-1.svg' | assetUrl }}" alt="Courtyard Icon">
+                    <div class="feature-content">
+                        <div class="feature-title">Private Courtyard Entry</div>
+                        <div class="feature-description">Ground-level fenced courtyard with outdoor storage and BBQ space</div>
+                    </div>
+                </div>
+                <div class="separator-line"></div>
+                <div class="feature-item">
+                    <img src="{{ 'featuresicons-2.svg' | assetUrl }}" alt="Beach Icon">
+                    <div class="feature-content">
+                        <div class="feature-title">Walkable To Nearby Beach</div>
+                        <div class="feature-description">Just 0.3 miles to Jupiter's dog-friendly beach</div>
+                    </div>
+                </div>
+            </div>
+            #}
+
             <!-- Property Features -->
-            {% set has_interior_features = homes[property_id].processed_features and homes[property_id].processed_features.interior | length > 0 %}
             {% set has_exterior_features = homes[property_id].processed_features and homes[property_id].processed_features.exterior | length > 0 %}
+            
             
             {% if has_interior_features or has_exterior_features %}
             <section class="section" id="features">
@@ -910,37 +930,6 @@
                 </div>
             </section>
             {% endif %}
-
-            <!-- Key Features -->
-            {#
-            <div class="key-features">
-                <div class="feature-item">
-                    <img src="{{ 'featuresicons-39.svg' | assetUrl }}" alt="Renovated Icon">
-                    <div class="feature-content">
-                        <div class="feature-title">Fully Renovated Coastal Loft</div>
-                        <div class="feature-description">Updated kitchen, baths, flooring & fixtures with vaulted ceilings and luxury vinyl plank — fully redone prior to 2024 sale.</div>
-                    </div>
-                </div>
-                <div class="separator-line"></div>
-                <div class="feature-item">
-                    <img src="{{ 'featuresicons-1.svg' | assetUrl }}" alt="Courtyard Icon">
-                    <div class="feature-content">
-                        <div class="feature-title">Private Courtyard Entry</div>
-                        <div class="feature-description">Ground-level fenced courtyard with outdoor storage and BBQ space</div>
-                    </div>
-                </div>
-                <div class="separator-line"></div>
-                <div class="feature-item">
-                    <img src="{{ 'featuresicons-2.svg' | assetUrl }}" alt="Beach Icon">
-                    <div class="feature-content">
-                        <div class="feature-title">Walkable To Nearby Beach</div>
-                        <div class="feature-description">Just 0.3 miles to Jupiter's dog-friendly beach</div>
-                    </div>
-                </div>
-            </div>
-            #}
-
-
         </div>
         <!-- Sidebar -->
         <div class="sidebar">
@@ -1015,7 +1004,7 @@
                                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" class="email-icon">
                                               <path d="M9.36102 1.8977L15.0985 5.3402C15.2898 5.44145 15.4191 5.57926 15.4866 5.75363C15.5541 5.92801 15.5879 6.09957 15.5879 6.26832V14.0814C15.5879 14.3514 15.4866 14.5877 15.2841 14.7902C15.0816 14.9927 14.8454 15.0939 14.5754 15.0939H3.10039C2.83039 15.0939 2.59414 14.9927 2.39164 14.7902C2.18914 14.5877 2.08789 14.3514 2.08789 14.0814V6.26832C2.08789 6.09957 2.12445 5.92801 2.19758 5.75363C2.2707 5.57926 2.39727 5.44145 2.57727 5.3402L8.31477 1.8977C8.47767 1.8077 8.65339 1.7627 8.84194 1.7627C9.03049 1.7627 9.20352 1.8077 9.36102 1.8977ZM8.83789 9.4577L14.5079 6.13332L8.83789 2.72457L3.16789 6.13332L8.83789 9.4577ZM8.33164 10.2846L3.10039 7.21332V14.0814H14.5754V7.21332L9.34414 10.2846C9.1881 10.3746 9.01969 10.4196 8.8389 10.4196C8.65823 10.4196 8.48914 10.3746 8.33164 10.2846Z" fill="currentColor"/>
                                             </svg>
-                                                <a href="mailto:Asantiagorealty@gmail" class="email-address">Asantiagorealty@gmail</a>
+                                        </div>
                                         </div>
                                     </div>
                                 </div>
@@ -1051,7 +1040,7 @@
                                             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" class="email-icon">
                                               <path d="M9.36102 1.8977L15.0985 5.3402C15.2898 5.44145 15.4191 5.57926 15.4866 5.75363C15.5541 5.92801 15.5879 6.09957 15.5879 6.26832V14.0814C15.5879 14.3514 15.4866 14.5877 15.2841 14.7902C15.0816 14.9927 14.8454 15.0939 14.5754 15.0939H3.10039C2.83039 15.0939 2.59414 14.9927 2.39164 14.7902C2.18914 14.5877 2.08789 14.3514 2.08789 14.0814V6.26832C2.08789 6.09957 2.12445 5.92801 2.19758 5.75363C2.2707 5.57926 2.39727 5.44145 2.57727 5.3402L8.31477 1.8977C8.47767 1.8077 8.65339 1.7627 8.84194 1.7627C9.03049 1.7627 9.20352 1.8077 9.36102 1.8977ZM8.83789 9.4577L14.5079 6.13332L8.83789 2.72457L3.16789 6.13332L8.83789 9.4577ZM8.33164 10.2846L3.10039 7.21332V14.0814H14.5754V7.21332L9.34414 10.2846C9.1881 10.3746 9.01969 10.4196 8.8389 10.4196C8.65823 10.4196 8.48914 10.3746 8.33164 10.2846Z" fill="currentColor"/>
                                             </svg>
-                                                <a href="mailto:Asantiagorealty@gmail" class="email-address">Asantiagorealty@gmail</a>
+                                        </div>
                                         </div>
                                     </div>
                                 </div>
@@ -1092,5 +1081,29 @@
       }
     }
   });
+  /**
+   * Toggles the display of room details within a floor section
+   * @param {HTMLElement} header - The room header element that was clicked
+   */
+  function toggleRoomDetails(header) {
+    const content = header.nextElementSibling;
+    const arrow = header.querySelector(".collapse-arrow");
+
+    content.classList.toggle("expanded");
+    arrow.classList.toggle("rotated");
+  }
+
+  /**
+   * Toggles the display of floor sections
+   * @param {HTMLElement} header - The floor header element that was clicked
+   */
+  function toggleFloorSection(header) {
+    const content = header.nextElementSibling;
+    const arrow = header.querySelector(".collapse-arrow");
+
+    content.classList.toggle("expanded");
+    arrow.classList.toggle("rotated");
+  }
+</script>
 </script>
 {% endset %}

@@ -61,6 +61,7 @@ export interface PropertyData {
   features: PropertyFeatures;
   structure?: any;
   utility?: any;
+
   providers?: any[];
   carousel_images?: CarouselImage[];
 }
@@ -148,7 +149,7 @@ export class IPLDDataLoader {
       if (this.isIPLDLink(value)) {
         const linkedPath = value["/"];
 
-        if (linkedPath.startsWith("./")) {
+        if (typeof linkedPath === 'string' && linkedPath.startsWith("./")) {
           // Relative path - resolve to CID
           const fileName = path.basename(linkedPath);
           const cid = path.basename(fileName, ".json");
@@ -158,7 +159,7 @@ export class IPLDDataLoader {
           if (linkedNode) {
             node.relationships.set(key, linkedNode);
           }
-        } else {
+        } else if (typeof linkedPath === 'string') {
           // Direct CID reference
           const linkedNode = graph.get(linkedPath);
           if (linkedNode) {
@@ -497,10 +498,10 @@ export class IPLDDataLoader {
   private extractCidFromLink(link: any): string {
     if (this.isIPLDLink(link)) {
       const linkPath = link["/"];
-      if (linkPath.startsWith("./")) {
+      if (typeof linkPath === 'string' && linkPath.startsWith("./")) {
         return path.basename(linkPath.slice(2), ".json");
       }
-      return linkPath;
+      return typeof linkPath === 'string' ? linkPath : "";
     }
     return "";
   }
@@ -612,6 +613,8 @@ export class IPLDDataLoader {
 
     return features;
   }
+
+
 
   private async loadCarouselImages(
     _rootDir: string,
