@@ -118,13 +118,13 @@ option {
   display: flex;
   width: 100%;
   transition: transform 0.3s ease-in-out;
-  height: 615px;
 }
 
 .carousel-item {
   width: 100%;
   position: relative;
   flex-shrink: 0;
+  aspect-ratio: 16 / 9;
 }
 
 .carousel-item-group {
@@ -135,7 +135,7 @@ option {
 
 .carousel-image {
   width: 100%;
-  height: 615px;
+  height: 100%;
   border-radius: 20px;
   background-color: #fff;
   position: relative;
@@ -980,6 +980,7 @@ h1 .data-footnote:hover {
   display: flex;
   list-style: none;
   padding: 0;
+  margin: 8px 2px;
   gap: 8px;
   align-items: center;
 }
@@ -1982,7 +1983,7 @@ h1 .data-footnote:hover {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
   margin: 0;
   padding-left: 8px;
   font-size: 13px;
@@ -1990,6 +1991,9 @@ h1 .data-footnote:hover {
   color: #6a6a6a;
 }
 .room-properties li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   margin: 0;
   padding: 0;
   line-height: 1.4;
@@ -1998,9 +2002,21 @@ h1 .data-footnote:hover {
 .room-property-icon {
   width: 18px;
   height: 18px;
-  margin-right: 8px;
   vertical-align: middle;
   display: inline-block;
+}
+
+.room-expand-icon {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.floor-header-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
 }
 
 /* === Floorplan Side-by-Side Layout === */

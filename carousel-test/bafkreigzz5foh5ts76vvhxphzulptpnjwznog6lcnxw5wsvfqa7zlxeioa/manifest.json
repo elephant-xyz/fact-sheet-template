@@ -1,0 +1,35 @@
+{
+  "propertyId": "bafkreigzz5foh5ts76vvhxphzulptpnjwznog6lcnxw5wsvfqa7zlxeioa",
+  "generatedAt": "2025-07-25T19:46:41.696Z",
+  "generator": "@elephant/fact-sheet",
+  "version": "1.0.0",
+  "domain": "https://elephant.xyz/homes/public",
+  "options": {
+    "inlineCss": false,
+    "inlineJs": false
+  },
+  "property": {
+    "address": {
+      "street_address": "2558 Gardens Pkwy",
+      "street_number": "2558",
+      "street_name": "Gardens",
+      "street_suffix_type": "Pkwy",
+      "city_name": "Palm Beach Gardens",
+      "state_code": "FL",
+      "county_name": "Palm Beach",
+      "latitude": "26.8488911",
+      "longitude": "-80.0751658"
+    },
+    "details": {
+      "livable_floor_area": "2589",
+      "property_type": "Townhouse",
+      "property_structure_built_year": 2005,
+      "parcel_identifier": "52-43-42-05-31-003-7080",
+      "property_legal_description_text": "HARBOUR OAKS  LT 3708",
+      "sourceUrl": "https://pbcpao.gov/Property/Details?parcelId=52434205310037080"
+    },
+    "salesCount": 3,
+    "taxCount": 10,
+    "dataSourcesCount": 0
+  }
+}
