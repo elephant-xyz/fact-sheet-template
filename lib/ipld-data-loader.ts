@@ -1,6 +1,7 @@
 import * as fs from "fs/promises";
 import * as path from "path";
-import { existsSync, readFileSync } from "fs";
+import { existsSync } from "fs";
+import enumMappingRaw from "./data-mapping.json" with { type: "json" };
 
 interface IPLDLink {
   "/": string;
@@ -164,7 +165,9 @@ export class IPLDDataLoader {
 
   constructor(dataDir: string) {
     this.dataDir = dataDir;
-    this.enumMapping = this.parseEnumMapping("lib/data-mapping.json");
+    this.enumMapping = this.parseEnumMapping(
+      enumMappingRaw as EnumMappingRaw[],
+    );
   }
 
   async loadPropertyData(rootCID: string): Promise<PropertyData> {
@@ -181,11 +184,8 @@ export class IPLDDataLoader {
     return this.transformToPropertyData(graph, rootDir);
   }
 
-  private parseEnumMapping(fileName: string): EnumMapping {
+  private parseEnumMapping(mappingRaw: EnumMappingRaw[]): EnumMapping {
     const result: EnumMapping = {};
-    const mappingRaw: EnumMappingRaw[] = JSON.parse(
-      readFileSync(fileName, "utf-8"),
-    );
 
     for (const item of mappingRaw) {
       if (!result[item.lexiconClass]) {
