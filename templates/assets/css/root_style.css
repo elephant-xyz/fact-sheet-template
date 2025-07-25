@@ -1959,22 +1959,11 @@ h1 .data-footnote:hover {
 }
 
 .floor-header {
-  cursor: pointer;
   display: flex;
   font-size: 13px;
   align-items: center;
   gap: 8px;
-  padding: 12px 0;
-  border-bottom: 1px solid #f0f0f0;
-  user-select: none;
-}
-
-.floor-header:hover {
-  background-color: #f8f8f8;
-}
-
-.floor-header:hover .collapse-arrow {
-  color: #333;
+  /* Add your styles here */
 }
 .floor-rooms {
   display: flex;
@@ -1987,91 +1976,7 @@ h1 .data-footnote:hover {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  margin-bottom: 8px;
 }
-
-.room-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.room-type {
-  font-weight: 600;
-  color: #333;
-  font-size: 14px;
-}
-
-.room-name {
-  font-weight: 600;
-  color: #423e3e;
-  font-size: 14px;
-}
-
-/* Collapsible Functionality - Improved Styling */
-.collapsible-content {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease-out;
-}
-
-.collapsible-content.expanded {
-  max-height: 1000px; /* Adjust based on content */
-}
-
-.collapse-arrow {
-  transition: transform 0.3s ease;
-  color: #666;
-  margin-left: auto;
-  flex-shrink: 0;
-}
-
-.collapse-arrow.rotated {
-  transform: rotate(180deg);
-}
-
-.room-properties.collapsible-content {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease-out;
-}
-
-.room-properties.collapsible-content.expanded {
-  max-height: 500px;
-}
-
-.room-header {
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 0;
-  border-bottom: 1px solid #f0f0f0;
-  margin-bottom: 8px;
-  user-select: none;
-}
-
-.room-header:hover {
-  background-color: #f8f8f8;
-}
-
-.room-header:hover .collapse-arrow {
-  color: #333;
-}
-
-.room-name {
-  font-weight: 600;
-  color: #423e3e;
-}
-
-.room-size {
-  font-weight: 500;
-  color: #666;
-  font-size: 12px;
-}
-
-
 
 .room-properties {
   list-style: none;
@@ -2102,12 +2007,15 @@ h1 .data-footnote:hover {
 .floorplan-floors {
   display: flex;
   flex-direction: row;
-  gap: 48px;
+  gap: 24px;
+  flex-wrap: nowrap;
 }
 .floor-section {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  flex: 1;
+  min-width: 200px;
 }
 @media (max-width: 768px) {
   .floorplan-floors {
@@ -2249,5 +2157,85 @@ h1 .data-footnote:hover {
 .see-all-line {
   width: 100%;
   height: 1px;
-  background-color: #d9d1c8;
+  background-color: #d9d8d8;
+  margin-top: 8px;
+}
+
+/* Collapsible Functionality - Improved Styling */
+.collapsible-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+
+.collapsible-content.expanded {
+  max-height: 1000px; /* Adjust based on content */
+}
+
+.collapse-arrow {
+  transition: transform 0.3s ease;
+  color: #666;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.collapse-arrow.rotated {
+  transform: rotate(180deg);
+}
+
+.floor-header {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+  user-select: none;
+}
+
+.floor-header:hover {
+  background-color: #f8f8f8;
+}
+
+.floor-header:hover .collapse-arrow {
+  color: #333;
+}
+
+.room-header {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+  margin-bottom: 8px;
+  user-select: none;
+}
+
+.room-header:hover {
+  background-color: #f8f8f8;
+}
+
+.room-header:hover .collapse-arrow {
+  color: #333;
+}
+
+.room-name {
+  font-weight: 600;
+  color: #423e3e;
+}
+
+.room-properties {
+  padding-left: 16px;
+  margin-top: 8px;
+}
+
+.room-properties.collapsible-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+
+.room-properties.collapsible-content.expanded {
+  max-height: 500px;
 }

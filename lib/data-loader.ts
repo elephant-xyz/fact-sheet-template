@@ -120,6 +120,7 @@ export class DataLoader {
       utility: ipldData.utility || null,
 
       carousel_images: ipldData.carousel_images || [],
+      layouts: ipldData.layouts || [],
       
       // Process all features dynamically
       processed_features: this.processAllFeatures(ipldData),

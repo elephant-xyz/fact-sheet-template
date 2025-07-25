@@ -306,12 +306,12 @@
                         </div>
                       </div>
                   {% endif %}
-                      <!-- Monthly Tax Amount -->
+                      <!-- Yearly Tax Amount -->
                   {% if first_tax.monthly_tax_amount %}
                       <div class="tax-data-item">
                         <div class="tax-item-divider"></div>
                         <div class="tax-item-content">
-                          <span class="tax-label">Monthly Tax:</span>
+                          <span class="tax-label">Annual Tax:</span>
                       <span class="tax-value">${{ first_tax.monthly_tax_amount | number }}</span>
                         </div>
                       </div>
@@ -394,7 +394,7 @@
                       <div class="tax-data-item">
                         <div class="tax-item-divider"></div>
                         <div class="tax-item-content">
-                          <span class="tax-label">Monthly Tax:</span>
+                          <span class="tax-label">Annual Tax:</span>
                           <span class="tax-value">${{ tax.data.monthly_tax_amount | number }}</span>
                         </div>
                       </div>
@@ -467,7 +467,7 @@
                     <div class="tax-data-item">
                       <div class="tax-item-divider"></div>
                       <div class="tax-item-content">
-                        <span class="tax-label">Monthly Tax:</span>
+                        <span class="tax-label">Annual Tax:</span>
                         <span class="tax-value">${{ homes[property_id].tax_3.monthly_tax_amount | number }}</span>
                       </div>
                     </div>
@@ -609,21 +609,17 @@
                     </span>{% endif %}
                 </div>
                 {% endif %}
-                {% set first_floor_rooms = [] %}
-                {% set second_floor_rooms = [] %}
-                {% set other_rooms = [] %}
                 
                 {# Group all layout rooms by floor level #}
-                {% for key, value in homes[property_id] %}
-                  {% if key and key | string and key | string | slice(0, 7) == 'layout_' %}
-                    {% set room = value %}
-                    {% if room.floor_level == 1 %}
-                      {% set _ = first_floor_rooms.append(room) %}
-                    {% elif room.floor_level == 2 %}
-                      {% set _ = second_floor_rooms.append(room) %}
-                    {% else %}
-                      {% set _ = other_rooms.append(room) %}
-                    {% endif %}
+                {% set all_layouts = homes[property_id].layouts or [] %}
+                {% set first_floor_rooms = all_layouts | selectattr('floor_level', 'equalto', '1st Floor') | list %}
+                {% set second_floor_rooms = all_layouts | selectattr('floor_level', 'equalto', '2nd Floor') | list %}
+                {% set other_rooms = [] %}
+                
+                {# Add rooms that don't match 1st or 2nd floor #}
+                {% for room in all_layouts %}
+                  {% if room.floor_level != '1st Floor' and room.floor_level != '2nd Floor' %}
+                    {% set other_rooms = other_rooms + [room] %}
                   {% endif %}
                 {% endfor %}
                 
@@ -632,21 +628,32 @@
                   <div class="floorplan-floors">
                     <!-- 1st Floor -->
                     {% if first_floor_rooms | length > 0 %}
-                    <div class="floor-section">
-                        <div class="floor-header">
+                    <div class="floor-section collapsible">
+                        <div class="floor-header" onclick="toggleFloorSection(this)">
                             <img src="{{ 'featuresicons-13.svg' | assetUrl }}" alt="1st Floor">
                             <h3 class="section-subtitle">1st Floor</h3>
+                            <svg class="collapse-arrow rotated" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                <path d="M3 7.5L6 4.5L9 7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
                         </div>
-                        <div class="floor-rooms">
+                        <div class="floor-rooms collapsible-content">
                             {% for room in first_floor_rooms %}
-                            <div class="room-item">
-                                <span>{{ room.space_type or 'Room' }}</span>
-                                <ul class="room-properties">
-                                  {% if room.has_windows %}<li><img src="{{ 'type=windows.svg' | assetUrl }}" alt="Windows" class="room-property-icon">has_windows: {{ room.has_windows }}</li>{% endif %}
-                                  {% if room.window_design_type %}<li><img src="{{ 'type=texture.svg' | assetUrl }}" alt="Window Design" class="room-property-icon">window_design_type: {{ room.window_design_type }}</li>{% endif %}
-                                  {% if room.flooring_material_type %}<li><img src="{{ 'type=texture.svg' | assetUrl }}" alt="Flooring" class="room-property-icon">flooring_material_type: {{ room.flooring_material_type }}</li>{% endif %}
-                                  {% if room.size_square_feet %}<li><img src="{{ 'type=measure.svg' | assetUrl }}" alt="Size" class="room-property-icon">size_square_feet: {{ room.size_square_feet }}</li>{% endif %}
-                                  {% if room.is_finished %}<li><img src="{{ 'type=sparkle.svg' | assetUrl }}" alt="Finished" class="room-property-icon">is_finished: {{ room.is_finished }}</li>{% endif %}
+                            <div class="room-item collapbsible">
+                                <div class="room-header" onclick="toggleRoomDetails(this)" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 8px 0;">
+                                    <span>{{ room.space_type or 'Room' }}</span>
+                                    <svg class="collapse-arrow rotated" width="10" height="10" viewBox="0 0 10 10" fill="none">
+                                        <path d="M2.5 6.25L5 3.75L7.5 6.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </div>
+                                <ul class="room-properties" style="display: none;">
+                                  {% if room.has_windows %}<li><img src="{{ 'type=windows.svg' | assetUrl }}" alt="Windows" class="room-property-icon">Has Windows</li>{% endif %}
+                                  {% if room.window_design_type %}<li><img src="{{ 'type=texture.svg' | assetUrl }}" alt="Window Design" class="room-property-icon">Window Type: {{ room.window_design_type }}</li>{% endif %}
+                                  {% if room.flooring_material_type %}<li><img src="{{ 'type=texture.svg' | assetUrl }}" alt="Flooring" class="room-property-icon">Flooring: {{ room.flooring_material_type }}</li>{% endif %}
+                                  {% if room.size_square_feet %}<li><img src="{{ 'type=measure.svg' | assetUrl }}" alt="Size" class="room-property-icon">Size: {{ room.size_square_feet }} sqft</li>{% endif %}
+                                  {% if room.is_finished %}<li><img src="{{ 'type=sparkle.svg' | assetUrl }}" alt="Finished" class="room-property-icon">Finished</li>{% endif %}
+                                  {% if room.countertop_material %}<li><img src="{{ 'type=texture.svg' | assetUrl }}" alt="Countertop" class="room-property-icon">Countertop: {{ room.countertop_material }}</li>{% endif %}
+                                  {% if room.cabinet_style %}<li><img src="{{ 'type=texture.svg' | assetUrl }}" alt="Cabinet" class="room-property-icon">Cabinet Style: {{ room.cabinet_style }}</li>{% endif %}
+                                  {% if room.natural_light_quality %}<li><img src="{{ 'type=windows.svg' | assetUrl }}" alt="Light" class="room-property-icon">Natural Light: {{ room.natural_light_quality }}</li>{% endif %}
                                 </ul>
                             </div>
                             {% endfor %}
@@ -656,21 +663,30 @@
                     
                     <!-- 2nd Floor -->
                     {% if second_floor_rooms | length > 0 %}
-                    <div class="floor-section">
-                        <div class="floor-header">
+                    <div class="floor-section collapsible">
+                        <div class="floor-header" onclick="toggleFloorSection(this)">
                             <img src="{{ 'featuresicons-5.svg' | assetUrl }}" alt="2nd Floor">
                             <h3 class="section-subtitle">2nd Floor</h3>
+                            <svg class="collapse-arrow rotated" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                <path d="M3 7.5L6 4.5L9 7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
                         </div>
-                        <div class="floor-rooms">
+                        <div class="floor-rooms collapsible-content">
                             {% for room in second_floor_rooms %}
-                            <div class="room-item">
-                                <span>{{ room.space_type or 'Room' }}</span>
-                                <ul class="room-properties">
-                                  {% if room.has_windows %}<li><img src="{{ 'type=windows.svg' | assetUrl }}" alt="Windows" class="room-property-icon">has_windows: {{ room.has_windows }}</li>{% endif %}
-                                  {% if room.window_design_type %}<li><img src="{{ 'type=texture.svg' | assetUrl }}" alt="Window Design" class="room-property-icon">window_design_type: {{ room.window_design_type }}</li>{% endif %}
-                                  {% if room.flooring_material_type %}<li><img src="{{ 'type=texture.svg' | assetUrl }}" alt="Flooring" class="room-property-icon">flooring_material_type: {{ room.flooring_material_type }}</li>{% endif %}
-                                  {% if room.size_square_feet %}<li><img src="{{ 'type=measure.svg' | assetUrl }}" alt="Size" class="room-property-icon">size_square_feet: {{ room.size_square_feet }}</li>{% endif %}
-                                  {% if room.is_finished %}<li><img src="{{ 'type=sparkle.svg' | assetUrl }}" alt="Finished" class="room-property-icon">is_finished: {{ room.is_finished }}</li>{% endif %}
+                            <div class="room-item collapsible">
+                                <div class="room-header" onclick="toggleRoomDetails(this)" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 8px 0;">
+                                    <span>{{ room.space_type or 'Room' }}</span>
+                                    <img src="{{ 'uiicons-1.svg' | assetUrl }}" alt="Expand" class="room-expand-icon" style="width: 16px; height: 16px; transition: transform 0.3s;">
+                                </div>
+                                <ul class="room-properties" style="display: none;">
+                                  {% if room.has_windows %}<li><img src="{{ 'type=windows.svg' | assetUrl }}" alt="Windows" class="room-property-icon">Has Windows</li>{% endif %}
+                                  {% if room.window_design_type %}<li><img src="{{ 'type=texture.svg' | assetUrl }}" alt="Window Design" class="room-property-icon">Window Type: {{ room.window_design_type }}</li>{% endif %}
+                                  {% if room.flooring_material_type %}<li><img src="{{ 'type=texture.svg' | assetUrl }}" alt="Flooring" class="room-property-icon">Flooring: {{ room.flooring_material_type }}</li>{% endif %}
+                                  {% if room.size_square_feet %}<li><img src="{{ 'type=measure.svg' | assetUrl }}" alt="Size" class="room-property-icon">Size: {{ room.size_square_feet }} sqft</li>{% endif %}
+                                  {% if room.is_finished %}<li><img src="{{ 'type=sparkle.svg' | assetUrl }}" alt="Finished" class="room-property-icon">Finished</li>{% endif %}
+                                  {% if room.countertop_material %}<li><img src="{{ 'type=texture.svg' | assetUrl }}" alt="Countertop" class="room-property-icon">Countertop: {{ room.countertop_material }}</li>{% endif %}
+                                  {% if room.cabinet_style %}<li><img src="{{ 'type=texture.svg' | assetUrl }}" alt="Cabinet" class="room-property-icon">Cabinet Style: {{ room.cabinet_style }}</li>{% endif %}
+                                  {% if room.natural_light_quality %}<li><img src="{{ 'type=windows.svg' | assetUrl }}" alt="Light" class="room-property-icon">Natural Light: {{ room.natural_light_quality }}</li>{% endif %}
                                 </ul>
                             </div>
                             {% endfor %}
@@ -680,22 +696,31 @@
                     
                     <!-- Other Rooms -->
                     {% if other_rooms | length > 0 %}
-                    <div class="floor-section">
-                        <div class="floor-header">
+                    <div class="floor-section collapsible">
+                        <div class="floor-header" onclick="toggleFloorSection(this)">
                             <img src="{{ 'featuresicons-33.svg' | assetUrl }}" alt="Other Rooms">
                             <h3 class="section-subtitle">Other Rooms</h3>
-                  </div>
-                        <div class="floor-rooms">
+                            <svg class="collapse-arrow rotated" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                <path d="M3 7.5L6 4.5L9 7.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="floor-rooms collapsible-content">
                             {% for room in other_rooms %}
-                            <div class="room-item">
-                                <span>{{ room.space_type or 'Room' }}</span>
-                                <ul class="room-properties">
-                                  {% if room.has_windows %}<li><img src="{{ 'type=windows.svg' | assetUrl }}" alt="Windows" class="room-property-icon">has_windows: {{ room.has_windows }}</li>{% endif %}
-                                  {% if room.window_design_type %}<li><img src="{{ 'type=texture.svg' | assetUrl }}" alt="Window Design" class="room-property-icon">window_design_type: {{ room.window_design_type }}</li>{% endif %}
-                                  {% if room.flooring_material_type %}<li><img src="{{ 'type=texture.svg' | assetUrl }}" alt="Flooring" class="room-property-icon">flooring_material_type: {{ room.flooring_material_type }}</li>{% endif %}
-                                  {% if room.size_square_feet %}<li><img src="{{ 'type=measure.svg' | assetUrl }}" alt="Size" class="room-property-icon">size_square_feet: {{ room.size_square_feet }}</li>{% endif %}
-                                  {% if room.is_finished %}<li><img src="{{ 'type=sparkle.svg' | assetUrl }}" alt="Finished" class="room-property-icon">is_finished: {{ room.is_finished }}</li>{% endif %}
-                                  {% if room.floor_level %}<li><img src="{{ 'featuresicons-13.svg' | assetUrl }}" alt="Floor Level" class="room-property-icon">floor_level: {{ room.floor_level }}</li>{% endif %}
+                            <div class="room-item collapsible">
+                                <div class="room-header" onclick="toggleRoomDetails(this)" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 8px 0;">
+                                    <span>{{ room.space_type or 'Room' }}</span>
+                                    <img src="{{ 'uiicons-1.svg' | assetUrl }}" alt="Expand" class="room-expand-icon" style="width: 16px; height: 16px; transition: transform 0.3s;">
+                                </div>
+                                <ul class="room-properties" style="display: none;">
+                                  {% if room.has_windows %}<li><img src="{{ 'type=windows.svg' | assetUrl }}" alt="Windows" class="room-property-icon">Has Windows</li>{% endif %}
+                                  {% if room.window_design_type %}<li><img src="{{ 'type=texture.svg' | assetUrl }}" alt="Window Design" class="room-property-icon">Window Type: {{ room.window_design_type }}</li>{% endif %}
+                                  {% if room.flooring_material_type %}<li><img src="{{ 'type=texture.svg' | assetUrl }}" alt="Flooring" class="room-property-icon">Flooring: {{ room.flooring_material_type }}</li>{% endif %}
+                                  {% if room.size_square_feet %}<li><img src="{{ 'type=measure.svg' | assetUrl }}" alt="Size" class="room-property-icon">Size: {{ room.size_square_feet }} sqft</li>{% endif %}
+                                  {% if room.is_finished %}<li><img src="{{ 'type=sparkle.svg' | assetUrl }}" alt="Finished" class="room-property-icon">Finished</li>{% endif %}
+                                  {% if room.floor_level %}<li><img src="{{ 'featuresicons-13.svg' | assetUrl }}" alt="Floor Level" class="room-property-icon">Floor: {{ room.floor_level }}</li>{% endif %}
+                                  {% if room.countertop_material %}<li><img src="{{ 'type=texture.svg' | assetUrl }}" alt="Countertop" class="room-property-icon">Countertop: {{ room.countertop_material }}</li>{% endif %}
+                                  {% if room.cabinet_style %}<li><img src="{{ 'type=texture.svg' | assetUrl }}" alt="Cabinet" class="room-property-icon">Cabinet Style: {{ room.cabinet_style }}</li>{% endif %}
+                                  {% if room.natural_light_quality %}<li><img src="{{ 'type=windows.svg' | assetUrl }}" alt="Light" class="room-property-icon">Natural Light: {{ room.natural_light_quality }}</li>{% endif %}
                                 </ul>
                 </div>
                             {% endfor %}
@@ -1092,5 +1117,19 @@
       }
     }
   });
+
+  function toggleRoomDetails(header) {
+    const roomItem = header.parentElement;
+    const properties = roomItem.querySelector('.room-properties');
+    const expandIcon = header.querySelector('.room-expand-icon');
+    
+    if (properties.style.display === 'none' || properties.style.display === '') {
+      properties.style.display = 'block';
+      expandIcon.style.transform = 'rotate(180deg)';
+    } else {
+      properties.style.display = 'none';
+      expandIcon.style.transform = 'rotate(0deg)';
+    }
+  }
 </script>
 {% endset %}
