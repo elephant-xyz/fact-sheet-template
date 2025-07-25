@@ -306,12 +306,12 @@
                         </div>
                       </div>
                   {% endif %}
-                      <!-- Monthly Tax Amount -->
+                      <!-- Yearly Tax Amount -->
                   {% if first_tax.monthly_tax_amount %}
                       <div class="tax-data-item">
                         <div class="tax-item-divider"></div>
                         <div class="tax-item-content">
-                          <span class="tax-label">Monthly Tax:</span>
+                          <span class="tax-label">Annual Tax:</span>
                       <span class="tax-value">${{ first_tax.monthly_tax_amount | number }}</span>
                         </div>
                       </div>
@@ -394,7 +394,7 @@
                       <div class="tax-data-item">
                         <div class="tax-item-divider"></div>
                         <div class="tax-item-content">
-                          <span class="tax-label">Monthly Tax:</span>
+                          <span class="tax-label">Annual Tax:</span>
                           <span class="tax-value">${{ tax.data.monthly_tax_amount | number }}</span>
                         </div>
                       </div>
@@ -467,7 +467,7 @@
                     <div class="tax-data-item">
                       <div class="tax-item-divider"></div>
                       <div class="tax-item-content">
-                        <span class="tax-label">Monthly Tax:</span>
+                        <span class="tax-label">Annual Tax:</span>
                         <span class="tax-value">${{ homes[property_id].tax_3.monthly_tax_amount | number }}</span>
                       </div>
                     </div>
