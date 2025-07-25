@@ -88,6 +88,12 @@ interface LayoutInfo {
   pool_water_quality?: string;
 }
 
+export interface LayoutSummary {
+  firstFloorLayouts: LayoutInfo[];
+  secondFloorLayouts: LayoutInfo[];
+  otherLayouts: LayoutInfo[];
+}
+
 export interface PropertyData {
   property: PropertyInfo;
   sales: SaleInfo[];
@@ -98,7 +104,7 @@ export interface PropertyData {
 
   providers?: any[];
   carousel_images?: CarouselImage[];
-  layouts?: LayoutInfo[];
+  layouts?: LayoutSummary;
 }
 
 export class IPLDDataLoader {
@@ -184,7 +190,7 @@ export class IPLDDataLoader {
       if (this.isIPLDLink(value)) {
         const linkedPath = value["/"];
 
-        if (typeof linkedPath === 'string' && linkedPath.startsWith("./")) {
+        if (typeof linkedPath === "string" && linkedPath.startsWith("./")) {
           // Relative path - resolve to CID
           const fileName = path.basename(linkedPath);
           const cid = path.basename(fileName, ".json");
@@ -194,7 +200,7 @@ export class IPLDDataLoader {
           if (linkedNode) {
             node.relationships.set(key, linkedNode);
           }
-        } else if (typeof linkedPath === 'string') {
+        } else if (typeof linkedPath === "string") {
           // Direct CID reference
           const linkedNode = graph.get(linkedPath);
           if (linkedNode) {
@@ -246,12 +252,14 @@ export class IPLDDataLoader {
       this.findNodeByContent(graph, "flooring_material_primary") ||
       this.findNodeByContent(graph, "exterior_wall_material_primary") ||
       this.findNodeByContent(graph, "structure_rooms_total");
-    const layoutNodes = this.findNodesByContent(graph, "space_type");
     const utilityNode = this.findNodeByContent(graph, "cooling_system_type");
     const unnormalizedAddressNode = this.findNodeByContent(
       graph,
       "full_address",
     );
+
+    // Load layout data
+    const layouts = await this.loadLayoutData(graph);
 
     // Extract property information with layout data for beds/baths
     const property = this.extractPropertyInfo(
@@ -259,7 +267,7 @@ export class IPLDDataLoader {
       addressNode,
       lotNode,
       structureNode,
-      layoutNodes,
+      layouts,
       unnormalizedAddressNode,
     );
 
@@ -278,9 +286,6 @@ export class IPLDDataLoader {
 
     // Load carousel images
     const carousel_images = await this.loadCarouselImages(rootDir, graph);
-
-    // Load layout data
-    const layouts = await this.loadLayoutData(graph);
 
     return {
       property,
@@ -324,7 +329,7 @@ export class IPLDDataLoader {
     addressNode?: DataNode,
     lotNode?: DataNode,
     structureNode?: DataNode,
-    layoutNodes?: DataNode[],
+    layoutNodes?: LayoutSummary,
     unnormalizedAddress?: DataNode,
   ): PropertyInfo {
     const propertyData = propertyNode?.data || {};
@@ -372,31 +377,33 @@ export class IPLDDataLoader {
     let beds = 0;
     let baths = 0;
 
-    if (layoutNodes && layoutNodes.length > 0) {
-      layoutNodes.forEach((node) => {
-        const spaceType = node.data.space_type;
-        if (spaceType) {
-          const lowerSpaceType = spaceType.toLowerCase();
+    if (layoutNodes) {
+      for (const layoutGroup of Object.values(layoutNodes)) {
+        layoutGroup.forEach((node: LayoutInfo) => {
+          const spaceType = node.space_type;
+          if (spaceType) {
+            const lowerSpaceType = spaceType.toLowerCase();
 
-          // Count bedrooms
-          if (
-            lowerSpaceType.includes("bedroom") ||
-            lowerSpaceType.includes("primary bedroom")
-          ) {
-            beds += 1;
-          }
+            // Count bedrooms
+            if (
+              lowerSpaceType.includes("bedroom") ||
+              lowerSpaceType.includes("primary bedroom")
+            ) {
+              beds += 1;
+            }
 
-          // Count bathrooms
-          if (lowerSpaceType.includes("full bathroom")) {
-            baths += 1;
-          } else if (
-            lowerSpaceType.includes("half bathroom") ||
-            lowerSpaceType.includes("half bath")
-          ) {
-            baths += 0.5;
+            // Count bathrooms
+            if (lowerSpaceType.includes("full bathroom")) {
+              baths += 1;
+            } else if (
+              lowerSpaceType.includes("half bathroom") ||
+              lowerSpaceType.includes("half bath")
+            ) {
+              baths += 0.5;
+            }
           }
-        }
-      });
+        });
+      }
     }
 
     // Fallback to structure data if no layout data
@@ -537,10 +544,10 @@ export class IPLDDataLoader {
   private extractCidFromLink(link: any): string {
     if (this.isIPLDLink(link)) {
       const linkPath = link["/"];
-      if (typeof linkPath === 'string' && linkPath.startsWith("./")) {
+      if (typeof linkPath === "string" && linkPath.startsWith("./")) {
         return path.basename(linkPath.slice(2), ".json");
       }
-      return typeof linkPath === 'string' ? linkPath : "";
+      return typeof linkPath === "string" ? linkPath : "";
     }
     return "";
   }
@@ -653,8 +660,6 @@ export class IPLDDataLoader {
     return features;
   }
 
-
-
   private async loadCarouselImages(
     _rootDir: string,
     graph: Map<string, DataNode>,
@@ -666,27 +671,36 @@ export class IPLDDataLoader {
       if (node.data?.relationships?.property_has_file) {
         // This node contains property_has_file relationships
         const propertyHasFileLinks = node.data.relationships.property_has_file;
-        
+
         // Process each relationship link
         for (const relationshipLink of propertyHasFileLinks) {
           if (this.isIPLDLink(relationshipLink)) {
             // Resolve the relationship node
-            const relationshipNode = this.resolveNodeFromLink(relationshipLink, graph);
-            
+            const relationshipNode = this.resolveNodeFromLink(
+              relationshipLink,
+              graph,
+            );
+
             if (!relationshipNode) {
               continue;
             }
-            
+
             if (relationshipNode?.data?.to) {
               // Resolve the file metadata node
-              const fileNode = this.resolveNodeFromLink(relationshipNode.data.to, graph);
-              
+              const fileNode = this.resolveNodeFromLink(
+                relationshipNode.data.to,
+                graph,
+              );
+
               if (!fileNode) {
                 continue;
               }
-              
+
               // Check if it's an image
-              if (fileNode?.data?.document_type === "PropertyImage" && fileNode.data.ipfs_url) {
+              if (
+                fileNode?.data?.document_type === "PropertyImage" &&
+                fileNode.data.ipfs_url
+              ) {
                 images.push({
                   ipfs_url: fileNode.data.ipfs_url,
                   name: fileNode.data.name || "",
@@ -704,17 +718,24 @@ export class IPLDDataLoader {
     if (images.length === 0) {
       // Find all relationship nodes that match the pattern
       for (const node of graph.values()) {
-        if (node.cid.startsWith("relationship_property_file_file_") || 
-            node.cid.includes("relationship_property_file")) {
-          
+        if (
+          node.cid.startsWith("relationship_property_file_file_") ||
+          node.cid.includes("relationship_property_file")
+        ) {
           if (node.data?.from && node.data?.to) {
             // Check if this is from property.json
             const fromLink = node.data.from;
-            if (this.isIPLDLink(fromLink) && fromLink["/"] === "./property.json") {
+            if (
+              this.isIPLDLink(fromLink) &&
+              fromLink["/"] === "./property.json"
+            ) {
               // Resolve the file metadata node
               const fileNode = this.resolveNodeFromLink(node.data.to, graph);
-              
-              if (fileNode?.data?.document_type === "PropertyImage" && fileNode.data.ipfs_url) {
+
+              if (
+                fileNode?.data?.document_type === "PropertyImage" &&
+                fileNode.data.ipfs_url
+              ) {
                 images.push({
                   ipfs_url: fileNode.data.ipfs_url,
                   name: fileNode.data.name || "",
@@ -740,36 +761,44 @@ export class IPLDDataLoader {
 
   private async loadLayoutData(
     graph: Map<string, DataNode>,
-  ): Promise<LayoutInfo[]> {
-    const layouts: LayoutInfo[] = [];
-
+  ): Promise<LayoutSummary> {
+    const layoutsByDataGroup: Record<string, LayoutInfo[]> = {};
     // Method 1: Find nodes that have relationships.property_has_layout
     for (const node of graph.values()) {
       if (node.data?.relationships?.property_has_layout) {
         // This node contains property_has_layout relationships
-        const propertyHasLayoutLinks = node.data.relationships.property_has_layout;
-        
+        const propertyHasLayoutLinks =
+          node.data.relationships.property_has_layout;
+
         // Process each relationship link
         for (const relationshipLink of propertyHasLayoutLinks) {
           if (this.isIPLDLink(relationshipLink)) {
             // Resolve the relationship node
-            const relationshipNode = this.resolveNodeFromLink(relationshipLink, graph);
-            
+            const relationshipNode = this.resolveNodeFromLink(
+              relationshipLink,
+              graph,
+            );
+
             if (!relationshipNode) {
               continue;
             }
-            
+
             if (relationshipNode?.data?.to) {
               // Resolve the layout node
-              const layoutNode = this.resolveNodeFromLink(relationshipNode.data.to, graph);
-              
+              const layoutNode = this.resolveNodeFromLink(
+                relationshipNode.data.to,
+                graph,
+              );
+
               if (!layoutNode) {
                 continue;
               }
-              
+
               // Extract layout data
               if (layoutNode?.data?.space_type) {
-                layouts.push(layoutNode.data as LayoutInfo);
+                (layoutsByDataGroup[node.data.label] ??= []).push(
+                  layoutNode.data as LayoutInfo,
+                );
               }
             }
           }
@@ -777,48 +806,39 @@ export class IPLDDataLoader {
       }
     }
 
-    // Method 2: If no layouts found via aggregation, look for relationship nodes directly
-    if (layouts.length === 0) {
-      // Find all relationship nodes that match the pattern
-      for (const node of graph.values()) {
-        if (node.cid.startsWith("relationship_property_layout_") || 
-            node.cid.includes("relationship_property_layout")) {
-          
-          if (node.data?.from && node.data?.to) {
-            // Check if this is from property.json
-            const fromLink = node.data.from;
-            if (this.isIPLDLink(fromLink) && fromLink["/"] === "./property.json") {
-              // Resolve the layout node
-              const layoutNode = this.resolveNodeFromLink(node.data.to, graph);
-              
-              if (layoutNode?.data?.space_type) {
-                layouts.push(layoutNode.data as LayoutInfo);
-              }
-            }
-          }
-        }
-      }
+    let layouts: LayoutInfo[] = [];
+    if (Object.keys(layoutsByDataGroup).length === 1) {
+      layouts = layoutsByDataGroup[Object.keys(layoutsByDataGroup)[0]];
+    } else if (Object.hasOwn(layoutsByDataGroup, "Photo Metadata")) {
+      layouts = layoutsByDataGroup["Photo Metadata"];
+    } else {
+      const [_, value] = Object.entries(layoutsByDataGroup).reduce(
+        (max, current) => (current[1].length > max[1].length ? current : max),
+      );
+      layouts = value;
     }
 
-    // Sort layouts by floor level and then by space type
-    layouts.sort((a, b) => {
-      // Convert floor_level to number for sorting
-      const floorA = typeof a.floor_level === 'string' ? 
-        (a.floor_level.includes('1') ? 1 : a.floor_level.includes('2') ? 2 : 3) : 
-        (a.floor_level || 3);
-      const floorB = typeof b.floor_level === 'string' ? 
-        (b.floor_level.includes('1') ? 1 : b.floor_level.includes('2') ? 2 : 3) : 
-        (b.floor_level || 3);
-      
-      if (floorA !== floorB) {
-        return floorA - floorB;
-      }
-      
-      // Then sort by space type
-      return (a.space_type || '').localeCompare(b.space_type || '');
-    });
+    const firstFloorLayouts = layouts
+      .filter((layout) => layout["floor_level"] === "1st Floor")
+      .sort((a, b) => a.space_type.localeCompare(b.space_type));
 
-    return layouts;
+    const secondFloorLayouts = layouts
+      .filter((layout) => layout["floor_level"] === "2nd Floor")
+      .sort((a, b) => a.space_type.localeCompare(b.space_type));
+
+    const otherLayouts = layouts
+      .filter(
+        (layout) =>
+          layout["floor_level"] !== "1st Floor" &&
+          layout["floor_level"] !== "2nd Floor",
+      )
+      .sort((a, b) => a.space_type.localeCompare(b.space_type));
+
+    return {
+      firstFloorLayouts,
+      secondFloorLayouts,
+      otherLayouts,
+    };
   }
 
   private capitalizeWords(str?: string): string {
@@ -829,11 +849,14 @@ export class IPLDDataLoader {
       .join(" ");
   }
 
-  private resolveNodeFromLink(link: any, graph: Map<string, DataNode>): DataNode | undefined {
+  private resolveNodeFromLink(
+    link: any,
+    graph: Map<string, DataNode>,
+  ): DataNode | undefined {
     if (!this.isIPLDLink(link)) return undefined;
-    
+
     const linkedPath = link["/"];
-    
+
     if (linkedPath.startsWith("./")) {
       // Extract the CID from the path
       const fileName = path.basename(linkedPath);
