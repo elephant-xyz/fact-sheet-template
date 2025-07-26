@@ -46,7 +46,7 @@ option {
 /* Main Layout */
 .main-layout {
   display: flex;
-  gap: 24px;
+  gap: 16px;
   flex-wrap: nowrap;
 }
 
@@ -102,10 +102,16 @@ option {
   border-bottom-color: #8e8b8b;
 }
 
+.header-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 /* Image Carousel */
 .carousel-container {
   width: 100%;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
   position: relative;
   overflow: hidden;
 }
@@ -118,6 +124,7 @@ option {
   display: flex;
   width: 100%;
   transition: transform 0.3s ease-in-out;
+  gap: 8px;
 }
 
 .carousel-item {
@@ -169,13 +176,73 @@ option {
   width: 6px;
   height: 6px;
   border-radius: 50px;
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: transparent;
+  border: 1px solid rgba(255, 255, 255, 1);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  transform: scale(1);
 }
 
 .indicator:hover {
-  background-color: rgba(255, 255, 255, 0.8);
+  border-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+/* Carousel Navigation Arrows */
+.carousel-navigation {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.carousel-arrow {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.5);
+  border: none;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(4px);
+  pointer-events: auto;
+  z-index: 3;
+}
+
+.carousel-arrow:hover {
+  background-color: rgba(0, 0, 0, 0.7);
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.carousel-arrow:active {
+  transform: scale(0.95);
+}
+
+.carousel-arrow svg {
+  width: 16px;
+  height: 16px;
+  stroke-width: 2;
+}
+
+.carousel-arrow-left {
+  margin-right: auto;
+}
+
+.carousel-arrow-right {
+  margin-left: auto;
 }
 
 /* Carousel slide functionality - using attribute selectors for dynamic IDs */
@@ -184,107 +251,102 @@ option {
 }
 
 .carousel-radio[id*="carousel-radio-"][id$="-2"]:checked ~ .carousel-slides {
-  transform: translateX(-100%);
+  transform: translateX(calc(-100% - 8px));
 }
 
 .carousel-radio[id*="carousel-radio-"][id$="-3"]:checked ~ .carousel-slides {
-  transform: translateX(-200%);
+  transform: translateX(calc(-200% - 16px));
 }
 
 .carousel-radio[id*="carousel-radio-"][id$="-4"]:checked ~ .carousel-slides {
-  transform: translateX(-300%);
+  transform: translateX(calc(-300% - 24px));
 }
 
 .carousel-radio[id*="carousel-radio-"][id$="-5"]:checked ~ .carousel-slides {
-  transform: translateX(-400%);
+  transform: translateX(calc(-400% - 32px));
 }
 
 .carousel-radio[id*="carousel-radio-"][id$="-6"]:checked ~ .carousel-slides {
-  transform: translateX(-500%);
+  transform: translateX(calc(-500% - 40px));
 }
 
 .carousel-radio[id*="carousel-radio-"][id$="-7"]:checked ~ .carousel-slides {
-  transform: translateX(-600%);
+  transform: translateX(calc(-600% - 48px));
 }
 
 .carousel-radio[id*="carousel-radio-"][id$="-8"]:checked ~ .carousel-slides {
-  transform: translateX(-700%);
+  transform: translateX(calc(-700% - 56px));
 }
 
 .carousel-radio[id*="carousel-radio-"][id$="-9"]:checked ~ .carousel-slides {
-  transform: translateX(-800%);
+  transform: translateX(calc(-800% - 64px));
 }
 
 .carousel-radio[id*="carousel-radio-"][id$="-10"]:checked ~ .carousel-slides {
-  transform: translateX(-900%);
+  transform: translateX(calc(-900% - 72px));
 }
 
 .carousel-radio[id*="carousel-radio-"][id$="-11"]:checked ~ .carousel-slides {
-  transform: translateX(-1000%);
+  transform: translateX(calc(-1000% - 80px));
 }
 
 .carousel-radio[id*="carousel-radio-"][id$="-12"]:checked ~ .carousel-slides {
-  transform: translateX(-1100%);
+  transform: translateX(calc(-1100% - 88px));
 }
 
 .carousel-radio[id*="carousel-radio-"][id$="-13"]:checked ~ .carousel-slides {
-  transform: translateX(-1200%);
+  transform: translateX(calc(-1200% - 96px));
 }
 
 .carousel-radio[id*="carousel-radio-"][id$="-14"]:checked ~ .carousel-slides {
-  transform: translateX(-1300%);
+  transform: translateX(calc(-1300% - 104px));
 }
 
 .carousel-radio[id*="carousel-radio-"][id$="-15"]:checked ~ .carousel-slides {
-  transform: translateX(-1400%);
+  transform: translateX(calc(-1400% - 112px));
 }
 
 .carousel-radio[id*="carousel-radio-"][id$="-16"]:checked ~ .carousel-slides {
-  transform: translateX(-1500%);
+  transform: translateX(calc(-1500% - 120px));
 }
 
 .carousel-radio[id*="carousel-radio-"][id$="-17"]:checked ~ .carousel-slides {
-  transform: translateX(-1600%);
+  transform: translateX(calc(-1600% - 128px));
 }
 
 .carousel-radio[id*="carousel-radio-"][id$="-18"]:checked ~ .carousel-slides {
-  transform: translateX(-1700%);
+  transform: translateX(calc(-1700% - 136px));
 }
 
 .carousel-radio[id*="carousel-radio-"][id$="-19"]:checked ~ .carousel-slides {
-  transform: translateX(-1800%);
+  transform: translateX(calc(-1800% - 144px));
 }
 
 .carousel-radio[id*="carousel-radio-"][id$="-20"]:checked ~ .carousel-slides {
-  transform: translateX(-1900%);
+  transform: translateX(calc(-1900% - 152px));
 }
 
 .carousel-radio[id*="carousel-radio-"][id$="-21"]:checked ~ .carousel-slides {
-  transform: translateX(-2000%);
+  transform: translateX(calc(-2000% - 160px));
 }
 
 .carousel-radio[id*="carousel-radio-"][id$="-22"]:checked ~ .carousel-slides {
-  transform: translateX(-2100%);
+  transform: translateX(calc(-2100% - 168px));
 }
 
 .carousel-radio[id*="carousel-radio-"][id$="-23"]:checked ~ .carousel-slides {
-  transform: translateX(-2200%);
+  transform: translateX(calc(-2200% - 176px));
 }
 
 .carousel-radio[id*="carousel-radio-"][id$="-24"]:checked ~ .carousel-slides {
-  transform: translateX(-2300%);
+  transform: translateX(calc(-2300% - 184px));
 }
 
 .carousel-radio[id*="carousel-radio-"][id$="-25"]:checked ~ .carousel-slides {
-  transform: translateX(-2400%);
+  transform: translateX(calc(-2400% - 192px));
 }
 
-/* Active indicator styling */
-.carousel-radio:checked ~ .carousel-indicators .indicator {
-  background-color: rgba(255, 255, 255, 0.8);
-  width: 8px;
-  height: 8px;
-}
+/* Active indicator styling - removed general rule that affected all indicators */
 
 /* Specific active indicator styling for each radio button */
 .carousel-radio[id*="carousel-radio-"][id$="-1"]:checked
@@ -362,14 +424,14 @@ option {
 .carousel-radio[id*="carousel-radio-"][id$="-25"]:checked
   ~ .carousel-indicators
   label[for*="carousel-radio-"][for$="-25"] {
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(255, 255, 255, 1) !important;
+  border: none !important;
   width: 8px;
   height: 8px;
+  transform: scale(1.2);
 }
 
-.carousel-radio:checked ~ .carousel-indicators .indicator:has(input:checked) {
-  background-color: rgba(255, 255, 255, 1);
-}
+/* Removed :has() rule for better browser compatibility */
 
 .image-badge {
   position: absolute;
@@ -427,7 +489,7 @@ option {
   font-size: 14px;
   color: #423e3e;
 
-  line-height: 1.4;
+  line-height: 100%;
 }
 
 /* Sidebar */
@@ -436,6 +498,7 @@ option {
   flex-shrink: 0;
   position: sticky;
   top: 104px;
+  margin-top: 36px;
   align-self: flex-start;
   max-height: calc(100vh - 40px);
   overflow-y: auto;
@@ -896,7 +959,7 @@ option {
 /* Property Address Styles */
 .property-address {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 8px;
   font-size: 14px;
 }
@@ -922,9 +985,7 @@ option {
 }
 
 .address-coordinates {
-  font-size: 14px;
-  color: #8e8b8b;
-  display: block;
+  color: inherit;
 }
 
 .address-line {
@@ -932,16 +993,20 @@ option {
   margin-right: 4px;
 }
 
-.county-info {
-  color: #8e8b8b;
-  font-size: 14px;
+.location-details {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 8px;
+  font-size: 14px;
+  color: #8e8b8b;
+}
+
+.county-info {
+  color: inherit;
 }
 
 .county-info img {
-  margin: 0 8px;
+  margin: 0 0px;
 }
 
 .parcel-id-info {
@@ -980,7 +1045,7 @@ h1 .data-footnote:hover {
   display: flex;
   list-style: none;
   padding: 0;
-  margin: 8px 2px;
+  margin: 0px 2px;
   gap: 8px;
   align-items: center;
 }
@@ -1858,7 +1923,7 @@ h1 .data-footnote:hover {
   /* Add your styles here */
 }
 .floorplan-specs {
-  margin-bottom: 8px;
+  margin-bottom: 4px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -1877,8 +1942,8 @@ h1 .data-footnote:hover {
 }
 
 .floorplan-specs .icon {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   align-self: center;
 }
 .floorplan-description {
@@ -1889,9 +1954,11 @@ h1 .data-footnote:hover {
 /* Property Type Info */
 .property-type-info,
 .property-type-value {
-  margin-top: 8px;
+  
+  margin-top: 4px;
+  margin-bottom: 8px;
   font-size: 13px;
-  color: #8e8b8b;
+  color: #423e3e;
 }
 
 /* Features Container and Grid */
@@ -1918,7 +1985,7 @@ h1 .data-footnote:hover {
 .features-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
 .feature-item-detailed {
@@ -1983,12 +2050,14 @@ h1 .data-footnote:hover {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin: 0;
-  padding-left: 8px;
+  gap: 10px;
   font-size: 13px;
   font-weight: 400;
   color: #6a6a6a;
+  margin-top: 8px;
+  margin-bottom: 16px;
+  
+  
 }
 .room-properties li {
   display: flex;
@@ -2007,16 +2076,10 @@ h1 .data-footnote:hover {
 }
 
 .room-expand-icon {
-  width: 16px;
-  height: 16px;
+  width: 12px;
+  height: 12px;
   transition: transform 0.3s ease;
   cursor: pointer;
-}
-
-.floor-header-icon {
-  width: 20px;
-  height: 20px;
-  margin-right: 8px;
 }
 
 /* === Floorplan Side-by-Side Layout === */
@@ -2029,9 +2092,10 @@ h1 .data-footnote:hover {
 .floor-section {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
   flex: 1;
   min-width: 200px;
+  margin: 8px 0px;
 }
 @media (max-width: 768px) {
   .floorplan-floors {
@@ -2067,11 +2131,20 @@ h1 .data-footnote:hover {
   }
 }
 
-.floor-header img {
+.floor-header img:not(.floor-header-icon) {
   width: 24px;
   height: 24px;
   object-fit: contain;
   display: inline-block;
+  vertical-align: middle;
+}
+
+.floor-header .floor-header-icon {
+  width: 20px;
+  height: 20px;
+  
+  object-fit: contain;
+  display: none; /* Hidden - floor header icons */
   vertical-align: middle;
 }
 
@@ -2188,6 +2261,12 @@ h1 .data-footnote:hover {
   max-height: 1000px; /* Adjust based on content */
 }
 
+/* Floor rooms should always be visible/expanded */
+.floor-rooms.collapsible-content {
+  max-height: none !important;
+  overflow: visible !important;
+}
+
 .collapse-arrow {
   transition: transform 0.3s ease;
   color: #666;
@@ -2200,51 +2279,49 @@ h1 .data-footnote:hover {
 }
 
 .floor-header {
-  cursor: pointer;
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 0;
-  border-bottom: 1px solid #f0f0f0;
+  margin-top: 8px;
+  margin-bottom: 8px;
   user-select: none;
 }
 
-.floor-header:hover {
-  background-color: #f8f8f8;
-}
 
-.floor-header:hover .collapse-arrow {
-  color: #333;
-}
 
 .room-header {
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 0;
-  border-bottom: 1px solid #f0f0f0;
-  margin-bottom: 8px;
+  padding: 0px 0px;
   user-select: none;
 }
 
-.room-header:hover {
-  background-color: #f8f8f8;
+.room-icon-container {
+  width: 20px;
+  flex-shrink: 0;
 }
 
-.room-header:hover .collapse-arrow {
-  color: #333;
+.room-icon-container img {
+  width: 100%;
+  height: auto;
+  display: block;
 }
+
+.room-title {
+  /* Add your custom styling here */
+  font-weight: 600;
+  color: #423e3e;
+}
+
+
 
 .room-name {
   font-weight: 600;
   color: #423e3e;
 }
 
-.room-properties {
-  padding-left: 16px;
-  margin-top: 8px;
-}
 
 .room-properties.collapsible-content {
   max-height: 0;

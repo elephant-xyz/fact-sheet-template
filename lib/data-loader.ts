@@ -69,6 +69,7 @@ export class DataLoader {
         city_name: property.city || "",
         state_code: property.state || "",
         county_name: property.county || "",
+        postal_code: property.postalCode || "",
         latitude: property.coordinates?.split(",")[0]?.trim() || "",
         longitude: property.coordinates?.split(",")[1]?.trim() || "",
       },

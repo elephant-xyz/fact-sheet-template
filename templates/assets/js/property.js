@@ -395,17 +395,53 @@ function renderSalesPriceChart() {
                 );
 
                 if (saleData && saleData.owner) {
-                  // Add comma after the last name (assuming format is "Last First")
-                  const ownerName = saleData.owner.trim();
-                  const nameParts = ownerName.split(" ");
-                  if (nameParts.length >= 2) {
-                    // If there are at least 2 parts, put comma after the first part (last name)
-                    const lastName = nameParts[0];
-                    const firstName = nameParts.slice(1).join(" ");
-                    lines.push("Owner: " + lastName + ", " + firstName);
+                  const ownerString = saleData.owner.trim();
+                  
+                  // Check for multiple owners using common delimiters
+                  const delimiters = [' & ', ' and ', ', ', ';', '&'];
+                  let owners = [ownerString];
+                  
+                  // Try to split on common delimiters to find multiple owners
+                  for (const delimiter of delimiters) {
+                    if (ownerString.includes(delimiter)) {
+                      owners = ownerString.split(delimiter).map(owner => owner.trim());
+                      break;
+                    }
+                  }
+                  
+                  // Format and display all owners
+                  if (owners.length === 1) {
+                    // Single owner - format as before
+                    const ownerName = owners[0];
+                    const nameParts = ownerName.split(" ");
+                    if (nameParts.length >= 2) {
+                      // If there are at least 2 parts, put comma after the first part (last name)
+                      const lastName = nameParts[0];
+                      const firstName = nameParts.slice(1).join(" ");
+                      lines.push("Owner: " + lastName + ", " + firstName);
+                    } else {
+                      // If only one part, just add comma at the end
+                      lines.push("Owner: " + ownerName + ",");
+                    }
                   } else {
-                    // If only one part, just add comma at the end
-                    lines.push("Owner: " + ownerName + ",");
+                    // Multiple owners - display each on a separate line
+                    owners.forEach((owner, index) => {
+                      const ownerName = owner.trim();
+                      if (ownerName) {
+                        const nameParts = ownerName.split(" ");
+                        let formattedName = ownerName;
+                        
+                        if (nameParts.length >= 2) {
+                          // If there are at least 2 parts, put comma after the first part (last name)
+                          const lastName = nameParts[0];
+                          const firstName = nameParts.slice(1).join(" ");
+                          formattedName = lastName + ", " + firstName;
+                        }
+                        
+                        const prefix = index === 0 ? "Owners: " : "        ";
+                        lines.push(prefix + formattedName);
+                      }
+                    });
                   }
                 }
 
