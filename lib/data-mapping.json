@@ -1206,6 +1206,13 @@
     },
     {
       "lexiconClass": "layout",
+      "lexiconProperty": "condition_issues",
+      "iconName": "warning",
+      "enumValue": "PersonalItemsVisible",
+      "enumDescription": "Personal Items Visible"
+    },
+    {
+      "lexiconClass": "layout",
       "lexiconProperty": "flooring_wear",
       "iconName": "flooring-wear",
       "enumValue": "Good",
@@ -1838,7 +1845,7 @@
     {
       "lexiconClass": "appliance",
       "lexiconProperty": "appliance_type",
-      "iconName": "refrigerator",
+      "iconName": "fridge",
       "enumValue": "Refrigerator",
       "enumDescription": "Refrigerator"
     },
