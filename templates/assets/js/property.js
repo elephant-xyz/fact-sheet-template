@@ -1417,10 +1417,169 @@ function toggleFloorSection(header) {
 /**
  * Initializes all the JavaScript functionality when the DOM is loaded.
  */
+/**
+ * Handles sticky providers card behavior and condensed navigation version
+ */
+function setupStickyProviders() {
+  const providersCard = document.querySelector('.providers-card');
+  const sidebar = document.querySelector('.sidebar');
+  const condensedProviders = document.getElementById('nav-providers-condensed');
+  const propertyHistorySection = document.getElementById('property-history');
+  
+  if (!providersCard || !sidebar || !condensedProviders || !propertyHistorySection) {
+    return;
+  }
+
+  let isSticky = true;
+  let sidebarOriginalTop = null;
+  let transitionPoint = null;
+
+  // Get the sidebar's original position in document flow
+  function getSidebarOriginalTop() {
+    if (sidebarOriginalTop === null) {
+      const rect = sidebar.getBoundingClientRect();
+      sidebarOriginalTop = window.pageYOffset + rect.top;
+    }
+    return sidebarOriginalTop;
+  }
+
+  function handleScroll() {
+    const scrollY = window.pageYOffset;
+    const originalTop = getSidebarOriginalTop();
+    const navHeight = 104;
+    const targetStickyTop = navHeight; // Where we want sidebar top to be when sticky
+    
+    if (isSticky) {
+      // Calculate sticky transform
+      const stickyTransform = Math.max(0, scrollY + targetStickyTop - originalTop);
+      sidebar.style.transform = `translateY(${stickyTransform}px)`;
+      
+      // Check if providers card would hit property history bottom
+      const providersCardRect = providersCard.getBoundingClientRect();
+      const propertyHistoryRect = propertyHistorySection.getBoundingClientRect();
+      const providersBottom = providersCardRect.bottom;
+      const historyBottom = propertyHistoryRect.bottom;
+      const buffer = 10;
+      
+      if ((providersBottom + buffer) >= historyBottom && historyBottom < window.innerHeight) {
+        // Record where we transition and switch to scrolling mode
+        transitionPoint = stickyTransform;
+        isSticky = false;
+        condensedProviders.classList.add('show');
+      }
+    } else {
+      // In scrolling mode - gradually return to natural position
+      const scrollDelta = scrollY + targetStickyTop - originalTop;
+      const targetTransform = Math.max(0, Math.min(transitionPoint, scrollDelta));
+      sidebar.style.transform = `translateY(${targetTransform}px)`;
+      
+      // Check if we should go back to sticky
+      const propertyHistoryRect = propertyHistorySection.getBoundingClientRect();
+      const historyTop = propertyHistoryRect.top;
+      const windowHeight = window.innerHeight;
+      
+      if (historyTop > windowHeight * 0.3) {
+        // Transition back to sticky mode
+        isSticky = true;
+        condensedProviders.classList.remove('show');
+      }
+    }
+  }
+
+  // Add scroll event listener with throttling for performance
+  let ticking = false;
+  window.addEventListener('scroll', function() {
+    if (!ticking) {
+      requestAnimationFrame(function() {
+        handleScroll();
+        ticking = false;
+      });
+      ticking = true;
+    }
+  });
+
+  // Add click handler to "view all providers" button
+  const viewAllProvidersBtn = document.getElementById('view-all-providers-btn');
+  const providersOverlay = document.getElementById('providers-overlay');
+  const closeOverlayBtn = document.getElementById('close-overlay-btn');
+  const providersOverlayList = document.querySelector('.providers-overlay-list');
+  
+  if (viewAllProvidersBtn && providersOverlay) {
+    viewAllProvidersBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      
+      // Copy providers content to overlay
+      if (providersOverlayList && providersCard) {
+        const providersListClone = providersCard.querySelector('.providers-list').cloneNode(true);
+        providersOverlayList.innerHTML = '';
+        providersOverlayList.appendChild(providersListClone);
+      }
+      
+      // Position overlay relative to condensed card
+      const condensedRect = condensedProviders.getBoundingClientRect();
+      const overlayContent = providersOverlay.querySelector('.providers-overlay-content');
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      
+      // Calculate position ensuring overlay stays in viewport
+      let top = condensedRect.top;
+      let left = condensedRect.left;
+      const overlayWidth = 274; // Fixed width to match original providers card
+      
+      // Adjust position if overlay would go off screen
+      if (left + overlayWidth > viewportWidth - 20) {
+        left = viewportWidth - overlayWidth - 20;
+      }
+      if (left < 20) {
+        left = 20;
+      }
+      
+      // Ensure overlay doesn't go below viewport
+      if (top + 500 > viewportHeight) {
+        top = Math.max(20, viewportHeight - 500);
+      }
+      
+      overlayContent.style.top = top + 'px';
+      overlayContent.style.left = left + 'px';
+      
+      // Show overlay
+      providersOverlay.classList.add('show');
+    });
+  }
+  
+  // Close overlay handlers
+  if (closeOverlayBtn && providersOverlay) {
+    closeOverlayBtn.addEventListener('click', function() {
+      providersOverlay.classList.remove('show');
+    });
+    
+    // Close on background click
+    providersOverlay.addEventListener('click', function(e) {
+      if (e.target === providersOverlay) {
+        providersOverlay.classList.remove('show');
+      }
+    });
+    
+    // Close on escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && providersOverlay.classList.contains('show')) {
+        providersOverlay.classList.remove('show');
+      }
+    });
+  }
+
+  // Initial check after layout is complete
+  setTimeout(() => {
+    getSidebarOriginalTop();
+    handleScroll();
+  }, 100);
+}
+
 document.addEventListener("DOMContentLoaded", function () {
   setupNavigation();
   setupChartTabs();
   toggleNavigationOnShortPage();
+  setupStickyProviders();
 
   // Initialize the charts with a small delay to ensure CSS is loaded
   setTimeout(() => {
