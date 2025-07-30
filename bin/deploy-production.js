@@ -35,7 +35,14 @@ program
     try {
       await deployToProduction(options);
     } catch (error) {
-      console.error('Production deployment failed:', error.message);
+      // Create a basic logger for error reporting
+      const logger = new Logger({
+        quiet: false,
+        verbose: false,
+        logFile: 'deploy-production-error.log'
+      });
+      logger.error('Production deployment failed:', error.message);
+      logger.finalize();
       process.exit(1);
     }
   });
@@ -102,7 +109,7 @@ async function deployToProduction(options) {
   if (url) {
     // Download from URL
     logger.info(`📥 Downloading from URL: ${url}`);
-    sourceDir = await downloadFromUrl(url);
+    sourceDir = await downloadFromUrl(url, logger);
   } else {
     // Use local path
     logger.info(`📁 Using local path: ${localPath}`);
@@ -217,7 +224,7 @@ async function deployToProduction(options) {
   logger.finalize();
 }
 
-async function downloadFromUrl(url) {
+async function downloadFromUrl(url, logger) {
   const tempDir = path.join(process.cwd(), 'temp-download');
   await fs.ensureDir(tempDir);
 
@@ -225,7 +232,7 @@ async function downloadFromUrl(url) {
     if (url.startsWith('ipfs://') || url.includes('ipfs')) {
       // Handle IPFS URLs
       const cid = extractCidFromUrl(url);
-      console.log(`📥 Downloading from IPFS CID: ${cid}`);
+      logger.info(`📥 Downloading from IPFS CID: ${cid}`);
       
       const { exec } = await import('child_process');
       const { promisify } = await import('util');
@@ -242,7 +249,7 @@ async function downloadFromUrl(url) {
 
         for (const gateway of gateways) {
           try {
-            console.log(`🔄 Trying gateway: ${gateway}`);
+            logger.info(`🔄 Trying gateway: ${gateway}`);
             const downloadUrl = `${gateway}${cid}`;
             
             // Use curl to download
@@ -255,10 +262,10 @@ async function downloadFromUrl(url) {
               await fs.remove(path.join(tempDir, 'temp.tar.gz'));
             }
             
-            console.log(`✅ Successfully downloaded from ${gateway}`);
+            logger.info(`✅ Successfully downloaded from ${gateway}`);
             break;
           } catch (error) {
-            console.log(`❌ Failed to download from ${gateway}: ${error.message}`);
+            logger.warn(`❌ Failed to download from ${gateway}: ${error.message}`);
             continue;
           }
         }
@@ -281,7 +288,7 @@ async function downloadFromUrl(url) {
       }
     } else {
       // Handle HTTP URLs
-      console.log(`📥 Downloading from HTTP URL: ${url}`);
+      logger.info(`📥 Downloading from HTTP URL: ${url}`);
       
       const { exec } = await import('child_process');
       const { promisify } = await import('util');
