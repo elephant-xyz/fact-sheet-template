@@ -29,26 +29,18 @@ export class AssetManager {
     
     this.logger.debug(`Copying assets for ${propertyId}...`);
 
-    // Check if using default elephant.xyz domain
-    const isDefaultDomain = !this.options.domain || 
-                           this.options.domain === 'https://elephant.xyz' ||
-                           this.options.domain.includes('elephant.xyz');
-
-    // Copy CSS files (unless inlining or using default domain)
-    if (!this.options.inlineCss && !isDefaultDomain) {
+    // Copy CSS files (unless inlining)
+    if (!this.options.inlineCss) {
       await this.copyCSSAssets(propertyDir);
     }
 
-    // Copy JS files (unless inlining or using default domain)
-    if (!this.options.inlineJs && !isDefaultDomain) {
+    // Copy JS files (unless inlining)
+    if (!this.options.inlineJs) {
       await this.copyJSAssets(propertyDir);
     }
 
-    // Only copy static assets if not using the default elephant.xyz domain
-    if (!isDefaultDomain) {
-      // Copy static assets only for custom domains
-      await this.copyStaticAssets(propertyDir);
-    }
+    // Always copy static assets for local builds
+    await this.copyStaticAssets(propertyDir);
 
     // Copy property-specific images if they exist
     if (propertyDataPath && propertyData) {
