@@ -1,5 +1,6 @@
 [build]
   publish = "deploy-temp"
+  command = ""
   # No build command needed for redirect deployment
 
 [build.environment]

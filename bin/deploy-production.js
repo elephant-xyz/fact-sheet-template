@@ -47,6 +47,55 @@ program
     }
   });
 
+program
+  .command('remove-sitemap')
+  .description('Remove property from sitemap')
+  .requiredOption('-p, --property-id <id>', 'Property ID to remove from sitemap')
+  .option('--log-file <path>', 'Path to log file (default: deploy-production.log)')
+  .option('--verbose', 'Verbose output')
+  .option('--quiet', 'Suppress output except errors')
+  .option('--dry-run', 'Show what would be removed without actually removing')
+  .option('--remove-files', 'Also remove property files from deployment')
+  .action(async (options) => {
+    try {
+      await removeFromSitemap(options);
+    } catch (error) {
+      // Create a basic logger for error reporting
+      const logger = new Logger({
+        quiet: false,
+        verbose: false,
+        logFile: 'deploy-production-error.log'
+      });
+      logger.error('Sitemap removal failed:', error.message);
+      logger.finalize();
+      process.exit(1);
+    }
+  });
+
+program
+  .command('remove-property')
+  .description('Completely remove property from sitemap and deployment')
+  .requiredOption('-p, --property-id <id>', 'Property ID to remove')
+  .option('--log-file <path>', 'Path to log file (default: deploy-production.log)')
+  .option('--verbose', 'Verbose output')
+  .option('--quiet', 'Suppress output except errors')
+  .option('--dry-run', 'Show what would be removed without actually removing')
+  .action(async (options) => {
+    try {
+      await removeProperty(options);
+    } catch (error) {
+      // Create a basic logger for error reporting
+      const logger = new Logger({
+        quiet: false,
+        verbose: false,
+        logFile: 'deploy-production-error.log'
+      });
+      logger.error('Property removal failed:', error.message);
+      logger.finalize();
+      process.exit(1);
+    }
+  });
+
 async function deployToProduction(options) {
   const { propertyId, url, localPath, dryRun = false, logFile = 'deploy-production.log', verbose = false, quiet = false } = options;
 
@@ -224,6 +273,161 @@ async function deployToProduction(options) {
   logger.finalize();
 }
 
+async function removeFromSitemap(options) {
+  const { propertyId, logFile = 'deploy-production.log', verbose = false, quiet = false, dryRun = false, removeFiles = false } = options;
+
+  // Create logger
+  const logger = new Logger({
+    quiet: quiet,
+    verbose: verbose,
+    logFile: logFile
+  });
+
+  logger.info(`🗑️  Removing property ${propertyId} from sitemap`);
+
+  // Validate environment variables
+  if (!process.env.NETLIFY_SITE_ID) {
+    logger.error('NETLIFY_SITE_ID environment variable is required');
+    logger.finalize();
+    throw new Error('NETLIFY_SITE_ID environment variable is required');
+  }
+
+  if (!process.env.NETLIFY_TOKEN) {
+    logger.error('NETLIFY_TOKEN environment variable is required');
+    logger.finalize();
+    throw new Error('NETLIFY_TOKEN environment variable is required');
+  }
+
+  if (dryRun) {
+    logger.info('🔍 DRY RUN MODE - No actual sitemap removal will occur');
+    logger.finalize();
+    return;
+  }
+
+  let sitemapContent = '';
+  
+  // Always try to read from production sitemap first
+  try {
+    logger.info(`📥 Fetching current sitemap from production...`);
+    const https = await import('https');
+    const productionSitemap = await new Promise((resolve, reject) => {
+      https.get('https://elephant.xyz/sitemap.xml', (res) => {
+        let data = '';
+        res.on('data', (chunk) => data += chunk);
+        res.on('end', () => resolve(data));
+        res.on('error', reject);
+      }).on('error', reject);
+    });
+    
+    sitemapContent = productionSitemap;
+    logger.info(`✅ Successfully fetched production sitemap`);
+  } catch (error) {
+    logger.error(`❌ Could not fetch production sitemap: ${error.message}`);
+    logger.finalize();
+    throw new Error(`Could not fetch production sitemap: ${error.message}`);
+  }
+
+  // Check if property already exists in sitemap
+  const propertyUrl = `https://elephant.xyz/homes/${propertyId}`;
+  if (!sitemapContent.includes(propertyUrl)) {
+    logger.info(`✅ Property ${propertyId} not found in sitemap, no action needed.`);
+    logger.finalize();
+    return;
+  }
+
+  // Remove the property URL entry
+  let updatedSitemapContent = sitemapContent.replace(
+    new RegExp(`  <url>\\s*<loc>https://elephant\\.xyz/homes/${propertyId}</loc>\\s*<lastmod>[^<]+</lastmod>\\s*<changefreq>monthly</changefreq>\\s*<priority>0\\.8</priority>\\s*</url>`, 'g'),
+    ''
+  );
+
+  // Clean up any extra whitespace
+  updatedSitemapContent = updatedSitemapContent.replace(/\n\s*\n/g, '\n');
+
+  // Write to local sitemap for deployment
+  const localSitemapPath = path.join(process.cwd(), 'sitemap.xml');
+  await fs.writeFile(localSitemapPath, updatedSitemapContent);
+  logger.info(`✅ Removed property ${propertyId} from sitemap`);
+
+  // Deploy sitemap to Netlify
+  logger.info(`🌐 Deploying updated sitemap to Netlify...`);
+  try {
+    const deployCommand = `netlify deploy --prod --dir=${process.cwd()} --site=${process.env.NETLIFY_SITE_ID} --auth=${process.env.NETLIFY_TOKEN}`;
+    const { stdout, stderr } = await execAsync(deployCommand);
+
+    if (stderr) {
+      logger.warn('⚠️  Netlify warnings:', stderr);
+    }
+
+    logger.info('✅ Successfully deployed updated sitemap to Netlify');
+    logger.info(`🌐 Updated sitemap available at: https://elephant.xyz/sitemap.xml`);
+  } catch (error) {
+    logger.error('❌ Netlify sitemap deployment failed:', error.message);
+    throw error;
+  }
+
+  // If --remove-files is true, remove the property files from the deployment directory
+  if (removeFiles) {
+    const propertyDir = path.join(process.cwd(), 'deploy-temp', 'homes', propertyId);
+    if (await fs.pathExists(propertyDir)) {
+      logger.info(`🗑️  Removing property files from: ${propertyDir}`);
+      await fs.remove(propertyDir);
+      logger.info(`✅ Property files removed from: ${propertyDir}`);
+    } else {
+      logger.warn(`⚠️  Property files not found at: ${propertyDir}, no files to remove.`);
+    }
+  }
+
+  logger.finalize();
+}
+
+async function removeProperty(options) {
+  const { propertyId, logFile = 'deploy-production.log', verbose = false, quiet = false, dryRun = false } = options;
+
+  // Create logger
+  const logger = new Logger({
+    quiet: quiet,
+    verbose: verbose,
+    logFile: logFile
+  });
+
+  logger.info(`🗑️  Completely removing property ${propertyId} from sitemap and deployment`);
+
+  // Validate environment variables
+  if (!process.env.NETLIFY_SITE_ID) {
+    logger.error('NETLIFY_SITE_ID environment variable is required');
+    logger.finalize();
+    throw new Error('NETLIFY_SITE_ID environment variable is required');
+  }
+
+  if (!process.env.NETLIFY_TOKEN) {
+    logger.error('NETLIFY_TOKEN environment variable is required');
+    logger.finalize();
+    throw new Error('NETLIFY_TOKEN environment variable is required');
+  }
+
+  if (dryRun) {
+    logger.info('🔍 DRY RUN MODE - No actual property removal will occur');
+    logger.finalize();
+    return;
+  }
+
+  // Remove from sitemap
+  await removeFromSitemap({ propertyId, logFile, verbose, quiet, dryRun: false, removeFiles: false });
+
+  // Remove from deployment directory
+  const propertyDir = path.join(process.cwd(), 'deploy-temp', 'homes', propertyId);
+  if (await fs.pathExists(propertyDir)) {
+    logger.info(`🗑️  Removing property files from: ${propertyDir}`);
+    await fs.remove(propertyDir);
+    logger.info(`✅ Property files removed from: ${propertyDir}`);
+  } else {
+    logger.warn(`⚠️  Property files not found at: ${propertyDir}, no files to remove.`);
+  }
+
+  logger.finalize();
+}
+
 async function downloadFromUrl(url, logger) {
   const tempDir = path.join(process.cwd(), 'temp-download');
   await fs.ensureDir(tempDir);
@@ -346,23 +550,29 @@ async function updateSitemap(propertyId, deployDir, logger) {
   const sitemapPath = path.join(deployDir, 'sitemap.xml');
   let sitemapContent = '';
   
-  // First try to read existing sitemap from deploy directory
-  if (await fs.pathExists(sitemapPath)) {
-    sitemapContent = await fs.readFile(sitemapPath, 'utf8');
-    logger.info(`📖 Found existing sitemap.xml in deploy directory`);
-  } else {
-    // Try to read from project root
-    const rootSitemapPath = path.join(process.cwd(), 'sitemap.xml');
-    if (await fs.pathExists(rootSitemapPath)) {
-      sitemapContent = await fs.readFile(rootSitemapPath, 'utf8');
-      logger.info(`📖 Found existing sitemap.xml in project root`);
-    } else {
-      // Create new sitemap
-      sitemapContent = `<?xml version="1.0" encoding="UTF-8"?>
+  // Always try to read from production sitemap first
+  try {
+    logger.info(`📥 Fetching current sitemap from production...`);
+    const https = await import('https');
+    const productionSitemap = await new Promise((resolve, reject) => {
+      https.get('https://elephant.xyz/sitemap.xml', (res) => {
+        let data = '';
+        res.on('data', (chunk) => data += chunk);
+        res.on('end', () => resolve(data));
+        res.on('error', reject);
+      }).on('error', reject);
+    });
+    
+    sitemapContent = productionSitemap;
+    logger.info(`✅ Successfully fetched production sitemap`);
+  } catch (error) {
+    logger.warn(`⚠️  Could not fetch production sitemap: ${error.message}`);
+    logger.info(`📝 Creating new sitemap.xml`);
+    
+    // Create new sitemap if production fetch fails
+    sitemapContent = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </urlset>`;
-      logger.info(`📝 Creating new sitemap.xml`);
-    }
   }
 
   // Check if property already exists in sitemap
