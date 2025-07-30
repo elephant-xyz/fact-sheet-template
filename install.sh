@@ -8,8 +8,6 @@ set -e  # Exit on any error
 
 INSTALL_DIR="${HOME}/.elephant-fact-sheet"
 BIN_DIR="${HOME}/.local/bin"
-STATIC_TARGET_DIR="$BIN_DIR/templates/assets/static"
-TEST="/content/templates/assets/static"
 
 # Check Node.js version
 if ! command -v node &> /dev/null; then
@@ -38,10 +36,8 @@ cd "$INSTALL_DIR"
 npm install --silent --no-audit --no-fund > /dev/null 2>&1
 npm run build --silent > /dev/null 2>&1
 
-# Setup directories and copy assets
-mkdir -p "$BIN_DIR" "$STATIC_TARGET_DIR" "$TEST"
-cp -r "$INSTALL_DIR/templates/assets/static/"* "$STATIC_TARGET_DIR"
-cp -r "$INSTALL_DIR/templates/assets/static/"* "$TEST"
+# Setup directories
+mkdir -p "$BIN_DIR"
 
 # Link and make executable
 ln -sf "$INSTALL_DIR/bin/fact-sheet.js" "$BIN_DIR/fact-sheet"

@@ -320,12 +320,53 @@ Generated websites are self-contained and can be deployed anywhere:
 - **CDN**: Each property folder is independent and cacheable
 - **Local viewing**: Open `index.html` directly in a browser
 
+### Testing
+
+The project includes comprehensive testing to ensure HTML generation works correctly for all example data:
+
+#### Local Testing
+
+```bash
+# Run the comprehensive test for all example-data folders
+npm run test:generate-all
+
+# Or run the test directly
+node test-generate-all.js
+```
+
+This test will:
+- Generate HTML for all directories in `example-data/`
+- Validate HTML structure and content
+- Check that all assets are properly copied
+- Provide a detailed summary of results
+
+#### GitHub Actions
+
+The project includes automated CI/CD workflows:
+
+- **`test-generate-all.yml`**: Runs the comprehensive HTML generation test
+- **`ci.yml`**: Full CI pipeline with build, test, and validation
+
+These workflows run on:
+- Every push to `main`/`master` branches
+- Every pull request
+- Manual triggering via GitHub Actions UI
+
+#### Test Coverage
+
+The tests verify:
+- ✅ HTML generation for all example-data directories
+- ✅ Proper HTML structure (DOCTYPE, html, head, body tags)
+- ✅ Asset copying (CSS, JS, SVG icons, images)
+- ✅ File size validation
+- ✅ Cross-platform compatibility
+
 ### Contributing
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Make your changes
-4. Test thoroughly with `npm test` and `npm run example`
+4. Test thoroughly with `npm run test:generate-all`
 5. Commit your changes (`git commit -m 'Add amazing feature'`)
 6. Push to the branch (`git push origin feature/amazing-feature`)
 7. Open a Pull Request
