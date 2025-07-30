@@ -103,11 +103,19 @@ async function main() {
     }
     
     const csvFilename = args[0];
-    const csvPath = path.join('.elephant-dev/data', csvFilename);
+    
+    // Handle both relative and absolute paths
+    let csvPath;
+    if (path.isAbsolute(csvFilename)) {
+      csvPath = csvFilename;
+    } else {
+      csvPath = path.join('.elephant-dev/data', csvFilename);
+    }
     
     // Check if file exists
     if (!fs.existsSync(csvPath)) {
       logger.error(`❌ CSV file not found: ${csvPath}`);
+      logger.error(`Tried both absolute path and relative path in .elephant-dev/data/`);
       process.exit(1);
     }
     
