@@ -185,6 +185,10 @@ async function deployToProduction(options) {
   await fs.writeFile(timestampFile, `Deployed at: ${new Date().toISOString()}`);
   logger.info(`✅ Added timestamp to force deployment`);
 
+  // Update sitemap in deploy directory
+  logger.info(`🗺️  Updating sitemap...`);
+  await updateSitemap(propertyId, deployDir, logger);
+
   // Deploy to Netlify
   logger.info(`🌐 Deploying to Netlify...`);
 
@@ -198,10 +202,7 @@ async function deployToProduction(options) {
 
     logger.info('✅ Successfully deployed to Netlify');
     logger.info(`🌐 Your property is now live at: https://elephant.xyz/homes/${propertyId}`);
-
-    // Update sitemap
-    logger.info(`🗺️  Updating sitemap...`);
-    await updateSitemap(propertyId, process.env.NETLIFY_SITE_ID, process.env.NETLIFY_TOKEN, logger);
+    logger.info(`🌐 Sitemap available at: https://elephant.xyz/sitemap.xml`);
 
   } catch (error) {
     logger.error('❌ Netlify deployment failed:', error.message);
@@ -334,20 +335,27 @@ function extractCidFromUrl(url) {
   throw new Error('Could not extract CID from URL');
 }
 
-async function updateSitemap(propertyId, netlifySiteId, netlifyToken, logger) {
-  const sitemapPath = path.join(process.cwd(), 'sitemap.xml');
+async function updateSitemap(propertyId, deployDir, logger) {
+  const sitemapPath = path.join(deployDir, 'sitemap.xml');
   let sitemapContent = '';
   
+  // First try to read existing sitemap from deploy directory
   if (await fs.pathExists(sitemapPath)) {
-    // Read existing sitemap
     sitemapContent = await fs.readFile(sitemapPath, 'utf8');
-    logger.info(`📖 Found existing sitemap.xml`);
+    logger.info(`📖 Found existing sitemap.xml in deploy directory`);
   } else {
-    // Create new sitemap
-    sitemapContent = `<?xml version="1.0" encoding="UTF-8"?>
+    // Try to read from project root
+    const rootSitemapPath = path.join(process.cwd(), 'sitemap.xml');
+    if (await fs.pathExists(rootSitemapPath)) {
+      sitemapContent = await fs.readFile(rootSitemapPath, 'utf8');
+      logger.info(`📖 Found existing sitemap.xml in project root`);
+    } else {
+      // Create new sitemap
+      sitemapContent = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </urlset>`;
-    logger.info(`📝 Creating new sitemap.xml`);
+      logger.info(`📝 Creating new sitemap.xml`);
+    }
   }
 
   // Check if property already exists in sitemap
@@ -374,23 +382,6 @@ async function updateSitemap(propertyId, netlifySiteId, netlifyToken, logger) {
 
   await fs.writeFile(sitemapPath, updatedSitemapContent);
   logger.info(`✅ Added property ${propertyId} to sitemap`);
-
-  // Deploy sitemap to Netlify
-  logger.info(`🌐 Deploying sitemap to Netlify...`);
-  try {
-    const deployCommand = `netlify deploy --prod --dir=${process.cwd()} --site=${netlifySiteId} --auth=${netlifyToken}`;
-    const { stdout, stderr } = await execAsync(deployCommand);
-
-    if (stderr) {
-      logger.warn('⚠️  Netlify warnings:', stderr);
-    }
-
-    logger.info('✅ Successfully deployed sitemap to Netlify');
-    logger.info(`🌐 Sitemap available at: https://elephant.xyz/sitemap.xml`);
-  } catch (error) {
-    logger.error('❌ Netlify sitemap deployment failed:', error.message);
-    throw error;
-  }
 }
 
 program.parse(); 
