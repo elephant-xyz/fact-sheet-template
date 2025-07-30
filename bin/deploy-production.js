@@ -182,6 +182,86 @@ async function deployToProduction(options) {
     }
   }
 
+  // Download and copy images from IPFS content to shared public directory
+  if (url) {
+    logger.info(`📥 Downloading images from IPFS content...`);
+    const imageFiles = await fs.readdir(sourceDir);
+    const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'];
+    
+    for (const file of imageFiles) {
+      const fileExt = path.extname(file).toLowerCase();
+      if (imageExtensions.includes(fileExt)) {
+        const sourcePath = path.join(sourceDir, file);
+        const targetPath = path.join(sharedPublicDir, file);
+        await fs.copy(sourcePath, targetPath);
+        logger.info(`✅ Copied image: ${file} to shared public directory`);
+      }
+    }
+    
+    // Download only referenced assets from IPFS
+    logger.info(`📥 Downloading referenced assets from IPFS...`);
+    const cid = extractCidFromUrl(url);
+    const ipfsGateway = `https://${cid}.ipfs.dweb.link/`;
+    
+    try {
+      const { exec } = await import('child_process');
+      const { promisify } = await import('util');
+      const execAsync = promisify(exec);
+      
+      // Get all referenced assets from HTML
+      const htmlContent = await fs.readFile(path.join(propertyDir, 'index.html'), 'utf8');
+      const imageMatches = htmlContent.match(/src="[^"]*\.(jpg|jpeg|png|gif|webp|svg)"/g) || [];
+      const hrefMatches = htmlContent.match(/href="[^"]*\.(jpg|jpeg|png|gif|webp|svg)"/g) || [];
+      const allMatches = [...imageMatches, ...hrefMatches];
+      
+      // Extract unique filenames
+      const assetFiles = new Set();
+      for (const match of allMatches) {
+        const filename = match.match(/[^"]*\/([^"]+)/)?.[1];
+        if (filename) {
+          assetFiles.add(filename);
+        }
+      }
+      
+      logger.info(`📥 Attempting to download ${assetFiles.size} referenced assets from IPFS...`);
+      
+      // Download all discovered assets
+      let downloadedCount = 0;
+      for (const filename of assetFiles) {
+        const downloadUrl = `${ipfsGateway}${filename}`;
+        const targetPath = path.join(sharedPublicDir, filename);
+        
+        try {
+          logger.info(`📥 Trying to download: ${filename}`);
+          const curlCommand = `curl -L -o "${targetPath}" "${downloadUrl}"`;
+          await execAsync(curlCommand);
+          
+          // Verify download
+          const stats = await fs.stat(targetPath);
+          if (stats.size > 0) {
+            logger.info(`✅ Downloaded from IPFS: ${filename}`);
+            downloadedCount++;
+          } else {
+            // Remove empty file
+            await fs.remove(targetPath);
+            logger.warn(`⚠️  Empty file, skipping: ${filename}`);
+          }
+        } catch (error) {
+          logger.warn(`⚠️  Failed to download: ${filename} - ${error.message}`);
+          // Remove failed download file if it exists
+          if (await fs.pathExists(targetPath)) {
+            await fs.remove(targetPath);
+          }
+        }
+      }
+      
+      logger.info(`✅ Successfully downloaded ${downloadedCount} assets from IPFS`);
+      
+    } catch (error) {
+      logger.warn(`⚠️  Could not download assets from IPFS: ${error.message}`);
+    }
+  }
+
   // Copy assets from templates to shared public directory
   logger.info(`📦 Copying assets to shared public directory...`);
   const assetsSource = path.join(process.cwd(), 'templates', 'assets');
@@ -227,6 +307,22 @@ async function deployToProduction(options) {
     
     // Also fix any remaining relative paths that might have been missed
     html = html.replace(/\.\/homes\/public\//g, '/homes/public/');
+    
+    // Fix image paths from downloaded HTML (they reference files in the same directory)
+    // These files are actually in the shared public directory
+    html = html.replace(/src="\.\/([^"]+)"/g, 'src="/homes/public/$1"');
+    html = html.replace(/href="\.\/([^"]+)"/g, 'href="/homes/public/$1"');
+    
+    // Fix any remaining relative paths for images and assets
+    html = html.replace(/src="([^"]*\.(jpg|jpeg|png|gif|webp|svg))"/g, (match, filename) => {
+      if (filename.startsWith('/')) {
+        return match; // Already absolute
+      }
+      if (filename.startsWith('http')) {
+        return match; // Already external URL
+      }
+      return `src="/homes/public/${filename}"`;
+    });
     
     // Remove problematic Cloudflare script
     html = html.replace(/<script data-cfasync="false" src="\/cdn-cgi\/scripts\/[^"]*"><\/script>/g, '');
@@ -457,35 +553,52 @@ async function downloadFromUrl(url, logger) {
             const downloadUrl = `${gateway}${cid}`;
             
             // Use curl to download
-            const curlCommand = `curl -L -o "${tempDir}/temp.tar.gz" "${downloadUrl}"`;
+            const curlCommand = `curl -L -o "${tempDir}/downloaded-content" "${downloadUrl}"`;
             await execAsync(curlCommand);
             
-            // Extract if it's a tar.gz
-            if (await fs.pathExists(path.join(tempDir, 'temp.tar.gz'))) {
-              await execAsync(`cd "${tempDir}" && tar -xzf temp.tar.gz`);
-              await fs.remove(path.join(tempDir, 'temp.tar.gz'));
-            }
+            // Check what type of file we downloaded
+            const fileTypeCommand = `file "${tempDir}/downloaded-content"`;
+            const { stdout: fileType } = await execAsync(fileTypeCommand);
             
-            logger.info(`✅ Successfully downloaded from ${gateway}`);
-            break;
+            if (fileType.includes('HTML') || fileType.includes('text')) {
+              // It's an HTML file, create a directory structure
+              const extractedDir = path.join(tempDir, 'extracted');
+              await fs.ensureDir(extractedDir);
+              
+              // Move the HTML file to index.html
+              await fs.move(path.join(tempDir, 'downloaded-content'), path.join(extractedDir, 'index.html'));
+              
+              logger.info(`✅ Successfully downloaded HTML from ${gateway}`);
+              return extractedDir;
+            } else if (fileType.includes('gzip') || fileType.includes('tar')) {
+              // It's a compressed file, extract it
+              await execAsync(`cd "${tempDir}" && tar -xzf downloaded-content`);
+              await fs.remove(path.join(tempDir, 'downloaded-content'));
+              
+              // Find the extracted directory
+              const files = await fs.readdir(tempDir);
+              const extractedDir = files.find(file => {
+                const stat = fs.statSync(path.join(tempDir, file));
+                return stat.isDirectory();
+              });
+
+              if (!extractedDir) {
+                throw new Error('No extracted directory found');
+              }
+
+              logger.info(`✅ Successfully downloaded and extracted from ${gateway}`);
+              return path.join(tempDir, extractedDir);
+            } else {
+              logger.warn(`⚠️  Unknown file type: ${fileType}`);
+              continue;
+            }
           } catch (error) {
             logger.warn(`❌ Failed to download from ${gateway}: ${error.message}`);
             continue;
           }
         }
 
-        // Find the extracted directory
-        const files = await fs.readdir(tempDir);
-        const extractedDir = files.find(file => {
-          const stat = fs.statSync(path.join(tempDir, file));
-          return stat.isDirectory();
-        });
-
-        if (!extractedDir) {
-          throw new Error('No extracted directory found');
-        }
-
-        return path.join(tempDir, extractedDir);
+        throw new Error('Failed to download from all gateways');
 
       } catch (error) {
         throw new Error(`Failed to download from IPFS: ${error.message}`);
@@ -499,27 +612,44 @@ async function downloadFromUrl(url, logger) {
       const execAsync = promisify(exec);
 
       try {
-        const curlCommand = `curl -L -o "${tempDir}/temp.tar.gz" "${url}"`;
+        const curlCommand = `curl -L -o "${tempDir}/downloaded-content" "${url}"`;
         await execAsync(curlCommand);
         
-        // Extract if it's a tar.gz
-        if (await fs.pathExists(path.join(tempDir, 'temp.tar.gz'))) {
-          await execAsync(`cd "${tempDir}" && tar -xzf temp.tar.gz`);
-          await fs.remove(path.join(tempDir, 'temp.tar.gz'));
-        }
+        // Check what type of file we downloaded
+        const fileTypeCommand = `file "${tempDir}/downloaded-content"`;
+        const { stdout: fileType } = await execAsync(fileTypeCommand);
         
-        // Find the extracted directory
-        const files = await fs.readdir(tempDir);
-        const extractedDir = files.find(file => {
-          const stat = fs.statSync(path.join(tempDir, file));
-          return stat.isDirectory();
-        });
+        if (fileType.includes('HTML') || fileType.includes('text')) {
+          // It's an HTML file, create a directory structure
+          const extractedDir = path.join(tempDir, 'extracted');
+          await fs.ensureDir(extractedDir);
+          
+          // Move the HTML file to index.html
+          await fs.move(path.join(tempDir, 'downloaded-content'), path.join(extractedDir, 'index.html'));
+          
+          logger.info(`✅ Successfully downloaded HTML from HTTP URL`);
+          return extractedDir;
+        } else if (fileType.includes('gzip') || fileType.includes('tar')) {
+          // It's a compressed file, extract it
+          await execAsync(`cd "${tempDir}" && tar -xzf downloaded-content`);
+          await fs.remove(path.join(tempDir, 'downloaded-content'));
+          
+          // Find the extracted directory
+          const files = await fs.readdir(tempDir);
+          const extractedDir = files.find(file => {
+            const stat = fs.statSync(path.join(tempDir, file));
+            return stat.isDirectory();
+          });
 
-        if (!extractedDir) {
-          throw new Error('No extracted directory found');
+          if (!extractedDir) {
+            throw new Error('No extracted directory found');
+          }
+
+          logger.info(`✅ Successfully downloaded and extracted from HTTP URL`);
+          return path.join(tempDir, extractedDir);
+        } else {
+          throw new Error(`Unknown file type: ${fileType}`);
         }
-
-        return path.join(tempDir, extractedDir);
 
       } catch (error) {
         throw new Error(`Failed to download from HTTP URL: ${error.message}`);
@@ -547,58 +677,99 @@ function extractCidFromUrl(url) {
 }
 
 async function updateSitemap(propertyId, deployDir, logger) {
-  const sitemapPath = path.join(deployDir, 'sitemap.xml');
-  let sitemapContent = '';
-  
-  // Always try to read from production sitemap first
   try {
-    logger.info(`📥 Fetching current sitemap from production...`);
-    const https = await import('https');
-    const productionSitemap = await new Promise((resolve, reject) => {
-      https.get('https://elephant.xyz/sitemap.xml', (res) => {
-        let data = '';
-        res.on('data', (chunk) => data += chunk);
-        res.on('end', () => resolve(data));
-        res.on('error', reject);
-      }).on('error', reject);
-    });
+    const sitemapPath = path.join(deployDir, 'sitemap.xml');
+    let sitemapContent = '';
     
-    sitemapContent = productionSitemap;
-    logger.info(`✅ Successfully fetched production sitemap`);
-  } catch (error) {
-    logger.warn(`⚠️  Could not fetch production sitemap: ${error.message}`);
-    logger.info(`📝 Creating new sitemap.xml`);
+    logger.info(`🗺️  Starting sitemap update for property ${propertyId}`);
+    logger.info(`📁 Sitemap will be written to: ${sitemapPath}`);
     
-    // Create new sitemap if production fetch fails
-    sitemapContent = `<?xml version="1.0" encoding="UTF-8"?>
+    // Always try to read from production sitemap first
+    try {
+      logger.info(`📥 Fetching current sitemap from production...`);
+      const https = await import('https');
+      const productionSitemap = await new Promise((resolve, reject) => {
+        https.get('https://elephant.xyz/sitemap.xml', (res) => {
+          let data = '';
+          res.on('data', (chunk) => data += chunk);
+          res.on('end', () => resolve(data));
+          res.on('error', reject);
+        }).on('error', reject);
+      });
+      
+      logger.info(`📥 Received ${productionSitemap.length} characters from production sitemap`);
+      
+      // Check if the response is actually XML (not HTML error page)
+      if (productionSitemap.trim().startsWith('<?xml') || productionSitemap.trim().startsWith('<urlset')) {
+        sitemapContent = productionSitemap;
+        logger.info(`✅ Successfully fetched production sitemap`);
+      } else {
+        logger.warn(`⚠️  Production sitemap returned HTML instead of XML, creating new sitemap`);
+        logger.warn(`⚠️  First 100 chars: ${productionSitemap.substring(0, 100)}`);
+        throw new Error('Production sitemap is not valid XML');
+      }
+    } catch (error) {
+      logger.warn(`⚠️  Could not fetch production sitemap: ${error.message}`);
+      logger.info(`📝 Creating new sitemap.xml`);
+      
+      // Create new sitemap if production fetch fails
+      sitemapContent = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 </urlset>`;
-  }
+    }
 
-  // Check if property already exists in sitemap
-  const propertyUrl = `https://elephant.xyz/homes/${propertyId}`;
-  if (sitemapContent.includes(propertyUrl)) {
-    logger.info(`✅ Property ${propertyId} already exists in sitemap`);
-    return;
-  }
-
-  // Add new property to sitemap
-  const newUrlEntry = `  <url>
+    // Check if property already exists in sitemap
+    const propertyUrl = `https://elephant.xyz/homes/${propertyId}`;
+    const currentTime = new Date().toISOString();
+    
+    if (sitemapContent.includes(propertyUrl)) {
+      logger.info(`✅ Property ${propertyId} already exists in sitemap, updating timestamp`);
+      
+      // Update the lastmod timestamp for existing property
+      const updatedSitemapContent = sitemapContent.replace(
+        new RegExp(`(<url>\\s*<loc>${propertyUrl}</loc>\\s*<lastmod>)[^<]*(</lastmod>)`, 'g'),
+        `$1${currentTime}$2`
+      );
+      
+      if (updatedSitemapContent !== sitemapContent) {
+        sitemapContent = updatedSitemapContent;
+        logger.info(`✅ Updated lastmod timestamp for property ${propertyId}`);
+      } else {
+        logger.info(`⚠️  Could not update timestamp (regex didn't match)`);
+      }
+    } else {
+      // Add new property to sitemap
+      const newUrlEntry = `  <url>
     <loc>${propertyUrl}</loc>
-    <lastmod>${new Date().toISOString()}</lastmod>
+    <lastmod>${currentTime}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>`;
 
-  // Insert before closing urlset tag
-  const updatedSitemapContent = sitemapContent.replace(
-    '</urlset>',
-    `${newUrlEntry}
+      // Insert before closing urlset tag
+      sitemapContent = sitemapContent.replace(
+        '</urlset>',
+        `${newUrlEntry}
 </urlset>`
-  );
+      );
+      
+      logger.info(`✅ Added property ${propertyId} to sitemap`);
+    }
 
-  await fs.writeFile(sitemapPath, updatedSitemapContent);
-  logger.info(`✅ Added property ${propertyId} to sitemap`);
+    logger.info(`📝 Writing sitemap to: ${sitemapPath}`);
+    await fs.writeFile(sitemapPath, sitemapContent);
+    
+    // Verify the file was created
+    if (await fs.pathExists(sitemapPath)) {
+      const stats = await fs.stat(sitemapPath);
+      logger.info(`✅ Successfully wrote sitemap (${stats.size} bytes)`);
+    } else {
+      throw new Error('Sitemap file was not created');
+    }
+  } catch (error) {
+    logger.error(`❌ Failed to update sitemap: ${error.message}`);
+    throw error;
+  }
 }
 
 program.parse(); 
