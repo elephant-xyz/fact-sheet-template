@@ -98,6 +98,21 @@ program
 
 async function deployToProduction(options) {
   const { propertyId, url, localPath, dryRun = false, logFile = 'deploy-production.log', verbose = false, quiet = false } = options;
+  
+  // Check if Netlify CLI is installed
+  try {
+    await execAsync('netlify --version');
+  } catch (error) {
+    logger.info('📦 Netlify CLI not found, installing...');
+    try {
+      await execAsync('npm install -g netlify-cli');
+      logger.success('✅ Netlify CLI installed successfully');
+    } catch (installError) {
+      logger.error('❌ Failed to install Netlify CLI:', installError.message);
+      logger.error('Please install Netlify CLI manually: npm install -g netlify-cli');
+      process.exit(1);
+    }
+  }
 
   // Create logger
   const logger = new Logger({
@@ -357,9 +372,40 @@ async function deployToProduction(options) {
     logger.info(`🌐 Sitemap available at: https://elephant.xyz/sitemap.xml`);
 
   } catch (error) {
-    logger.error('❌ Netlify deployment failed:', error.message);
-    logger.finalize();
-    throw error;
+    logger.error('❌ Netlify CLI deployment failed, trying alternative method...');
+    
+    // Fallback: Try using curl to upload to Netlify
+    try {
+      logger.info('🔄 Trying alternative deployment method...');
+      
+      // Create a zip file of the deployment directory
+      const zipPath = path.join(process.cwd(), 'deploy-temp.zip');
+      await execAsync(`cd "${deployDir}" && zip -r "${zipPath}" .`);
+      
+      // Upload using Netlify API
+      const uploadUrl = `https://api.netlify.com/api/v1/sites/${process.env.NETLIFY_SITE_ID}/deploys`;
+      const uploadCommand = `curl -H "Authorization: Bearer ${process.env.NETLIFY_TOKEN}" -H "Content-Type: application/zip" --data-binary "@${zipPath}" "${uploadUrl}"`;
+      
+      const { stdout: uploadResult } = await execAsync(uploadCommand);
+      const result = JSON.parse(uploadResult);
+      
+      if (result.url) {
+        logger.success('✅ Successfully deployed using alternative method');
+        logger.info(`🌐 Your property is now live at: https://elephant.xyz/homes/${propertyId}`);
+        logger.info(`🌐 Sitemap available at: https://elephant.xyz/sitemap.xml`);
+      } else {
+        throw new Error('Upload failed - no URL returned');
+      }
+      
+      // Clean up zip file
+      await fs.remove(zipPath);
+      
+    } catch (fallbackError) {
+      logger.error('❌ Alternative deployment method also failed:', fallbackError.message);
+      logger.error('❌ Netlify deployment failed:', error.message);
+      logger.finalize();
+      throw error;
+    }
   }
 
   // Clean up
