@@ -92,8 +92,9 @@ async function main() {
     // Get CSV filename from command line arguments
     const args = process.argv.slice(2);
     if (args.length === 0) {
-      logger.error('❌ Usage: node bin/deploy-from-csv.js <csv-filename>');
-      logger.error('Example: node bin/deploy-from-csv.js "upload-results (3).csv"');
+      logger.error('❌ Usage: node bin/deploy-from-csv.js <csv-file-path>');
+      logger.error('Example: node bin/deploy-from-csv.js "/content/upload-results.csv"');
+      logger.error('Example: node bin/deploy-from-csv.js "./data/upload-results.csv"');
       logger.error('');
       logger.error('CSV should have columns: dataCid, htmlLink');
       logger.error('Environment variables (can be set in .env file):');
@@ -102,20 +103,12 @@ async function main() {
       process.exit(1);
     }
     
-    const csvFilename = args[0];
-    
-    // Handle both relative and absolute paths
-    let csvPath;
-    if (path.isAbsolute(csvFilename)) {
-      csvPath = csvFilename;
-    } else {
-      csvPath = path.join('.elephant-dev/data', csvFilename);
-    }
+    const csvPath = args[0];
     
     // Check if file exists
     if (!fs.existsSync(csvPath)) {
       logger.error(`❌ CSV file not found: ${csvPath}`);
-      logger.error(`Tried both absolute path and relative path in .elephant-dev/data/`);
+      logger.error(`Please provide the full path to your CSV file`);
       process.exit(1);
     }
     
@@ -124,7 +117,7 @@ async function main() {
     
     // Parse CSV
     const data = parseCSV(csvContent);
-    logger.info(`📋 Found ${data.length} entries to deploy from ${csvFilename}`);
+    logger.info(`📋 Found ${data.length} entries to deploy from ${path.basename(csvPath)}`);
     
     // Process each entry
     for (const row of data) {
