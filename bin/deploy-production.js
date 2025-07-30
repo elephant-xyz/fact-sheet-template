@@ -99,6 +99,13 @@ program
 async function deployToProduction(options) {
   const { propertyId, url, localPath, dryRun = false, logFile = 'deploy-production.log', verbose = false, quiet = false } = options;
   
+  // Create logger first
+  const logger = new Logger({
+    quiet: quiet,
+    verbose: verbose,
+    logFile: logFile
+  });
+  
   // Check if Netlify CLI is installed
   try {
     await execAsync('netlify --version');
@@ -113,13 +120,6 @@ async function deployToProduction(options) {
       process.exit(1);
     }
   }
-
-  // Create logger
-  const logger = new Logger({
-    quiet: quiet,
-    verbose: verbose,
-    logFile: logFile
-  });
 
   logger.info(`🚀 Deploying property ${propertyId} to elephant.xyz production`);
 
