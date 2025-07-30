@@ -379,8 +379,8 @@ export class TemplateRenderer {
           this.options.domain.includes("elephant.xyz");
 
         if (isDefaultDomain) {
-          // For default domain, all assets use CDN
-          return `https://elephant.xyz/homes/public/${filename}`;
+          // For default domain, use local paths instead of CDN
+          return `./${filename}`;
         }
 
         // For custom domains, use the provided domain
