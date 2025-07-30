@@ -18,7 +18,8 @@
     "prepare": "npm run build",
     "prepublishOnly": "npm run clean && npm run build && npm run test",
     "example": "node bin/fact-sheet.js generate --input ./example-data --output ./example-output --verbose",
-    "example-inline": "node bin/fact-sheet.js generate --input ./example-data --output ./example-output-inline --inline-css --inline-js --verbose"
+    "example-inline": "node bin/fact-sheet.js generate --input ./example-data --output ./example-output-inline --inline-css --inline-js --verbose",
+    "test:generate-all": "node test-generate-all.js"
   },
   "files": [
     "bin/",

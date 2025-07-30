@@ -851,10 +851,14 @@ export class IPLDDataLoader {
     } else if (Object.hasOwn(layoutsByDataGroup, "Photo Metadata")) {
       layouts = layoutsByDataGroup["Photo Metadata"];
     } else {
-      const [_, value] = Object.entries(layoutsByDataGroup).reduce(
-        (max, current) => (current[1].length > max[1].length ? current : max),
-      );
-      layouts = value;
+      if (Object.keys(layoutsByDataGroup).length === 0) {
+        layouts = [];
+      } else {
+        const [_, value] = Object.entries(layoutsByDataGroup).reduce(
+          (max, current) => (current[1].length > max[1].length ? current : max),
+        );
+        layouts = value;
+      }
     }
 
     const firstFloorLayouts = layouts
