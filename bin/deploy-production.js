@@ -526,6 +526,13 @@ async function removeProperty(options) {
 
 async function downloadFromUrl(url, logger) {
   const tempDir = path.join(process.cwd(), 'temp-download');
+  
+  // Clean up any existing content from previous runs
+  if (await fs.pathExists(tempDir)) {
+    logger.info(`🧹 Cleaning up previous download directory`);
+    await fs.remove(tempDir);
+  }
+  
   await fs.ensureDir(tempDir);
 
   try {
@@ -552,8 +559,15 @@ async function downloadFromUrl(url, logger) {
             logger.info(`🔄 Trying gateway: ${gateway}`);
             const downloadUrl = `${gateway}${cid}`;
             
-            // Use curl to download
-            const curlCommand = `curl -L -o "${tempDir}/downloaded-content" "${downloadUrl}"`;
+            // Use curl to download with timeout and retry
+            const curlCommand = `curl -L --max-time 30 --retry 3 --retry-delay 2 -o "${tempDir}/downloaded-content" "${downloadUrl}"`;
+            
+            // Remove any existing downloaded file
+            const downloadedFile = path.join(tempDir, 'downloaded-content');
+            if (await fs.pathExists(downloadedFile)) {
+              await fs.remove(downloadedFile);
+            }
+            
             await execAsync(curlCommand);
             
             // Check what type of file we downloaded
@@ -612,7 +626,14 @@ async function downloadFromUrl(url, logger) {
       const execAsync = promisify(exec);
 
       try {
-        const curlCommand = `curl -L -o "${tempDir}/downloaded-content" "${url}"`;
+        const curlCommand = `curl -L --max-time 30 --retry 3 --retry-delay 2 -o "${tempDir}/downloaded-content" "${url}"`;
+        
+        // Remove any existing downloaded file
+        const downloadedFile = path.join(tempDir, 'downloaded-content');
+        if (await fs.pathExists(downloadedFile)) {
+          await fs.remove(downloadedFile);
+        }
+        
         await execAsync(curlCommand);
         
         // Check what type of file we downloaded
