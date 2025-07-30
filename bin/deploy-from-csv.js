@@ -69,7 +69,7 @@ async function deployProperty(propertyId, htmlLink) {
     process.exit(1);
   }
   
-  const command = `NETLIFY_SITE_ID=${netlifySiteId} NETLIFY_TOKEN=${netlifyToken} node ~/.elephant-fact-sheet/bin/deploy-production.js deploy -p ${propertyId} -u "${htmlLink}" --verbose`;
+  const command = `NETLIFY_SITE_ID=${netlifySiteId} NETLIFY_TOKEN=${netlifyToken} node bin/deploy-production.js deploy -p ${propertyId} -u "${htmlLink}" --verbose`;
   
   logger.info(`🚀 Deploying property ${propertyId} from ${htmlLink}...`);
   
@@ -96,6 +96,7 @@ async function main() {
       logger.error('Example: node bin/deploy-from-csv.js "/content/upload-results.csv"');
       logger.error('Example: node bin/deploy-from-csv.js "./data/upload-results.csv"');
       logger.error('');
+      logger.error('Note: Must be run from the fact-sheet-template directory');
       logger.error('CSV should have columns: dataCid, htmlLink');
       logger.error('Environment variables (can be set in .env file):');
       logger.error('  NETLIFY_SITE_ID - Your Netlify site ID');
