@@ -19,8 +19,6 @@
     "prepublishOnly": "npm run clean && npm run build && npm run test",
     "example": "node bin/fact-sheet.js generate --input ./example-data --output ./example-output --verbose",
     "example-inline": "node bin/fact-sheet.js generate --input ./example-data --output ./example-output-inline --inline-css --inline-js --verbose",
-    "deploy": "chmod +x deploy.sh && ./deploy.sh",
-    "deploy-property": "node deploy-property.js"
   },
   "files": [
     "bin/",
