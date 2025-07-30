@@ -59,7 +59,7 @@ function extractPropertyId(dataCid) {
 }
 
 // Run deployment command
-async function deployProperty(propertyId, htmlLink) {
+async function deployProperty(propertyId, htmlLink, dryRun = false) {
   const netlifySiteId = process.env.NETLIFY_SITE_ID;
   const netlifyToken = process.env.NETLIFY_TOKEN;
   
@@ -80,13 +80,23 @@ async function deployProperty(propertyId, htmlLink) {
   logger.info(`🔍 Debug: Fact sheet dir: ${factSheetDir}`);
   logger.info(`🔍 Debug: Deploy script path: ${deployScriptPath}`);
   
-  const command = `cd "${factSheetDir}" && NETLIFY_SITE_ID=${netlifySiteId} NETLIFY_TOKEN=${netlifyToken} node bin/deploy-production.js deploy -p ${propertyId} -u "${htmlLink}" --verbose`;
+  const dryRunFlag = dryRun ? ' --dry-run' : '';
+  const command = `cd "${factSheetDir}" && NETLIFY_SITE_ID=${netlifySiteId} NETLIFY_TOKEN=${netlifyToken} node bin/deploy-production.js deploy -p ${propertyId} -u "${htmlLink}" --verbose${dryRunFlag}`;
   
-  logger.info(`🚀 Deploying property ${propertyId} from ${htmlLink}...`);
+  if (dryRun) {
+    logger.info(`🔍 DRY RUN: Would deploy property ${propertyId} from ${htmlLink}...`);
+    logger.info(`🔍 DRY RUN: Command would be: ${command}`);
+  } else {
+    logger.info(`🚀 Deploying property ${propertyId} from ${htmlLink}...`);
+  }
   
   try {
     const { stdout, stderr } = await execAsync(command);
-    logger.success(`✅ Successfully deployed property ${propertyId}`);
+    if (dryRun) {
+      logger.success(`✅ DRY RUN: Successfully simulated deployment for property ${propertyId}`);
+    } else {
+      logger.success(`✅ Successfully deployed property ${propertyId}`);
+    }
     if (stdout) logger.info(stdout);
     if (stderr) logger.warn(stderr);
   } catch (error) {
@@ -103,9 +113,9 @@ async function main() {
     // Get CSV filename from command line arguments
     const args = process.argv.slice(2);
     if (args.length === 0) {
-      logger.error('❌ Usage: node bin/deploy-from-csv.js <csv-file-path>');
+      logger.error('❌ Usage: node bin/deploy-from-csv.js <csv-file-path> [--dry-run]');
       logger.error('Example: node bin/deploy-from-csv.js "/content/upload-results.csv"');
-      logger.error('Example: node bin/deploy-from-csv.js "./data/upload-results.csv"');
+      logger.error('Example: node bin/deploy-from-csv.js "./data/upload-results.csv" --dry-run');
       logger.error('');
       logger.error('Note: Must be run from the fact-sheet-template directory');
       logger.error('CSV should have columns: dataCid, htmlLink');
@@ -115,7 +125,14 @@ async function main() {
       process.exit(1);
     }
     
-    const csvPath = args[0];
+    // Check for dry-run flag
+    const dryRun = args.includes('--dry-run');
+    const csvPath = args.find(arg => !arg.startsWith('--'));
+    
+    if (!csvPath) {
+      logger.error('❌ CSV file path is required');
+      process.exit(1);
+    }
     
     // Check if file exists
     if (!fs.existsSync(csvPath)) {
@@ -147,7 +164,7 @@ async function main() {
       }
       
       logger.info(`\n📦 Processing: Property ${propertyId} (dataCid: ${row.dataCid}) -> ${htmlLink}`);
-      await deployProperty(propertyId, htmlLink);
+      await deployProperty(propertyId, htmlLink, dryRun);
     }
     
     logger.success(`\n🎉 Deployment process completed!`);
