@@ -167,10 +167,12 @@
                     </h1>
                     
                     {% if homes[property_id].address %}
-                        {% if homes[property_id].address.county_name or homes[property_id].address.latitude or homes[property_id].address.longitude %}
+                        {% if homes[property_id].address.county_name or homes[property_id].address.latitude or homes[property_id].address.longitude or (homes[property_id].address.street_address and 'palm beach' in (homes[property_id].address.street_address | lower)) %}
                         <div class="location-details">
                             {% if homes[property_id].address.county_name %}
                             <span class="county-info">{{ homes[property_id].address.county_name }} County</span>
+                            {% elif homes[property_id].address.street_address and 'palm beach' in (homes[property_id].address.street_address | lower) %}
+                            <span class="county-info">Palm Beach County</span>
                             {% endif %}
                             {% if homes[property_id].address.county_name and (homes[property_id].address.latitude or homes[property_id].address.longitude) %}
                             <img src="{{ 'ellipse-7.svg' | assetUrl }}" alt="">
@@ -241,7 +243,7 @@
                 {% if homes[property_id].all_sales | length > 4 %}
                 <button class="show-more-sales-btn" onclick="toggleMoreSalesData()">
                   <span>Show More Sale Events</span>
-                  <img src="{{ 'uiicons-1.svg' | assetUrl }}" alt="Dropdown" class="provider-dropdown-arrow">
+                  <img src="{{ 'type=carat-down.svg' | assetUrl }}" alt="Dropdown" class="provider-dropdown-arrow">
                 </button>
                 {% endif %}
                 
@@ -378,7 +380,7 @@
               {% if homes[property_id].all_taxes | length > 1 %}
               <button class="show-more-tax-btn" onclick="toggleMoreTaxData()">
                 <span>Show More Tax Years</span>
-                <img src="{{ 'uiicons-1.svg' | assetUrl }}" alt="Dropdown" class="provider-dropdown-arrow">
+                <img src="{{ 'type=carat-down.svg' | assetUrl }}" alt="Dropdown" class="provider-dropdown-arrow">
               </button>
               {% endif %}
 
@@ -744,7 +746,29 @@
             {% endif %}
             <!-- Building Details -->
             <section id="building-details" class="building-details-section scroll-offset-section">
+              {% set has_substantial_building_data = false %}
+              {% if homes[property_id].property.property_structure_built_year or homes[property_id].property.builder_name %}
+                {% set has_substantial_building_data = true %}
+              {% endif %}
+              {% if homes[property_id].property.property_legal_description_text and homes[property_id].property.property_legal_description_text != 'null' %}
+                {% set has_substantial_building_data = true %}
+              {% endif %}
+              {% if homes[property_id].property.livable_floor_area > 0 %}
+                {% set has_substantial_building_data = true %}
+              {% endif %}
+              {% if homes[property_id].lot and homes[property_id].lot.lot_type and homes[property_id].lot.lot_type != 'null' %}
+                {% set has_substantial_building_data = true %}
+              {% endif %}
+              {% if homes[property_id].lot and homes[property_id].lot.lot_area_sqft %}
+                {% set has_substantial_building_data = true %}
+              {% endif %}
+              {% if homes[property_id].lot and (homes[property_id].lot.lot_width_feet or homes[property_id].lot.lot_length_feet) %}
+                {% set has_substantial_building_data = true %}
+              {% endif %}
+              
+              {% if has_substantial_building_data %}
               <h2 class="section-title">Building Details</h2>
+              {% endif %}
                 <div class="building-details-content">
                     <div class="building-details-grid">
                         <!-- First Column -->
@@ -773,11 +797,11 @@
                             {% endif %}
                             
                             <!-- Parcel ID -->
-                            {% if homes[property_id].property.parcel_identifier %}
+                            {% if homes[property_id].property.parcel_identifier or property_id %}
                             <div class="building-spec-item">
                                 <div class="building-spec-label">Parcel ID (APN)</div>
                                 <div class="building-spec-value">
-                                    <div class="building-spec-text">{{ homes[property_id].property.parcel_identifier }}</div>
+                                    <div class="building-spec-text">{{ homes[property_id].property.parcel_identifier or property_id }}</div>
                                 </div>
                             </div>
                             {% endif %}
@@ -981,7 +1005,7 @@
                                     </div>
                                     <button class="provider-more-info-btn" onclick="toggleProviderInfo(this)">
                                         <span>More Info</span>
-                                        <img src="{{ 'uiicons-1.svg' | assetUrl }}" alt="Dropdown" class="provider-dropdown-arrow">
+                                        <img src="{{ 'type=carat-down.svg' | assetUrl }}" alt="Dropdown" class="provider-dropdown-arrow">
                                     </button>
                                 </div>
                                 <div class="provider-expanded-content" style="display: none;">
@@ -998,6 +1022,13 @@
                         </div>
                         {% endif %}
                         {% endfor %}
+                        
+                        <!-- Mobile expand button after first provider -->
+                        <button class="view-all-providers-btn" onclick="toggleAllProviders(this)">
+                            <span>View all providers</span>
+                            <img src="{{ 'type=carat-down.svg' | assetUrl }}" alt="Expand" class="arrow">
+                        </button>
+                        
                         {% else %}
                         <!-- Default providers -->
                         
@@ -1020,7 +1051,7 @@
                                     </div>
                                     <button class="provider-more-info-btn" onclick="toggleProviderInfo(this)">
                                         <span>More Info</span>
-                                        <img src="{{ 'uiicons-1.svg' | assetUrl }}" alt="Dropdown" class="provider-dropdown-arrow">
+                                        <img src="{{ 'type=carat-down.svg' | assetUrl }}" alt="Dropdown" class="provider-dropdown-arrow">
                                     </button>
                                 </div>
                                 <div class="provider-expanded-content" style="display: none;">
@@ -1035,11 +1066,17 @@
                                 </div>
                             </div>
                         </div>
+                        
+                        <!-- Mobile expand button after first provider -->
+                        <button class="view-all-providers-btn" onclick="toggleAllProviders(this)">
+                            <span>View all providers</span>
+                            <img src="{{ 'type=carat-down.svg' | assetUrl }}" alt="Expand" class="arrow">
+                        </button>
 
                         <!-- Provider 2: Home Inspector -->
                         <div class="provider-item">
                             <div class="provider-avatar">
-                                <img src="{{ 'annette.jpg' | assetUrl }}" alt="Michael Johnson">
+                                <img src="{{ 'michael_headshot.png' | assetUrl }}" alt="Michael Johnson">
                             </div>
                             <div class="provider-info">
                                 <div class="provider-header">
@@ -1055,7 +1092,7 @@
                                     </div>
                                     <button class="provider-more-info-btn" onclick="toggleProviderInfo(this)">
                                         <span>More Info</span>
-                                        <img src="{{ 'uiicons-1.svg' | assetUrl }}" alt="Dropdown" class="provider-dropdown-arrow">
+                                        <img src="{{ 'type=carat-down.svg' | assetUrl }}" alt="Dropdown" class="provider-dropdown-arrow">
                                     </button>
                                 </div>
                                 <div class="provider-expanded-content" style="display: none;">
@@ -1074,7 +1111,7 @@
                         <!-- Provider 3: Mortgage Broker -->
                         <div class="provider-item">
                             <div class="provider-avatar">
-                                <img src="{{ 'annette.jpg' | assetUrl }}" alt="Sarah Williams">
+                                <img src="{{ 'sarah_headshot.png' | assetUrl }}" alt="Sarah Williams">
                             </div>
                             <div class="provider-info">
                                 <div class="provider-header">
@@ -1090,7 +1127,7 @@
                                     </div>
                                     <button class="provider-more-info-btn" onclick="toggleProviderInfo(this)">
                                         <span>More Info</span>
-                                        <img src="{{ 'uiicons-1.svg' | assetUrl }}" alt="Dropdown" class="provider-dropdown-arrow">
+                                        <img src="{{ 'type=carat-down.svg' | assetUrl }}" alt="Dropdown" class="provider-dropdown-arrow">
                                     </button>
                                 </div>
                                 <div class="provider-expanded-content" style="display: none;">
@@ -1109,7 +1146,7 @@
                         <!-- Provider 4: Appraiser -->
                         <div class="provider-item">
                             <div class="provider-avatar">
-                                <img src="{{ 'annette.jpg' | assetUrl }}" alt="David Rodriguez">
+                                <img src="{{ 'david_headshot.png' | assetUrl }}" alt="David Rodriguez">
                             </div>
                             <div class="provider-info">
                                 <div class="provider-header">
@@ -1125,7 +1162,7 @@
                                     </div>
                                     <button class="provider-more-info-btn" onclick="toggleProviderInfo(this)">
                                         <span>More Info</span>
-                                        <img src="{{ 'uiicons-1.svg' | assetUrl }}" alt="Dropdown" class="provider-dropdown-arrow">
+                                        <img src="{{ 'type=carat-down.svg' | assetUrl }}" alt="Dropdown" class="provider-dropdown-arrow">
                                     </button>
                                 </div>
                                 <div class="provider-expanded-content" style="display: none;">
@@ -1144,7 +1181,7 @@
                         <!-- Provider 5: Title Agent -->
                         <div class="provider-item">
                             <div class="provider-avatar">
-                                <img src="{{ 'annette.jpg' | assetUrl }}" alt="Jennifer Chen">
+                                <img src="{{ 'jennifer_headshot.png' | assetUrl }}" alt="Jennifer Chen">
                             </div>
                             <div class="provider-info">
                                 <div class="provider-header">
@@ -1160,7 +1197,7 @@
                                     </div>
                                     <button class="provider-more-info-btn" onclick="toggleProviderInfo(this)">
                                         <span>More Info</span>
-                                        <img src="{{ 'uiicons-1.svg' | assetUrl }}" alt="Dropdown" class="provider-dropdown-arrow">
+                                        <img src="{{ 'type=carat-down.svg' | assetUrl }}" alt="Dropdown" class="provider-dropdown-arrow">
                                     </button>
                                 </div>
                                 <div class="provider-expanded-content" style="display: none;">
@@ -1179,7 +1216,7 @@
                         <!-- Provider 6: Insurance Broker -->
                         <div class="provider-item">
                             <div class="provider-avatar">
-                                <img src="{{ 'annette.jpg' | assetUrl }}" alt="Robert Thompson">
+                                <img src="{{ 'robert_headshot.png' | assetUrl }}" alt="Robert Thompson">
                             </div>
                             <div class="provider-info">
                                 <div class="provider-header">
@@ -1195,7 +1232,7 @@
                                     </div>
                                     <button class="provider-more-info-btn" onclick="toggleProviderInfo(this)">
                                         <span>More Info</span>
-                                        <img src="{{ 'uiicons-1.svg' | assetUrl }}" alt="Dropdown" class="provider-dropdown-arrow">
+                                        <img src="{{ 'type=carat-down.svg' | assetUrl }}" alt="Dropdown" class="provider-dropdown-arrow">
                                     </button>
                                 </div>
                                 <div class="provider-expanded-content" style="display: none;">
@@ -1214,7 +1251,7 @@
                         <!-- Provider 7: Photographer -->
                         <div class="provider-item">
                             <div class="provider-avatar">
-                                <img src="{{ 'annette.jpg' | assetUrl }}" alt="Lisa Martinez">
+                                <img src="{{ 'lisa_headshot.png' | assetUrl }}" alt="Lisa Martinez">
                             </div>
                             <div class="provider-info">
                                 <div class="provider-header">
@@ -1230,7 +1267,7 @@
                                     </div>
                                     <button class="provider-more-info-btn" onclick="toggleProviderInfo(this)">
                                         <span>More Info</span>
-                                        <img src="{{ 'uiicons-1.svg' | assetUrl }}" alt="Dropdown" class="provider-dropdown-arrow">
+                                        <img src="{{ 'type=carat-down.svg' | assetUrl }}" alt="Dropdown" class="provider-dropdown-arrow">
                                     </button>
                                 </div>
                                 <div class="provider-expanded-content" style="display: none;">
@@ -1247,6 +1284,12 @@
                         </div>
 
 
+                        <!-- Mobile collapse button at bottom (only shows when expanded) -->
+                        <button class="view-less-providers-btn" onclick="toggleAllProviders(this)">
+                            <span>View less</span>
+                            <img src="{{ 'type=carat-down.svg' | assetUrl }}" alt="Collapse" class="arrow">
+                        </button>
+                        
                         {% endif %}
                     </div>
                 </div>
@@ -1281,7 +1324,32 @@
         el.focus();
       }
     }
+    
+    // Auto-hide navigation when main-content doesn't exceed viewport
+    checkNavigationVisibility();
   });
+
+  // Check if navigation should be hidden based on main-content height
+  function checkNavigationVisibility() {
+    const navigation = document.querySelector('.navigation');
+    const mainContent = document.querySelector('.main-content');
+    
+    if (!mainContent) return;
+    
+    const mainContentHeight = mainContent.offsetHeight;
+    const viewportHeight = window.innerHeight;
+    
+    if (mainContentHeight <= viewportHeight) {
+      // Main content fits in viewport, hide navigation
+      navigation.classList.add('auto-hide');
+    } else {
+      // Main content exceeds viewport, show navigation
+      navigation.classList.remove('auto-hide');
+    }
+  }
+  
+  // Recheck on window resize
+  window.addEventListener('resize', checkNavigationVisibility);
 
   function toggleRoomDetails(header) {
     const roomItem = header.parentElement;
@@ -1340,5 +1408,35 @@
     const prevIndex = currentIndex === 0 ? radioButtons.length - 1 : currentIndex - 1;
     setSlide(propertyId, prevIndex);
   }
+
+  function toggleAllProviders(button) {
+    const providersList = button.closest('.providers-list');
+    
+    if (providersList.classList.contains('mobile-expanded')) {
+      // Currently expanded, so collapse
+      providersList.classList.remove('mobile-expanded');
+    } else {
+      // Currently collapsed, so expand
+      providersList.classList.add('mobile-expanded');
+    }
+  }
+
+  // Handle building details grid gap when second column is empty
+  function handleBuildingDetailsGap() {
+    const buildingDetailsGrids = document.querySelectorAll('.building-details-grid');
+    
+    buildingDetailsGrids.forEach(grid => {
+      const secondColumn = grid.querySelector('.building-details-column:nth-child(2)');
+      if (secondColumn) {
+        const hasItems = secondColumn.querySelector('.building-spec-item');
+        if (!hasItems) {
+          grid.classList.add('single-column');
+        }
+      }
+    });
+  }
+
+  // Run on page load
+  document.addEventListener('DOMContentLoaded', handleBuildingDetailsGap);
 </script>
 {% endset %}

@@ -41,6 +41,12 @@ option {
   margin: 0 auto;
   padding: 104px 208px;
   overflow-x: visible !important;
+  transition: padding-top 0.3s ease;
+}
+
+/* Reduce top padding when navigation is hidden */
+.navigation.auto-hide ~ .container {
+  padding-top: 40px;
 }
 
 /* Main Layout */
@@ -60,6 +66,12 @@ option {
   width: 100%;
 }
 
+@media (max-width: 768px) {
+  .main-content {
+    margin-bottom: 16px;
+  }
+}
+
 /* Navigation */
 .navigation {
   width: 100%;
@@ -68,6 +80,12 @@ option {
   box-shadow: 0px 2px 10px 2px rgba(0, 0, 0, 0.1);
   position: fixed;
   z-index: 10;
+  transition: transform 0.3s ease;
+}
+
+/* Hide navigation when content doesn't exceed viewport */
+.navigation.auto-hide {
+  transform: translateY(-100%);
 }
 
 .nav-content {
@@ -188,9 +206,7 @@ option {
 }
 
 .view-all-providers-btn:hover {
-  background-color: #f0f0f0;
-  border-color: #c0c0c0;
-  color: #423e3e;
+  opacity: 0.7;
 }
 
 .dropdown-icon {
@@ -675,6 +691,7 @@ option {
 
 /* Section Styles */
 .section {
+  padding: 0 4px;
 }
 
 .section-subtitle {
@@ -848,6 +865,7 @@ option {
   flex-direction: column;
   gap: 12px;
   padding: 12px;
+  position: relative;
   background-color: #f7f7f7;
   border: 1px solid #d9d8d8;
   border-radius: 12px;
@@ -857,7 +875,8 @@ option {
 .providers-title {
   font-weight: 600;
   line-height: 120%;
-  font-size: 16px;
+  font-size: 14px;
+  text-align: center;
   color: #423e3e;
 }
 
@@ -877,8 +896,8 @@ option {
 }
 
 .provider-avatar {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   border-radius: 8px;
   overflow: hidden;
   flex-shrink: 0;
@@ -903,7 +922,7 @@ option {
   align-items: center;
   gap: 4px;
   height: 18px;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .provider-name {
@@ -1317,8 +1336,8 @@ h1 .data-footnote:hover {
     font-size: 11px;
   }
   .provider-avatar {
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
   }
   .provider-item {
     gap: 4px;
@@ -1437,7 +1456,7 @@ h1 .data-footnote:hover {
     max-width: 400px;
   }
   .providers-card {
-    padding: 12px;
+    padding: 8px;
   }
   .provider-item {
     padding: 8px;
@@ -1480,7 +1499,7 @@ h1 .data-footnote:hover {
   }
   
   .view-all-providers-btn {
-    padding: 4px 6px;
+    
     font-size: 10px;
   }
   
@@ -1868,7 +1887,7 @@ h1 .data-footnote:hover {
 
 .provider-dropdown-arrow {
   width: 9px;
-  height: 9px;
+  height: auto;
   transition: transform 0.3s ease;
   display: inline-block;
 }
@@ -1939,13 +1958,6 @@ h1 .data-footnote:hover {
   color: #423e3e;
 }
 
-.provider-dropdown-arrow {
-  width: 9px;
-  height: 9px;
-  transition: transform 0.3s ease;
-  display: inline-block;
-}
-
 .provider-details {
   display: flex;
   flex-direction: column;
@@ -1975,6 +1987,90 @@ h1 .data-footnote:hover {
   gap: 4px;
 }
 
+/* Mobile Provider Functionality */
+.view-all-providers-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  font-size: 12px;
+  font-weight: 500;
+  color: #423e3e;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+}
+
+.view-all-providers-btn:hover {
+  opacity: 0.7;
+}
+
+.view-all-providers-btn .arrow {
+  width: 10px;
+  height: 10px;
+  transition: transform 0.3s ease;
+}
+
+.view-all-providers-btn.expanded .arrow {
+  transform: rotate(180deg);
+}
+
+.view-less-providers-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  background: transparent;
+  border: none;
+  font-size: 12px;
+  font-weight: 500;
+  color: #423e3e;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+}
+
+.view-less-providers-btn:hover {
+  opacity: 0.7;
+}
+
+.view-less-providers-btn .arrow {
+  width: 10px;
+  height: 10px;
+  transition: transform 0.3s ease;
+  transform: rotate(180deg);
+}
+
+/* Mobile breakpoint styles */
+@media (max-width: 768px) {
+  .view-all-providers-btn {
+    display: flex;
+  }
+  
+  /* Hide additional providers by default on mobile */
+  .providers-list .provider-item:not(:first-child) {
+    display: none;
+  }
+  
+  /* Show all providers when expanded */
+  .providers-list.mobile-expanded .provider-item {
+    display: flex;
+  }
+  
+  /* Show view less button when expanded */
+  .providers-list.mobile-expanded .view-less-providers-btn {
+    display: flex;
+  }
+  
+  /* Hide view all button when expanded */
+  .providers-list.mobile-expanded .view-all-providers-btn {
+    display: none;
+  }
+}
+
 .email-icon {
   width: 16px;
   height: 16px;
@@ -1990,7 +2086,7 @@ h1 .data-footnote:hover {
 }
 
 .tax-information-section {
-  padding: 16px 0;
+  padding: 16px 4px;
   display: none;
 }
 
@@ -2067,6 +2163,16 @@ h1 .data-footnote:hover {
 .building-details-grid {
   display: flex;
   gap: 48px;
+}
+
+/* Remove gap when second column has no building-spec-item elements */
+.building-details-grid:has(.building-details-column:nth-child(2):not(:has(.building-spec-item))) {
+  gap: 0 !important;
+}
+
+/* JavaScript fallback for browsers that don't support :has() */
+.building-details-grid.single-column {
+  gap: 0 !important;
 }
 
 .building-details-column {
@@ -2357,6 +2463,16 @@ h1 .data-footnote:hover {
     gap: 24px;
   }
 
+  /* Remove gap on mobile when second column has no building-spec-item elements */
+  .building-details-grid:has(.building-details-column:nth-child(2):not(:has(.building-spec-item))) {
+    gap: 0 !important;
+  }
+
+  /* JavaScript fallback for mobile */
+  .building-details-grid.single-column {
+    gap: 0 !important;
+  }
+
   .chart-tabs {
     gap: 0;
   }
@@ -2386,6 +2502,7 @@ h1 .data-footnote:hover {
 
 .scroll-offset-section {
   scroll-margin-top: 80px;
+  padding: 0 4px;
 }
 
 @media (max-width: 768px) {
