@@ -7,7 +7,18 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { exec } from 'child_process';
 import { promisify } from 'util';
-import { Logger } from '../dist/lib/logger.js';
+
+// Function to get Logger class
+async function getLogger() {
+  try {
+    const loggerModule = await import('../dist/lib/logger.js');
+    return loggerModule.Logger;
+  } catch (error) {
+    // Fallback to lib directory
+    const loggerModule = await import('../lib/logger.js');
+    return loggerModule.Logger;
+  }
+}
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -36,6 +47,7 @@ program
       await deployToProduction(options);
     } catch (error) {
       // Create a basic logger for error reporting
+      const Logger = await getLogger();
       const logger = new Logger({
         quiet: false,
         verbose: false,
@@ -61,6 +73,7 @@ program
       await removeFromSitemap(options);
     } catch (error) {
       // Create a basic logger for error reporting
+      const Logger = await getLogger();
       const logger = new Logger({
         quiet: false,
         verbose: false,
@@ -85,6 +98,7 @@ program
       await removeProperty(options);
     } catch (error) {
       // Create a basic logger for error reporting
+      const Logger = await getLogger();
       const logger = new Logger({
         quiet: false,
         verbose: false,
@@ -98,6 +112,14 @@ program
 
 async function deployToProduction(options) {
   const { propertyId, url, localPath, dryRun = false, logFile = 'deploy-production.log', verbose = false, quiet = false } = options;
+  
+  // Get Logger class and create logger
+  const Logger = await getLogger();
+  const logger = new Logger({
+    quiet: quiet,
+    verbose: verbose,
+    logFile: logFile
+  });
   
   // Check if Netlify CLI is installed
   try {
@@ -113,13 +135,6 @@ async function deployToProduction(options) {
       process.exit(1);
     }
   }
-
-  // Create logger
-  const logger = new Logger({
-    quiet: quiet,
-    verbose: verbose,
-    logFile: logFile
-  });
 
   logger.info(`🚀 Deploying property ${propertyId} to elephant.xyz production`);
 
@@ -418,7 +433,8 @@ async function deployToProduction(options) {
 async function removeFromSitemap(options) {
   const { propertyId, logFile = 'deploy-production.log', verbose = false, quiet = false, dryRun = false, removeFiles = false } = options;
 
-  // Create logger
+  // Get Logger class and create logger
+  const Logger = await getLogger();
   const logger = new Logger({
     quiet: quiet,
     verbose: verbose,
@@ -526,7 +542,8 @@ async function removeFromSitemap(options) {
 async function removeProperty(options) {
   const { propertyId, logFile = 'deploy-production.log', verbose = false, quiet = false, dryRun = false } = options;
 
-  // Create logger
+  // Get Logger class and create logger
+  const Logger = await getLogger();
   const logger = new Logger({
     quiet: quiet,
     verbose: verbose,
