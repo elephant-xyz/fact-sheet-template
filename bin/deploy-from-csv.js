@@ -4,6 +4,7 @@ import fs from 'fs';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import path from 'path';
+import { Logger } from '../dist/lib/logger.js';
 
 const execAsync = promisify(exec);
 
@@ -21,6 +22,14 @@ function loadEnv() {
     });
   }
 }
+
+// Initialize logger
+const logger = new Logger({
+  quiet: false,
+  verbose: true,
+  ci: false,
+  logFile: 'deploy-from-csv.log'
+});
 
 // Read and parse CSV file
 function parseCSV(csvContent) {
@@ -40,17 +49,10 @@ function parseCSV(csvContent) {
   return data;
 }
 
-// Extract property ID from filePath or propertyCid
-function extractPropertyId(filePath, propertyCid) {
-  // First try to extract from filePath like "/content/output/52434205310037080/..."
-  const match = filePath.match(/\/content\/output\/(\d+)\//);
-  if (match) {
-    return match[1];
-  }
-  
-  // If that fails, use the propertyCid as the property ID
-  if (propertyCid) {
-    return propertyCid;
+// Extract property ID from dataCid
+function extractPropertyId(dataCid) {
+  if (dataCid) {
+    return dataCid;
   }
   
   return null;
@@ -62,22 +64,22 @@ async function deployProperty(propertyId, htmlLink) {
   const netlifyToken = process.env.NETLIFY_TOKEN;
   
   if (!netlifySiteId || !netlifyToken) {
-    console.error('❌ Environment variables NETLIFY_SITE_ID and NETLIFY_TOKEN must be set');
-    console.error('Create a .env file with these variables or set them in your environment');
+    logger.error('❌ Environment variables NETLIFY_SITE_ID and NETLIFY_TOKEN must be set');
+    logger.error('Create a .env file with these variables or set them in your environment');
     process.exit(1);
   }
   
   const command = `NETLIFY_SITE_ID=${netlifySiteId} NETLIFY_TOKEN=${netlifyToken} node bin/deploy-production.js deploy -p ${propertyId} -u "${htmlLink}" --verbose`;
   
-  console.log(`🚀 Deploying property ${propertyId} from ${htmlLink}...`);
+  logger.info(`🚀 Deploying property ${propertyId} from ${htmlLink}...`);
   
   try {
     const { stdout, stderr } = await execAsync(command);
-    console.log(`✅ Successfully deployed property ${propertyId}`);
-    if (stdout) console.log(stdout);
-    if (stderr) console.log(stderr);
+    logger.success(`✅ Successfully deployed property ${propertyId}`);
+    if (stdout) logger.info(stdout);
+    if (stderr) logger.warn(stderr);
   } catch (error) {
-    console.error(`❌ Failed to deploy property ${propertyId}:`, error.message);
+    logger.error(`❌ Failed to deploy property ${propertyId}: ${error.message}`);
   }
 }
 
@@ -90,12 +92,13 @@ async function main() {
     // Get CSV filename from command line arguments
     const args = process.argv.slice(2);
     if (args.length === 0) {
-      console.error('❌ Usage: node bin/deploy-from-csv.js <csv-filename>');
-      console.error('Example: node bin/deploy-from-csv.js "upload-results (3).csv"');
-      console.error('');
-      console.error('Environment variables (can be set in .env file):');
-      console.error('  NETLIFY_SITE_ID - Your Netlify site ID');
-      console.error('  NETLIFY_TOKEN - Your Netlify token');
+      logger.error('❌ Usage: node bin/deploy-from-csv.js <csv-filename>');
+      logger.error('Example: node bin/deploy-from-csv.js "upload-results (3).csv"');
+      logger.error('');
+      logger.error('CSV should have columns: dataCid, htmlLink');
+      logger.error('Environment variables (can be set in .env file):');
+      logger.error('  NETLIFY_SITE_ID - Your Netlify site ID');
+      logger.error('  NETLIFY_TOKEN - Your Netlify token');
       process.exit(1);
     }
     
@@ -104,7 +107,7 @@ async function main() {
     
     // Check if file exists
     if (!fs.existsSync(csvPath)) {
-      console.error(`❌ CSV file not found: ${csvPath}`);
+      logger.error(`❌ CSV file not found: ${csvPath}`);
       process.exit(1);
     }
     
@@ -113,31 +116,31 @@ async function main() {
     
     // Parse CSV
     const data = parseCSV(csvContent);
-    console.log(`📋 Found ${data.length} entries to deploy from ${csvFilename}`);
+    logger.info(`📋 Found ${data.length} entries to deploy from ${csvFilename}`);
     
     // Process each entry
     for (const row of data) {
-      const propertyId = extractPropertyId(row.filePath, row.propertyCid);
+      const propertyId = extractPropertyId(row.dataCid);
       const htmlLink = row.htmlLink;
       
       if (!propertyId) {
-        console.warn(`⚠️  Could not extract property ID from: ${row.filePath}`);
+        logger.warn(`⚠️  Could not extract property ID from dataCid: ${row.dataCid}`);
         continue;
       }
       
       if (!htmlLink) {
-        console.warn(`⚠️  No HTML link found for property: ${propertyId}`);
+        logger.warn(`⚠️  No HTML link found for property: ${propertyId}`);
         continue;
       }
       
-      console.log(`\n📦 Processing: Property ${propertyId} -> ${htmlLink}`);
+      logger.info(`\n📦 Processing: Property ${propertyId} (dataCid: ${row.dataCid}) -> ${htmlLink}`);
       await deployProperty(propertyId, htmlLink);
     }
     
-    console.log(`\n🎉 Deployment process completed!`);
+    logger.success(`\n🎉 Deployment process completed!`);
     
   } catch (error) {
-    console.error('❌ Error:', error.message);
+    logger.error(`❌ Error: ${error.message}`);
     process.exit(1);
   }
 }
