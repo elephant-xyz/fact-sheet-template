@@ -25,8 +25,6 @@ program
   .command('deploy')
   .description('Deploy property to production')
   .requiredOption('-p, --property-id <id>', 'Property ID (e.g., 52434205310037080)')
-  .requiredOption('--netlify-site-id <id>', 'Netlify Site ID')
-  .requiredOption('--netlify-token <token>', 'Netlify Personal Access Token')
   .option('-u, --url <url>', 'URL to download from (IPFS or HTTP)')
   .option('-l, --local-path <path>', 'Local path to property directory')
   .option('--dry-run', 'Show what would be deployed without actually deploying')
@@ -43,7 +41,7 @@ program
   });
 
 async function deployToProduction(options) {
-  const { propertyId, netlifySiteId, netlifyToken, url, localPath, dryRun = false, logFile = 'deploy-production.log', verbose = false, quiet = false } = options;
+  const { propertyId, url, localPath, dryRun = false, logFile = 'deploy-production.log', verbose = false, quiet = false } = options;
 
   // Create logger
   const logger = new Logger({
@@ -53,6 +51,19 @@ async function deployToProduction(options) {
   });
 
   logger.info(`🚀 Deploying property ${propertyId} to elephant.xyz production`);
+
+  // Validate environment variables
+  if (!process.env.NETLIFY_SITE_ID) {
+    logger.error('NETLIFY_SITE_ID environment variable is required');
+    logger.finalize();
+    throw new Error('NETLIFY_SITE_ID environment variable is required');
+  }
+
+  if (!process.env.NETLIFY_TOKEN) {
+    logger.error('NETLIFY_TOKEN environment variable is required');
+    logger.finalize();
+    throw new Error('NETLIFY_TOKEN environment variable is required');
+  }
 
   if (dryRun) {
     logger.info('🔍 DRY RUN MODE - No actual deployment will occur');
@@ -178,7 +189,7 @@ async function deployToProduction(options) {
   logger.info(`🌐 Deploying to Netlify...`);
 
   try {
-    const deployCommand = `netlify deploy --prod --dir=${deployDir} --site=${netlifySiteId} --auth=${netlifyToken}`;
+    const deployCommand = `netlify deploy --prod --dir=${deployDir} --site=${process.env.NETLIFY_SITE_ID} --auth=${process.env.NETLIFY_TOKEN}`;
     const { stdout, stderr } = await execAsync(deployCommand);
 
     if (stderr) {
@@ -190,7 +201,7 @@ async function deployToProduction(options) {
 
     // Update sitemap
     logger.info(`🗺️  Updating sitemap...`);
-    await updateSitemap(propertyId, netlifySiteId, netlifyToken, logger);
+    await updateSitemap(propertyId, process.env.NETLIFY_SITE_ID, process.env.NETLIFY_TOKEN, logger);
 
   } catch (error) {
     logger.error('❌ Netlify deployment failed:', error.message);
