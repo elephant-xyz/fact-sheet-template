@@ -1,0 +1,50 @@
+name: Test HTML Generation for All Example Data
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  test-generate-all:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm install
+      
+    - name: Build TypeScript
+      run: npm run build
+      
+    - name: Run comprehensive HTML generation test
+      run: node test-generate-all.js
+      
+    - name: Upload test output as artifacts
+      uses: actions/upload-artifact@v4
+      if: always() # Upload even if test fails
+      with:
+        name: test-output
+        path: test-output/
+        retention-days: 7
+        
+    - name: Check test output structure
+      run: |
+        echo "📁 Test output structure:"
+        find test-output -type f -name "*.html" | head -10
+        echo ""
+        echo "📊 Total HTML files generated:"
+        find test-output -type f -name "*.html" | wc -l
+        echo ""
+        echo "📁 Total directories with content:"
+        find test-output -type d | wc -l 
