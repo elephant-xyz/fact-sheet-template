@@ -70,9 +70,16 @@ async function deployProperty(propertyId, htmlLink) {
   }
   
   // Get the directory where this script is located
-  const scriptDir = path.dirname(new URL(import.meta.url).pathname);
+  const scriptPath = process.argv[1];
+  const scriptDir = path.dirname(scriptPath);
   const factSheetDir = path.dirname(scriptDir); // Go up one level from bin/
   const deployScriptPath = path.join(factSheetDir, 'bin', 'deploy-production.js');
+  
+  logger.info(`🔍 Debug: Script path: ${scriptPath}`);
+  logger.info(`🔍 Debug: Script dir: ${scriptDir}`);
+  logger.info(`🔍 Debug: Fact sheet dir: ${factSheetDir}`);
+  logger.info(`🔍 Debug: Deploy script path: ${deployScriptPath}`);
+  
   const command = `cd "${factSheetDir}" && NETLIFY_SITE_ID=${netlifySiteId} NETLIFY_TOKEN=${netlifyToken} node bin/deploy-production.js deploy -p ${propertyId} -u "${htmlLink}" --verbose`;
   
   logger.info(`🚀 Deploying property ${propertyId} from ${htmlLink}...`);
