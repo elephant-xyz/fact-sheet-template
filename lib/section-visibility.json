@@ -4,15 +4,13 @@
       "header-section",
       "property-header", 
       "property-address",
-      "provider-cards",
-      "property-divider"
+      "provider-cards"
     ],
     "County": [
       "header-section",
       "property-header", 
       "property-address",
       "provider-cards",
-      "property-divider",
       "property-history",
       "floorplan",
       "building-details",
@@ -23,7 +21,6 @@
       "property-header", 
       "property-address",
       "provider-cards",
-      "property-divider",
       "property-history",
       "floorplan",
       "floorplan-layout",
@@ -35,7 +32,6 @@
       "property-header", 
       "property-address",
       "provider-cards",
-      "property-divider",
       "property-history",
       "floorplan",
       "floorplan-layout",
