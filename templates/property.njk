@@ -27,6 +27,53 @@
 
 {% set content %}
 
+<script>
+// Section visibility configuration from backend
+const sectionVisibility = {{ homes[property_id].sectionVisibility | json | safe }};
+
+// Function to show/hide sections based on label
+function updateSectionVisibility(label) {
+  console.log('Updating section visibility for label:', label);
+  
+  if (!sectionVisibility || !sectionVisibility.label_to_div_mapping) {
+    console.log('No section visibility configuration found');
+    return;
+  }
+  
+  const sections = sectionVisibility.label_to_div_mapping[label];
+  if (!sections) {
+    console.log('No sections found for label:', label);
+    return;
+  }
+  
+  console.log('Sections to show:', sections);
+  
+  // Hide all sections first
+  document.querySelectorAll('[data-section]').forEach(section => {
+    console.log('Hiding section:', section.id);
+    section.classList.remove('show');
+  });
+  
+  // Show only the sections for this label
+  sections.forEach(sectionName => {
+    const section = document.querySelector(`[data-section="${sectionName}"]`);
+    if (section) {
+      console.log('Showing section:', sectionName, 'element:', section);
+      section.classList.add('show');
+    } else {
+      console.log('Section not found:', sectionName);
+      // Debug: list all data-section elements
+      const allSections = document.querySelectorAll('[data-section]');
+      console.log('All data-section elements:', allSections);
+    }
+  });
+}
+
+         // Initialize with the label determined from the data
+         document.addEventListener('DOMContentLoaded', function() {
+           updateSectionVisibility('{{ homes[property_id].dataLabel or "Seed" }}');
+         });
+</script>
 
 <a href="#main-content" style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;">Skip to main content</a>
 
@@ -119,7 +166,7 @@
         <!-- Main Content -->
         <div class="main-content">
             <!-- Header section wrapper for breadcrumb, carousel, and address -->
-            <div class="header-section">
+            <div class="header-section" data-section="header-section">
                 <nav class="breadcrumb" aria-label="Breadcrumb">
                     <ol class="breadcrumb">
                         <li><a href="/" class="elephant-link">elephant.xyz</a></li>
@@ -160,8 +207,8 @@
                 {% endif %}
 
                 <!-- Property Header -->
-                <header class="property-header">
-                <div class="property-address">
+                <header class="property-header" data-section="property-header">
+                <div class="property-address" data-section="property-address">
                     <h1>
                         {% if homes[property_id].address %}
                             {% if homes[property_id].address.street_number %}{{ homes[property_id].address.street_number }}{% endif %}
@@ -224,7 +271,7 @@
             {% endfor %}
             
             {% if has_sales_data or (homes[property_id].all_taxes | length > 0) %}
-                <section id="property-history" class="property-history-section scroll-offset-section">
+                <section id="property-history" class="property-history-section scroll-offset-section" data-section="property-history">
                   <h2 class="section-title">Property History</h2>
 
                   <div class="property-history-data-points">
@@ -624,7 +671,7 @@
             {% set has_floorplan_data = (bedroom_count > 0) or (bathroom_count > 0) or property_config[property_id].has_size_data %}
             
             {% if has_floorplan_data %}
-            <div id="floorplan" class="section scroll-offset-section">
+            <div id="floorplan" class="section scroll-offset-section" data-section="floorplan">
                 <div class="floorplan-header">
                     <h2 class="section-title">Floorplan</h2>
                 </div>
@@ -717,7 +764,7 @@
                 {% endmacro %}
 
                 {% if (first_floor_rooms | length > 0 and first_floor_rooms | selectattr('space_type') | list | length > 0) or (second_floor_rooms | length > 0 and second_floor_rooms | selectattr('space_type') | list | length > 0) or (other_rooms | length > 0 and other_rooms | selectattr('space_type') | list | length > 0) %}
-                <div class="floorplan-layout">
+                <div class="floorplan-layout" data-section="floorplan-layout">
                   <div class="floorplan-floors">
                     <!-- 1st Floor -->
                     {% if first_floor_rooms | length > 0 and first_floor_rooms | selectattr('space_type') | list | length > 0 %}
@@ -757,7 +804,7 @@
             </div>
             {% endif %}
             <!-- Building Details -->
-            <section id="building-details" class="building-details-section scroll-offset-section">
+            <section id="building-details" class="building-details-section scroll-offset-section" data-section="building-details">
               {% set has_substantial_building_data = false %}
               {% if homes[property_id].property.property_structure_built_year or homes[property_id].property.builder_name %}
                 {% set has_substantial_building_data = true %}
@@ -905,7 +952,7 @@
             {% endmacro %}
             
             {% if interior_features | length > 0 or exterior_features | length > 0 or utilities is defined %}
-            <section class="section" id="features">
+            <section class="section" id="features" data-section="features">
                 <h2 class="section-title">Property Features</h2>
                 <div class="features-container">
                     <div class="features-grid">
@@ -993,7 +1040,7 @@
                 </div>
 
                 <!-- Service Providers Card -->
-                <div class="providers-card">
+                <div class="providers-card" data-section="provider-cards">
                     <h3 class="providers-title">Hire top rated providers</h3>
                     <div class="providers-list">
                         {% if homes[property_id].service_providers %}
@@ -1308,7 +1355,7 @@
             </div>
         </div>
     </div>
-    <div class="property-divider"></div>
+                    <div class="property-divider" data-section="property-divider"></div>
     <div id="datasrc" class="data-footnotes">
       <div class="data-source-btn-row" style="font-size:12px; color:#8E8B8B; padding-left:0;">
         {% if homes[property_id].address.source_http_request %}

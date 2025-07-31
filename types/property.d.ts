@@ -84,7 +84,9 @@ export interface CarouselImage {
   file_format?: string;
 }
 
-
+export interface SectionVisibility {
+  label_to_div_mapping: Record<string, string[]>;
+}
 
 export interface PropertyData {
   address?: Address;
@@ -102,6 +104,8 @@ export interface PropertyData {
   all_taxes: TaxEntry[];
   data_sources: DataSource[];
   carousel_images?: CarouselImage[];
+  sectionVisibility?: SectionVisibility;
+  dataLabel?: string;
 
   processed_features?: {
     interior: Array<{ property: string; value: string; info: any }>;
