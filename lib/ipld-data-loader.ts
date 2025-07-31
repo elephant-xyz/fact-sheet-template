@@ -854,10 +854,10 @@ export class IPLDDataLoader {
       if (Object.keys(layoutsByDataGroup).length === 0) {
         layouts = [];
       } else {
-        const [_, value] = Object.entries(layoutsByDataGroup).reduce(
-          (max, current) => (current[1].length > max[1].length ? current : max),
-        );
-        layouts = value;
+      const [_, value] = Object.entries(layoutsByDataGroup).reduce(
+        (max, current) => (current[1].length > max[1].length ? current : max),
+      );
+      layouts = value;
       }
     }
 

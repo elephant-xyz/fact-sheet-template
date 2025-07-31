@@ -40,7 +40,7 @@ export class AssetManager {
     }
 
     // Always copy static assets for local builds
-    await this.copyStaticAssets(propertyDir);
+      await this.copyStaticAssets(propertyDir);
 
     // Copy property-specific images if they exist
     if (propertyDataPath && propertyData) {
