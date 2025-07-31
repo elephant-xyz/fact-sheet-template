@@ -107,10 +107,6 @@ export interface PropertyData {
   providers?: any[];
   carousel_images?: CarouselImage[];
   layouts?: LayoutSummary;
-  labels?: string[]; // Add labels for section visibility
-  photometadata_structure?: any;
-  photometadata_utility?: any;
-  photometadata_appliances?: any;
 }
 
 type EnumMappingRaw = {
@@ -176,8 +172,6 @@ export class IPLDDataLoader {
   }
 
   async loadPropertyData(rootCID: string): Promise<PropertyData> {
-    console.log(`🚀 IPLD Data Loader called with rootCID: ${rootCID}`);
-    
     // 1. Load the root directory
     const rootDir = path.join(this.dataDir, rootCID);
     if (!existsSync(rootDir)) {
@@ -371,16 +365,7 @@ export class IPLDDataLoader {
       utility = this.convertNodeToRenderItem(utilityNode, "utility");
     }
 
-    // Extract photometadata
-    const photometadata_structure = this.extractPhotoMetadata(graph, "structure");
-    const photometadata_utility = this.extractPhotoMetadata(graph, "utility");
-    const photometadata_appliances = this.extractPhotoMetadata(graph, "appliance");
-
-    // Extract labels for section visibility
-    const labels = this.extractLabels(graph);
-    console.log(`🏷️  Extracted labels: ${labels.join(', ')}`);
-
-    const result = {
+    return {
       property,
       sales,
       taxes,
@@ -389,17 +374,7 @@ export class IPLDDataLoader {
       utility,
       carousel_images,
       layouts,
-      labels,
-      photometadata_structure,
-      photometadata_utility,
-      photometadata_appliances,
     };
-    
-    console.log(`📊 Final result labels: ${result.labels ? result.labels.join(', ') : 'none'}`);
-    
-    console.log(`📊 Final PropertyData labels: ${result.labels ? result.labels.join(', ') : 'none'}`);
-    
-    return result;
   }
 
   private findNodeByContent(
@@ -724,8 +699,6 @@ export class IPLDDataLoader {
     graph: Map<string, DataNode>,
   ): Promise<CarouselImage[]> {
     const images: CarouselImage[] = [];
-    
-    console.log(`🖼️  Loading carousel images from ${graph.size} nodes...`);
 
     // Method 1: Find nodes that have relationships.property_has_file
     for (const node of graph.values()) {
@@ -777,7 +750,6 @@ export class IPLDDataLoader {
 
     // Method 2: If no images found via aggregation, look for relationship nodes directly
     if (images.length === 0) {
-      console.log(`🔍 Method 2: Looking for property_file relationships...`);
       // Find all relationship nodes that match the pattern
       for (const node of graph.values()) {
         if (
@@ -811,33 +783,6 @@ export class IPLDDataLoader {
       }
     }
 
-    // Method 3: Look for any *-link.json relationships (for Photo data)
-    if (images.length === 0) {
-      console.log(`🔍 Method 3: Looking for any *-link.json relationships...`);
-      // Find all relationship nodes that end with -link
-      for (const node of graph.values()) {
-        if (node.cid.endsWith("-link")) {
-          if (node.data?.from && node.data?.to) {
-            // Accept any link file with valid from/to structure
-            // Resolve the file metadata node
-            const fileNode = this.resolveNodeFromLink(node.data.to, graph);
-
-            if (
-              fileNode?.data?.document_type === "PropertyImage" &&
-              fileNode.data.ipfs_url
-            ) {
-              images.push({
-                ipfs_url: fileNode.data.ipfs_url,
-                name: fileNode.data.name || "",
-                document_type: fileNode.data.document_type,
-                file_format: fileNode.data.file_format,
-              });
-            }
-          }
-        }
-      }
-    }
-
     // Sort images by filename number
     images.sort((a, b) => {
       const numA = parseInt(a.ipfs_url.match(/\d+/)?.[0] || "0");
@@ -845,7 +790,6 @@ export class IPLDDataLoader {
       return numA - numB;
     });
 
-    console.log(`📸 Found ${images.length} carousel images`);
     return images;
   }
 
@@ -985,72 +929,5 @@ export class IPLDDataLoader {
       // Direct CID reference
       return graph.get(linkedPath);
     }
-  }
-
-  /**
-   * Extract labels from the graph for section visibility
-   */
-  private extractLabels(graph: Map<string, DataNode>): string[] {
-    const labels: string[] = [];
-    
-    console.log(`🔍 Searching for labels in ${graph.size} nodes...`);
-    
-    for (const [cid, node] of graph.entries()) {
-      if (node.data && node.data.label && typeof node.data.label === 'string') {
-        console.log(`✅ Found label "${node.data.label}" in node ${cid}`);
-        labels.push(node.data.label);
-      }
-    }
-    
-    // Check for photometadata and add "Photo Metadata" label if found
-    let hasPhotoMetadata = false;
-    for (const [cid, node] of graph.entries()) {
-      if (node.data && node.data.source_http_request && 
-          (cid.includes("structure") || cid.includes("utility") || cid.includes("appliance") ||
-           node.data.exterior_wall_material_primary !== undefined ||
-           node.data.cooling_system_type !== undefined ||
-           node.data.appliance_type !== undefined)) {
-        hasPhotoMetadata = true;
-        console.log(`📸 Found photometadata in node ${cid}`);
-        break;
-      }
-    }
-    
-    if (hasPhotoMetadata && !labels.includes("Photo Metadata")) {
-      console.log(`✅ Adding "Photo Metadata" label`);
-      labels.push("Photo Metadata");
-    }
-    
-    console.log(`📋 Total labels found: ${labels.length}`);
-    return labels;
-  }
-
-  /**
-   * Extract photometadata from the graph
-   */
-  private extractPhotoMetadata(graph: Map<string, DataNode>, type: string): any {
-    console.log(`📸 Extracting photometadata for type: ${type}`);
-    
-    // Look for photometadata files with specific patterns
-    for (const [cid, node] of graph.entries()) {
-      if (node.data && node.data.source_http_request) {
-        // This is likely a photometadata file
-        if (type === "structure" && (cid.includes("structure") || node.data.exterior_wall_material_primary !== undefined)) {
-          console.log(`🏗️  Found structure photometadata in node ${cid}`);
-          return node.data;
-        }
-        if (type === "utility" && (cid.includes("utility") || node.data.cooling_system_type !== undefined)) {
-          console.log(`⚡ Found utility photometadata in node ${cid}`);
-          return node.data;
-        }
-        if (type === "appliance" && (cid.includes("appliance") || node.data.appliance_type !== undefined)) {
-          console.log(`🔌 Found appliance photometadata in node ${cid}`);
-          return node.data;
-        }
-      }
-    }
-    
-    console.log(`❌ No photometadata found for type: ${type}`);
-    return null;
   }
 }

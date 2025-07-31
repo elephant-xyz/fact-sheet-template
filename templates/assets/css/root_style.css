@@ -2685,36 +2685,3 @@ h1 .data-footnote:hover {
 .room-properties.collapsible-content.expanded {
   max-height: 500px;
 }
-
-/* Section Visibility Classes */
-.visible {
-  display: block !important;
-}
-
-.hidden {
-  display: none !important;
-}
-
-/* More specific rules for nested elements */
-.floorplan-layout.hidden {
-  display: none !important;
-}
-
-.section.hidden {
-  display: none !important;
-}
-
-/* Optional: Add transition for smooth show/hide */
-.section-with-visibility {
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-}
-
-.section-with-visibility.hidden {
-  opacity: 0;
-  visibility: hidden;
-}
-
-.section-with-visibility.visible {
-  opacity: 1;
-  visibility: visible;
-}
