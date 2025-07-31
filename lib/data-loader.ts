@@ -119,6 +119,8 @@ export class DataLoader {
 
       carousel_images: ipldData.carousel_images || [],
       layouts: ipldData.layouts || [],
+      sectionVisibility: ipldData.sectionVisibility || null,
+      dataLabel: ipldData.dataLabel || null,
     };
 
     return transformed as PropertyData;

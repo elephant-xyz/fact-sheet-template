@@ -2,6 +2,7 @@ import * as fs from "fs/promises";
 import * as path from "path";
 import { existsSync } from "fs";
 import enumMappingRaw from "./data-mapping.json" with { type: "json" };
+import sectionVisibilityRaw from "./section-visibility.json" with { type: "json" };
 
 interface IPLDLink {
   "/": string;
@@ -96,6 +97,10 @@ export interface LayoutSummary {
   otherLayouts: RenderItem[];
 }
 
+interface SectionVisibility {
+  label_to_div_mapping: Record<string, string[]>;
+}
+
 export interface PropertyData {
   property: PropertyInfo;
   sales: SaleInfo[];
@@ -107,6 +112,8 @@ export interface PropertyData {
   providers?: any[];
   carousel_images?: CarouselImage[];
   layouts?: LayoutSummary;
+  sectionVisibility?: SectionVisibility;
+  dataLabel?: string;
 }
 
 type EnumMappingRaw = {
@@ -163,12 +170,14 @@ export class IPLDDataLoader {
   private cache: Map<string, DataNode> = new Map();
   private dataDir: string;
   private enumMapping: EnumMapping;
+  private sectionVisibility: SectionVisibility;
 
   constructor(dataDir: string) {
     this.dataDir = dataDir;
     this.enumMapping = this.parseEnumMapping(
       enumMappingRaw as EnumMappingRaw[],
     );
+    this.sectionVisibility = sectionVisibilityRaw as SectionVisibility;
   }
 
   async loadPropertyData(rootCID: string): Promise<PropertyData> {
@@ -365,6 +374,9 @@ export class IPLDDataLoader {
       utility = this.convertNodeToRenderItem(utilityNode, "utility");
     }
 
+    // Determine the data label based on available data
+    const dataLabel = this.determineDataLabel(graph, carousel_images);
+
     return {
       property,
       sales,
@@ -374,6 +386,8 @@ export class IPLDDataLoader {
       utility,
       carousel_images,
       layouts,
+      sectionVisibility: this.sectionVisibility,
+      dataLabel,
     };
   }
 
@@ -783,6 +797,38 @@ export class IPLDDataLoader {
       }
     }
 
+    // Method 3: Look for *-link.json relationship files (used in photo data)
+    if (images.length === 0) {
+      for (const node of graph.values()) {
+        // Check if the node CID ends with "-link" (indicating a link relationship file)
+        if (node.cid.endsWith("-link")) {
+          if (node.data?.from && node.data?.to) {
+            // Check if this relationship is from a property node
+            const toLink = node.data.to;
+            
+            // For photo data, the from link might point to a CID rather than a local file
+            // We'll accept any link file that points to an image, regardless of the from field
+            // since the property relationship might be established through other means
+            
+            // Resolve the file metadata node
+            const fileNode = this.resolveNodeFromLink(toLink, graph);
+
+            if (
+              fileNode?.data?.document_type === "PropertyImage" &&
+              fileNode.data.ipfs_url
+            ) {
+              images.push({
+                ipfs_url: fileNode.data.ipfs_url,
+                name: fileNode.data.name || "",
+                document_type: fileNode.data.document_type,
+                file_format: fileNode.data.file_format,
+              });
+            }
+          }
+        }
+      }
+    }
+
     // Sort images by filename number
     images.sort((a, b) => {
       const numA = parseInt(a.ipfs_url.match(/\d+/)?.[0] || "0");
@@ -929,5 +975,84 @@ export class IPLDDataLoader {
       // Direct CID reference
       return graph.get(linkedPath);
     }
+  }
+
+  private determineDataLabel(graph: Map<string, DataNode>, carousel_images: CarouselImage[]): string {
+    // First, collect all labels found in the graph
+    const labels: string[] = [];
+    for (const node of graph.values()) {
+      if (node.data && node.data.label) {
+        console.log('Found explicit label:', node.data.label, 'in node:', node.cid);
+        labels.push(node.data.label);
+      }
+    }
+    
+    // Also check for label in any field of any node (case-insensitive)
+    for (const node of graph.values()) {
+      if (node.data) {
+        for (const [key, value] of Object.entries(node.data)) {
+          if (key.toLowerCase() === 'label' && typeof value === 'string') {
+            console.log('Found label in field:', key, 'value:', value, 'in node:', node.cid);
+            labels.push(value);
+          }
+        }
+      }
+    }
+    
+    // Prioritize labels: Photo Metadata > Photo > County > Seed
+    if (labels.includes('Photo Metadata')) {
+      console.log('Found Photo Metadata label, returning Photo Metadata');
+      return 'Photo Metadata';
+    }
+    if (labels.includes('Photo')) {
+      console.log('Found Photo label, returning Photo');
+      return 'Photo';
+    }
+    if (labels.includes('County')) {
+      console.log('Found County label, returning County');
+      return 'County';
+    }
+    if (labels.includes('Seed')) {
+      console.log('Found Seed label, returning Seed');
+      return 'Seed';
+    }
+    
+    // Check for photo metadata (most comprehensive data)
+    if (carousel_images.length > 0) {
+      console.log('No explicit label found, but has carousel images, returning Photo Metadata');
+      return "Photo Metadata";
+    }
+    
+    // Check for photo data
+    const hasPhotoData = Array.from(graph.values()).some(node => 
+      node.data && (
+        node.data.document_type === "photo" ||
+        node.data.file_format === "jpg" ||
+        node.data.file_format === "jpeg" ||
+        node.data.file_format === "png"
+      )
+    );
+    if (hasPhotoData) {
+      console.log('No explicit label found, but has photo data, returning Photo');
+      return "Photo";
+    }
+    
+    // Check for county data (sales, taxes, structure details)
+    const hasCountyData = Array.from(graph.values()).some(node => 
+      node.data && (
+        node.data.purchase_price_amount ||
+        node.data.tax_year ||
+        node.data.flooring_material_primary ||
+        node.data.exterior_wall_material_primary
+      )
+    );
+    if (hasCountyData) {
+      console.log('No explicit label found, but has county data, returning County');
+      return "County";
+    }
+    
+    // Default to Seed for basic property data
+    console.log('No explicit label found, defaulting to Seed');
+    return "Seed";
   }
 }

@@ -1,86 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="c7512ae0-ce21-4060-b688-6340c7b8594c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/fix-name.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/appraiser.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/arcitecture.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/balcony.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/bathroom.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/bedroom.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/builder.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/cabinet.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/carat-down.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/ceiling.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/closet.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/clutter.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/cooling.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/countertops.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/deck.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/decor-elements.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/dining-room.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/driveway.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/electric-capacity.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/electricity.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/email.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/exterior-door.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/exterior-material.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/exteriorsvg.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/fan.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/faucet.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/fence.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/floor-1of2.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/floor-1of3.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/floor-2of2.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/floor-2of3.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/floor-3of3.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/flooring-wear.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/flooring.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/floorplan.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/foundation.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/fridge.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/garage.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/glass-type.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/heating.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/hvac.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/in-demand.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/inspector.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/insurance-broker.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/interior-door.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/landscaping.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/laundry.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/lighting.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/living.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/mortgage-broker.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/natural-light.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/paint.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/patio.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/phone.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/photographer.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/plumbing.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/pool.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/price.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/rain.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/real-estate-agent.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/roof-structure.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/roof.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/safety.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/sewer.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/smart-home.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/solar.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/style.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/subfloor.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/texture.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/title-agent.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/utilities.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/view.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/wall-structure.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/warning.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/water.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/window-operation.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/window-treatment.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/windows.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/assets/static/wood-floor.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carousel-test/bafkreigzz5foh5ts76vvhxphzulptpnjwznog6lcnxw5wsvfqa7zlxeioa/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/carousel-test/bafkreigzz5foh5ts76vvhxphzulptpnjwznog6lcnxw5wsvfqa7zlxeioa/manifest.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/data-loader.ts" beforeDir="false" afterPath="$PROJECT_DIR$/lib/data-loader.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/ipld-data-loader.ts" beforeDir="false" afterPath="$PROJECT_DIR$/lib/ipld-data-loader.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/property.njk" beforeDir="false" afterPath="$PROJECT_DIR$/templates/property.njk" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/types/property.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/types/property.d.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -90,7 +20,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="main" />
+        <entry key="$PROJECT_DIR$" value="adding_confg" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -115,18 +45,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;mapping-update&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "visibility",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>

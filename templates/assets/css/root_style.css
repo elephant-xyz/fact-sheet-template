@@ -2685,3 +2685,38 @@ h1 .data-footnote:hover {
 .room-properties.collapsible-content.expanded {
   max-height: 500px;
 }
+
+/* Section Visibility Rules */
+[data-section] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+}
+
+[data-section].show {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+/* Special case for carousel - show by default if it has images */
+.carousel-container[data-section="photo-gallery"] {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
+/* Override the general data-section hiding for carousel */
+.carousel-container[data-section="photo-gallery"] {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  height: auto !important;
+  overflow: visible !important;
+}

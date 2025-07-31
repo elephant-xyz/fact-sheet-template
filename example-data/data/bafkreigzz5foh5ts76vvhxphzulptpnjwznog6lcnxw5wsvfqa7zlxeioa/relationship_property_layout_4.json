@@ -1,8 +1,0 @@
-{
-  "from": {
-    "/": "./property.json"
-  },
-  "to": {
-    "/": "./layout_4.json"
-  }
-}
