@@ -857,15 +857,14 @@ function updateSectionVisibility(label) {
                             
                             <!-- Parcel ID -->
                             {% if homes[property_id].property.parcel_identifier or property_id %}
-                            <div class="building-spec-item">
+                            <div class="building-spec-item" data-section="parcel-id">
                                 <div class="building-spec-label">Parcel ID (APN)</div>
                                 <div class="building-spec-value">
                                     <div class="building-spec-text">{{ homes[property_id].property.parcel_identifier or property_id }}</div>
                                 </div>
                             </div>
                             {% endif %}
-                        </div>
-                        
+                                            
                         <!-- Second Column -->
                         <div class="building-details-column">
                             <!-- Living Area -->
