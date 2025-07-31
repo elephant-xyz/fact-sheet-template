@@ -15,6 +15,7 @@ export class DataLoader {
       ci: options.ci,
       logFile: options.logFile,
     });
+    console.log(`🔧 Creating IPLD Data Loader with input: ${options.input}`);
     this.ipldLoader = new IPLDDataLoader(options.input);
   }
 
@@ -32,7 +33,10 @@ export class DataLoader {
 
       if (stats.isDirectory()) {
         try {
+          console.log(`🔍 Loading IPLD data for directory: ${dir}`);
           const propertyData = await this.ipldLoader.loadPropertyData(dir);
+          console.log(`✅ IPLD data loaded for ${dir}, labels:`, propertyData.labels);
+          console.log(`🔍 IPLD data keys:`, Object.keys(propertyData));
           homes[dir] = this.transformIPLDData(propertyData);
         } catch (error) {
           this.logger.warn(
@@ -119,6 +123,7 @@ export class DataLoader {
 
       carousel_images: ipldData.carousel_images || [],
       layouts: ipldData.layouts || [],
+      labels: ipldData.labels || [], // Include labels for section visibility
     };
 
     return transformed as PropertyData;

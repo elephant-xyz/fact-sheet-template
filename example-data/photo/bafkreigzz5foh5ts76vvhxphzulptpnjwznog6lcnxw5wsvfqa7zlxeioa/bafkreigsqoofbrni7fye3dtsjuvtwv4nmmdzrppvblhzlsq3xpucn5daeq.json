@@ -1,0 +1,112 @@
+{
+  "label": "County",
+  "relationships": {
+    "person_has_property": [
+      {
+        "/": "./relationship_person_3_1_property.json"
+      },
+      {
+        "/": "./relationship_person_1_2_property.json"
+      },
+      {
+        "/": "./relationship_person_1_1_property.json"
+      },
+      {
+        "/": "./relationship_person_2_1_property.json"
+      }
+    ],
+    "company_has_property": null,
+    "property_has_address": {
+      "/": "./relationship_property_address.json"
+    },
+    "property_has_lot": {
+      "/": "./relationship_property_lot.json"
+    },
+    "property_has_tax": [
+      {
+        "/": "./relationship_property_tax_2023.json"
+      },
+      {
+        "/": "./relationship_property_tax_2016.json"
+      },
+      {
+        "/": "./relationship_property_tax_2019.json"
+      },
+      {
+        "/": "./relationship_property_tax_2024.json"
+      },
+      {
+        "/": "./relationship_property_tax_2020.json"
+      },
+      {
+        "/": "./relationship_property_tax_2022.json"
+      },
+      {
+        "/": "./relationship_property_tax_2021.json"
+      },
+      {
+        "/": "./relationship_property_tax_2018.json"
+      },
+      {
+        "/": "./relationship_property_tax_2015.json"
+      },
+      {
+        "/": "./relationship_property_tax_2017.json"
+      }
+    ],
+    "property_has_sales_history": [
+      {
+        "/": "./relationship_property_sales_1.json"
+      },
+      {
+        "/": "./relationship_property_sales_3.json"
+      },
+      {
+        "/": "./relationship_property_sales_2.json"
+      }
+    ],
+    "property_has_layout": [
+      {
+        "/": "./relationship_property_layout_2.json"
+      },
+      {
+        "/": "./relationship_property_layout_3.json"
+      },
+      {
+        "/": "./relationship_property_layout_4.json"
+      },
+      {
+        "/": "./relationship_property_layout_6.json"
+      },
+      {
+        "/": "./relationship_property_layout_5.json"
+      },
+      {
+        "/": "./relationship_property_layout_1.json"
+      }
+    ],
+    "property_has_flood_storm_information": null,
+    "property_has_file": null,
+    "property_has_structure": {
+      "/": "./relationship_property_structure.json"
+    },
+    "property_has_utility": {
+      "/": "./relationship_property_utility.json"
+    },
+    "sales_history_has_person": [
+      {
+        "/": "./relationship_sales_person_3_1.json"
+      },
+      {
+        "/": "./relationship_sales_person_1_2.json"
+      },
+      {
+        "/": "./relationship_sales_person_1_1.json"
+      },
+      {
+        "/": "./relationship_sales_person_2_1.json"
+      }
+    ],
+    "sales_history_has_company": null
+  }
+}

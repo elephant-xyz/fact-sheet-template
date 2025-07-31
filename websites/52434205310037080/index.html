@@ -3,47 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-
-  2558 Gardens Pkwy, palm beach gardens, FL 33410
-
-</title>
-    <meta name="description" content="
-
-  Property for sale in Palm Beach County
-
-">
+    <title>Property for Sale in ,  - N/A beds</title>
+    <meta name="description" content="N/A-bed, N/A-bath property for sale in , . this property">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://elephant.xyz/homes/public/homes/52434205310037080">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="place">
     <meta property="og:url" content="https://elephant.xyz/homes/public/homes/52434205310037080">
-    <meta property="og:title" content="
-
-  2558 Gardens Pkwy, palm beach gardens, FL 33410
-
-">
-    <meta property="og:description" content="
-
-  Property for sale in Palm Beach County
-
-">
+    <meta property="og:title" content="Property for Sale in ,  - N/A beds">
+    <meta property="og:description" content="N/A-bed, N/A-bath property for sale in , . this property">
     <meta property="og:image" content="">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://elephant.xyz/homes/public/homes/52434205310037080">
-    <meta property="twitter:title" content="
-
-  2558 Gardens Pkwy, palm beach gardens, FL 33410
-
-">
-    <meta property="twitter:description" content="
-
-  Property for sale in Palm Beach County
-
-">
+    <meta property="twitter:title" content="Property for Sale in ,  - N/A beds">
+    <meta property="twitter:description" content="N/A-bed, N/A-bath property for sale in , . this property">
     <meta property="twitter:image" content="">
 
     
@@ -90,12 +66,6 @@ option {
   margin: 0 auto;
   padding: 104px 208px;
   overflow-x: visible !important;
-  transition: padding-top 0.3s ease;
-}
-
-/* Reduce top padding when navigation is hidden */
-.navigation.auto-hide ~ .container {
-  padding-top: 40px;
 }
 
 /* Main Layout */
@@ -115,12 +85,6 @@ option {
   width: 100%;
 }
 
-@media (max-width: 768px) {
-  .main-content {
-    margin-bottom: 16px;
-  }
-}
-
 /* Navigation */
 .navigation {
   width: 100%;
@@ -129,12 +93,6 @@ option {
   box-shadow: 0px 2px 10px 2px rgba(0, 0, 0, 0.1);
   position: fixed;
   z-index: 10;
-  transition: transform 0.3s ease;
-}
-
-/* Hide navigation when content doesn't exceed viewport */
-.navigation.auto-hide {
-  transform: translateY(-100%);
 }
 
 .nav-content {
@@ -255,7 +213,9 @@ option {
 }
 
 .view-all-providers-btn:hover {
-  opacity: 0.7;
+  background-color: #f0f0f0;
+  border-color: #c0c0c0;
+  color: #423e3e;
 }
 
 .dropdown-icon {
@@ -740,7 +700,6 @@ option {
 
 /* Section Styles */
 .section {
-  padding: 0 4px;
 }
 
 .section-subtitle {
@@ -914,7 +873,6 @@ option {
   flex-direction: column;
   gap: 12px;
   padding: 12px;
-  position: relative;
   background-color: #f7f7f7;
   border: 1px solid #d9d8d8;
   border-radius: 12px;
@@ -924,8 +882,7 @@ option {
 .providers-title {
   font-weight: 600;
   line-height: 120%;
-  font-size: 14px;
-  text-align: center;
+  font-size: 16px;
   color: #423e3e;
 }
 
@@ -945,8 +902,8 @@ option {
 }
 
 .provider-avatar {
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   border-radius: 8px;
   overflow: hidden;
   flex-shrink: 0;
@@ -971,7 +928,7 @@ option {
   align-items: center;
   gap: 4px;
   height: 18px;
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
 .provider-name {
@@ -1385,8 +1342,8 @@ h1 .data-footnote:hover {
     font-size: 11px;
   }
   .provider-avatar {
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 48px;
   }
   .provider-item {
     gap: 4px;
@@ -1505,7 +1462,7 @@ h1 .data-footnote:hover {
     max-width: 400px;
   }
   .providers-card {
-    padding: 8px;
+    padding: 12px;
   }
   .provider-item {
     padding: 8px;
@@ -1548,7 +1505,7 @@ h1 .data-footnote:hover {
   }
   
   .view-all-providers-btn {
-    
+    padding: 4px 6px;
     font-size: 10px;
   }
   
@@ -1936,7 +1893,7 @@ h1 .data-footnote:hover {
 
 .provider-dropdown-arrow {
   width: 9px;
-  height: auto;
+  height: 9px;
   transition: transform 0.3s ease;
   display: inline-block;
 }
@@ -2007,6 +1964,13 @@ h1 .data-footnote:hover {
   color: #423e3e;
 }
 
+.provider-dropdown-arrow {
+  width: 9px;
+  height: 9px;
+  transition: transform 0.3s ease;
+  display: inline-block;
+}
+
 .provider-details {
   display: flex;
   flex-direction: column;
@@ -2036,90 +2000,6 @@ h1 .data-footnote:hover {
   gap: 4px;
 }
 
-/* Mobile Provider Functionality */
-.view-all-providers-btn {
-  display: none;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  background: transparent;
-  border: none;
-  font-size: 12px;
-  font-weight: 500;
-  color: #423e3e;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  
-}
-
-.view-all-providers-btn:hover {
-  opacity: 0.7;
-}
-
-.view-all-providers-btn .arrow {
-  width: 10px;
-  height: 10px;
-  transition: transform 0.3s ease;
-}
-
-.view-all-providers-btn.expanded .arrow {
-  transform: rotate(180deg);
-}
-
-.view-less-providers-btn {
-  display: none;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-
-  background: transparent;
-  border: none;
-  font-size: 12px;
-  font-weight: 500;
-  color: #423e3e;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  
-}
-
-.view-less-providers-btn:hover {
-  opacity: 0.7;
-}
-
-.view-less-providers-btn .arrow {
-  width: 10px;
-  height: 10px;
-  transition: transform 0.3s ease;
-  transform: rotate(180deg);
-}
-
-/* Mobile breakpoint styles */
-@media (max-width: 768px) {
-  .view-all-providers-btn {
-    display: flex;
-  }
-  
-  /* Hide additional providers by default on mobile */
-  .providers-list .provider-item:not(:first-child) {
-    display: none;
-  }
-  
-  /* Show all providers when expanded */
-  .providers-list.mobile-expanded .provider-item {
-    display: flex;
-  }
-  
-  /* Show view less button when expanded */
-  .providers-list.mobile-expanded .view-less-providers-btn {
-    display: flex;
-  }
-  
-  /* Hide view all button when expanded */
-  .providers-list.mobile-expanded .view-all-providers-btn {
-    display: none;
-  }
-}
-
 .email-icon {
   width: 16px;
   height: 16px;
@@ -2135,7 +2015,7 @@ h1 .data-footnote:hover {
 }
 
 .tax-information-section {
-  padding: 16px 4px;
+  padding: 16px 0;
   display: none;
 }
 
@@ -2212,16 +2092,6 @@ h1 .data-footnote:hover {
 .building-details-grid {
   display: flex;
   gap: 48px;
-}
-
-/* Remove gap when second column has no building-spec-item elements */
-.building-details-grid:has(.building-details-column:nth-child(2):not(:has(.building-spec-item))) {
-  gap: 0 !important;
-}
-
-/* JavaScript fallback for browsers that don't support :has() */
-.building-details-grid.single-column {
-  gap: 0 !important;
 }
 
 .building-details-column {
@@ -2512,16 +2382,6 @@ h1 .data-footnote:hover {
     gap: 24px;
   }
 
-  /* Remove gap on mobile when second column has no building-spec-item elements */
-  .building-details-grid:has(.building-details-column:nth-child(2):not(:has(.building-spec-item))) {
-    gap: 0 !important;
-  }
-
-  /* JavaScript fallback for mobile */
-  .building-details-grid.single-column {
-    gap: 0 !important;
-  }
-
   .chart-tabs {
     gap: 0;
   }
@@ -2551,7 +2411,6 @@ h1 .data-footnote:hover {
 
 .scroll-offset-section {
   scroll-margin-top: 80px;
-  padding: 0 4px;
 }
 
 @media (max-width: 768px) {
@@ -2846,14 +2705,6 @@ h1 .data-footnote:hover {
                     
                     
                         
-                        <div class="location-details">
-                            
-                            <span class="county-info">Palm Beach County</span>
-                            
-                            
-                            
-                        </div>
-                        
                     
                     
 
@@ -2878,15 +2729,7 @@ h1 .data-footnote:hover {
             
             <!-- Building Details -->
             <section id="building-details" class="building-details-section scroll-offset-section">
-              
-              
-              
-              
-              
-              
-              
-              
-              
+              <h2 class="section-title">Building Details</h2>
                 <div class="building-details-content">
                     <div class="building-details-grid">
                         <!-- First Column -->
@@ -2898,13 +2741,6 @@ h1 .data-footnote:hover {
                             
                             
                             <!-- Parcel ID -->
-                            
-                            <div class="building-spec-item">
-                                <div class="building-spec-label">Parcel ID (APN)</div>
-                                <div class="building-spec-value">
-                                    <div class="building-spec-text">52434205310037080</div>
-                                </div>
-                            </div>
                             
                         </div>
                         
@@ -3014,7 +2850,7 @@ h1 .data-footnote:hover {
                                     </div>
                                     <button class="provider-more-info-btn" onclick="toggleProviderInfo(this)">
                                         <span>More Info</span>
-                                        <img src="./type=carat-down.svg" alt="Dropdown" class="provider-dropdown-arrow">
+                                        <img src="./uiicons-1.svg" alt="Dropdown" class="provider-dropdown-arrow">
                                     </button>
                                 </div>
                                 <div class="provider-expanded-content" style="display: none;">
@@ -3029,17 +2865,11 @@ h1 .data-footnote:hover {
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Mobile expand button after first provider -->
-                        <button class="view-all-providers-btn" onclick="toggleAllProviders(this)">
-                            <span>View all providers</span>
-                            <img src="./type=carat-down.svg" alt="Expand" class="arrow">
-                        </button>
 
                         <!-- Provider 2: Home Inspector -->
                         <div class="provider-item">
                             <div class="provider-avatar">
-                                <img src="./michael_headshot.png" alt="Michael Johnson">
+                                <img src="./annette.jpg" alt="Michael Johnson">
                             </div>
                             <div class="provider-info">
                                 <div class="provider-header">
@@ -3055,7 +2885,7 @@ h1 .data-footnote:hover {
                                     </div>
                                     <button class="provider-more-info-btn" onclick="toggleProviderInfo(this)">
                                         <span>More Info</span>
-                                        <img src="./type=carat-down.svg" alt="Dropdown" class="provider-dropdown-arrow">
+                                        <img src="./uiicons-1.svg" alt="Dropdown" class="provider-dropdown-arrow">
                                     </button>
                                 </div>
                                 <div class="provider-expanded-content" style="display: none;">
@@ -3074,7 +2904,7 @@ h1 .data-footnote:hover {
                         <!-- Provider 3: Mortgage Broker -->
                         <div class="provider-item">
                             <div class="provider-avatar">
-                                <img src="./sarah_headshot.png" alt="Sarah Williams">
+                                <img src="./annette.jpg" alt="Sarah Williams">
                             </div>
                             <div class="provider-info">
                                 <div class="provider-header">
@@ -3090,7 +2920,7 @@ h1 .data-footnote:hover {
                                     </div>
                                     <button class="provider-more-info-btn" onclick="toggleProviderInfo(this)">
                                         <span>More Info</span>
-                                        <img src="./type=carat-down.svg" alt="Dropdown" class="provider-dropdown-arrow">
+                                        <img src="./uiicons-1.svg" alt="Dropdown" class="provider-dropdown-arrow">
                                     </button>
                                 </div>
                                 <div class="provider-expanded-content" style="display: none;">
@@ -3109,7 +2939,7 @@ h1 .data-footnote:hover {
                         <!-- Provider 4: Appraiser -->
                         <div class="provider-item">
                             <div class="provider-avatar">
-                                <img src="./david_headshot.png" alt="David Rodriguez">
+                                <img src="./annette.jpg" alt="David Rodriguez">
                             </div>
                             <div class="provider-info">
                                 <div class="provider-header">
@@ -3125,7 +2955,7 @@ h1 .data-footnote:hover {
                                     </div>
                                     <button class="provider-more-info-btn" onclick="toggleProviderInfo(this)">
                                         <span>More Info</span>
-                                        <img src="./type=carat-down.svg" alt="Dropdown" class="provider-dropdown-arrow">
+                                        <img src="./uiicons-1.svg" alt="Dropdown" class="provider-dropdown-arrow">
                                     </button>
                                 </div>
                                 <div class="provider-expanded-content" style="display: none;">
@@ -3144,7 +2974,7 @@ h1 .data-footnote:hover {
                         <!-- Provider 5: Title Agent -->
                         <div class="provider-item">
                             <div class="provider-avatar">
-                                <img src="./jennifer_headshot.png" alt="Jennifer Chen">
+                                <img src="./annette.jpg" alt="Jennifer Chen">
                             </div>
                             <div class="provider-info">
                                 <div class="provider-header">
@@ -3160,7 +2990,7 @@ h1 .data-footnote:hover {
                                     </div>
                                     <button class="provider-more-info-btn" onclick="toggleProviderInfo(this)">
                                         <span>More Info</span>
-                                        <img src="./type=carat-down.svg" alt="Dropdown" class="provider-dropdown-arrow">
+                                        <img src="./uiicons-1.svg" alt="Dropdown" class="provider-dropdown-arrow">
                                     </button>
                                 </div>
                                 <div class="provider-expanded-content" style="display: none;">
@@ -3179,7 +3009,7 @@ h1 .data-footnote:hover {
                         <!-- Provider 6: Insurance Broker -->
                         <div class="provider-item">
                             <div class="provider-avatar">
-                                <img src="./robert_headshot.png" alt="Robert Thompson">
+                                <img src="./annette.jpg" alt="Robert Thompson">
                             </div>
                             <div class="provider-info">
                                 <div class="provider-header">
@@ -3195,7 +3025,7 @@ h1 .data-footnote:hover {
                                     </div>
                                     <button class="provider-more-info-btn" onclick="toggleProviderInfo(this)">
                                         <span>More Info</span>
-                                        <img src="./type=carat-down.svg" alt="Dropdown" class="provider-dropdown-arrow">
+                                        <img src="./uiicons-1.svg" alt="Dropdown" class="provider-dropdown-arrow">
                                     </button>
                                 </div>
                                 <div class="provider-expanded-content" style="display: none;">
@@ -3214,7 +3044,7 @@ h1 .data-footnote:hover {
                         <!-- Provider 7: Photographer -->
                         <div class="provider-item">
                             <div class="provider-avatar">
-                                <img src="./lisa_headshot.png" alt="Lisa Martinez">
+                                <img src="./annette.jpg" alt="Lisa Martinez">
                             </div>
                             <div class="provider-info">
                                 <div class="provider-header">
@@ -3230,7 +3060,7 @@ h1 .data-footnote:hover {
                                     </div>
                                     <button class="provider-more-info-btn" onclick="toggleProviderInfo(this)">
                                         <span>More Info</span>
-                                        <img src="./type=carat-down.svg" alt="Dropdown" class="provider-dropdown-arrow">
+                                        <img src="./uiicons-1.svg" alt="Dropdown" class="provider-dropdown-arrow">
                                     </button>
                                 </div>
                                 <div class="provider-expanded-content" style="display: none;">
@@ -3247,12 +3077,6 @@ h1 .data-footnote:hover {
                         </div>
 
 
-                        <!-- Mobile collapse button at bottom (only shows when expanded) -->
-                        <button class="view-less-providers-btn" onclick="toggleAllProviders(this)">
-                            <span>View less</span>
-                            <img src="./type=carat-down.svg" alt="Collapse" class="arrow">
-                        </button>
-                        
                         
                     </div>
                 </div>
@@ -3283,32 +3107,7 @@ h1 .data-footnote:hover {
         el.focus();
       }
     }
-    
-    // Auto-hide navigation when main-content doesn't exceed viewport
-    checkNavigationVisibility();
   });
-
-  // Check if navigation should be hidden based on main-content height
-  function checkNavigationVisibility() {
-    const navigation = document.querySelector('.navigation');
-    const mainContent = document.querySelector('.main-content');
-    
-    if (!mainContent) return;
-    
-    const mainContentHeight = mainContent.offsetHeight;
-    const viewportHeight = window.innerHeight;
-    
-    if (mainContentHeight <= viewportHeight) {
-      // Main content fits in viewport, hide navigation
-      navigation.classList.add('auto-hide');
-    } else {
-      // Main content exceeds viewport, show navigation
-      navigation.classList.remove('auto-hide');
-    }
-  }
-  
-  // Recheck on window resize
-  window.addEventListener('resize', checkNavigationVisibility);
 
   function toggleRoomDetails(header) {
     const roomItem = header.parentElement;
@@ -3367,36 +3166,6 @@ h1 .data-footnote:hover {
     const prevIndex = currentIndex === 0 ? radioButtons.length - 1 : currentIndex - 1;
     setSlide(propertyId, prevIndex);
   }
-
-  function toggleAllProviders(button) {
-    const providersList = button.closest('.providers-list');
-    
-    if (providersList.classList.contains('mobile-expanded')) {
-      // Currently expanded, so collapse
-      providersList.classList.remove('mobile-expanded');
-    } else {
-      // Currently collapsed, so expand
-      providersList.classList.add('mobile-expanded');
-    }
-  }
-
-  // Handle building details grid gap when second column is empty
-  function handleBuildingDetailsGap() {
-    const buildingDetailsGrids = document.querySelectorAll('.building-details-grid');
-    
-    buildingDetailsGrids.forEach(grid => {
-      const secondColumn = grid.querySelector('.building-details-column:nth-child(2)');
-      if (secondColumn) {
-        const hasItems = secondColumn.querySelector('.building-spec-item');
-        if (!hasItems) {
-          grid.classList.add('single-column');
-        }
-      }
-    });
-  }
-
-  // Run on page load
-  document.addEventListener('DOMContentLoaded', handleBuildingDetailsGap);
 </script>
 
     

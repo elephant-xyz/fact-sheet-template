@@ -1,0 +1,48 @@
+{
+  "label_to_div_mapping": {
+    "Seed": [
+      "header-section",
+      "property-header", 
+      "property-address",
+      "provider-cards",
+      "property-divider"
+    ],
+    "County": [
+      "header-section",
+      "property-header", 
+      "property-address",
+      "provider-cards",
+      "property-divider",
+      "property-history",
+      "floorplan",
+      "building-details",
+      "features"
+    ],
+    "Photo": [
+      "header-section",
+      "property-header", 
+      "property-address",
+      "provider-cards",
+      "property-divider",
+      "property-history",
+      "floorplan",
+      "floorplan-layout",
+      "building-details",
+      "features",
+      "photo-gallery"
+    ],
+    "Photo Metadata": [
+      "header-section",
+      "property-header", 
+      "property-address",
+      "provider-cards",
+      "property-divider",
+      "property-history",
+      "floorplan",
+      "floorplan-layout",
+      "building-details",
+      "features",
+      "photo-gallery"
+    ]
+  }
+} 

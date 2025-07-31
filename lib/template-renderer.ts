@@ -5,6 +5,7 @@ import fs from "fs-extra";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import { BuilderOptions, PropertyData } from "../types/property.js";
+import { SectionVisibilityFilter } from "./section-visibility-filter.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -24,6 +25,7 @@ export class TemplateRenderer {
     });
 
     this.setupFilters();
+    this.setupSectionVisibilityFilters();
   }
 
   private setupFilters(): void {
@@ -402,6 +404,33 @@ export class TemplateRenderer {
     });
   }
 
+  private setupSectionVisibilityFilters(): void {
+    const visibilityFilter = new SectionVisibilityFilter();
+
+    // Filter to check if a div should be visible based on data
+    this.env.addFilter("isDivVisible", (data: any, divId: string): boolean => {
+      const isVisible = visibilityFilter.isDivVisible(data, divId);
+      console.log(`🔍 Visibility check for ${divId}: ${isVisible ? 'visible' : 'hidden'}`);
+      console.log(`   Data labels: ${data.labels ? data.labels.join(', ') : 'none'}`);
+      return isVisible;
+    });
+
+    // Filter to get visibility CSS classes
+    this.env.addFilter("getVisibilityClasses", (data: any, divId: string): string => {
+      return visibilityFilter.getVisibilityClasses(data, divId);
+    });
+
+    // Filter to check if a label is present in data
+    this.env.addFilter("hasLabel", (data: any, label: string): boolean => {
+      return visibilityFilter.hasLabel(data, label);
+    });
+
+    // Filter to get all visible divs
+    this.env.addFilter("getVisibleDivs", (data: any): string[] => {
+      return visibilityFilter.getVisibleDivs(data);
+    });
+  }
+
   async renderProperty(
     propertyId: string,
     propertyData: PropertyData,
@@ -450,6 +479,8 @@ export class TemplateRenderer {
       homes: {
         [propertyId]: {
           ...propertyData,
+          // Ensure labels are available for visibility checks
+          labels: propertyData.labels || [],
           property: {
             ...propertyData.property, // Preserve existing property data
             property_structure_built_year:
@@ -488,6 +519,8 @@ export class TemplateRenderer {
     };
 
     console.log("propertyData", propertyData);
+    console.log("Labels:", propertyData.labels);
+    console.log("Has Photo Metadata label:", propertyData.labels?.includes("Photo Metadata"));
 
     // Handle inline CSS if requested
     if (this.options.inlineCss) {
