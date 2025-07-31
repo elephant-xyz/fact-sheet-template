@@ -797,6 +797,38 @@ export class IPLDDataLoader {
       }
     }
 
+    // Method 3: Look for *-link.json relationship files (used in photo data)
+    if (images.length === 0) {
+      for (const node of graph.values()) {
+        // Check if the node CID ends with "-link" (indicating a link relationship file)
+        if (node.cid.endsWith("-link")) {
+          if (node.data?.from && node.data?.to) {
+            // Check if this relationship is from a property node
+            const toLink = node.data.to;
+            
+            // For photo data, the from link might point to a CID rather than a local file
+            // We'll accept any link file that points to an image, regardless of the from field
+            // since the property relationship might be established through other means
+            
+            // Resolve the file metadata node
+            const fileNode = this.resolveNodeFromLink(toLink, graph);
+
+            if (
+              fileNode?.data?.document_type === "PropertyImage" &&
+              fileNode.data.ipfs_url
+            ) {
+              images.push({
+                ipfs_url: fileNode.data.ipfs_url,
+                name: fileNode.data.name || "",
+                document_type: fileNode.data.document_type,
+                file_format: fileNode.data.file_format,
+              });
+            }
+          }
+        }
+      }
+    }
+
     // Sort images by filename number
     images.sort((a, b) => {
       const numA = parseInt(a.ipfs_url.match(/\d+/)?.[0] || "0");
