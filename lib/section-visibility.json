@@ -4,7 +4,9 @@
       "header-section",
       "property-header", 
       "property-address",
-      "provider-cards"
+      "provider-cards",
+      "building-details",
+      "parcel-id"
     ],
     "County": [
       "header-section",
@@ -14,7 +16,8 @@
       "property-history",
       "floorplan",
       "building-details",
-      "features"
+      "features",
+      "parcel-id"
     ],
     "Photo": [
       "header-section",
@@ -24,7 +27,8 @@
       "property-history",
       "floorplan",
       "building-details",
-      "features"
+      "features",
+      "parcel-id"
     ],
     "Photo Metadata": [
       "header-section",
@@ -35,7 +39,8 @@
       "floorplan",
       "floorplan-layout",
       "building-details",
-      "features"
+      "features",
+      "parcel-id"
     ]
   }
 } 
