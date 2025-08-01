@@ -1,0 +1,18 @@
+{
+  "source_http_request": {
+    "method": "GET",
+    "url": "https://pbcpao.gov/Property/Details",
+    "multiValueQueryString": {
+      "parcelId": [
+        "52434205310037080"
+      ]
+    }
+  },
+  "request_identifier": "52434205310037080",
+  "livable_floor_area": "2589",
+  "number_of_units_type": "One",
+  "parcel_identifier": "52-43-42-05-31-003-7080",
+  "property_legal_description_text": "HARBOUR OAKS  LT 3708",
+  "property_structure_built_year": 2005,
+  "property_type": "Townhouse"
+}

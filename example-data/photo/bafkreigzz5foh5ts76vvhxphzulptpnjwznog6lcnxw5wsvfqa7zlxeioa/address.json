@@ -1,0 +1,30 @@
+{
+  "source_http_request": {
+    "method": "GET",
+    "url": "https://pbcpao.gov/Property/Details",
+    "multiValueQueryString": {
+      "parcelId": [
+        "52434205310037080"
+      ]
+    }
+  },
+  "request_identifier": "52434205310037080",
+  "city_name": "PALM BEACH GARDENS",
+  "country_code": "US",
+  "county_name": "palm beach",
+  "latitude": 26.8488911,
+  "longitude": -80.0751658,
+  "plus_four_postal_code": null,
+  "postal_code": "33410",
+  "state_code": "FL",
+  "street_name": "GARDENS",
+  "street_post_directional_text": null,
+  "street_pre_directional_text": null,
+  "street_number": "2558",
+  "street_suffix_type": "Pkwy",
+  "unit_identifier": null,
+  "township": null,
+  "range": null,
+  "section": null,
+  "block": null
+}

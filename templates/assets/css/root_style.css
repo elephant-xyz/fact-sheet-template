@@ -39,7 +39,7 @@ option {
   max-width: 1536px;
   width: 100%;
   margin: 0 auto;
-  padding: 104px 160px;
+  padding: 104px 208px;
   overflow-x: visible !important;
   transition: padding-top 0.3s ease;
 }
@@ -52,7 +52,7 @@ option {
 /* Main Layout */
 .main-layout {
   display: flex;
-  gap: 20px;
+  gap: 16px;
   flex-wrap: nowrap;
 }
 
@@ -93,9 +93,7 @@ option {
   justify-content: space-between;
   align-items: end;
   height: 80px;
-  padding: 0 160px;
-  max-width: 1536px;
-  margin: 0 auto;
+  padding: 0 208px;
 }
 
 .nav-tabs {
@@ -114,9 +112,8 @@ option {
   border-radius: 8px;
   font-size: 12px;
   color: #423e3e;
-  width: 274px;
-  margin-bottom: 8px;
-  padding-left: 4px;
+  min-width: 220px;
+  margin-bottom: 12px;
 }
 
 .nav-providers-condensed.show {
@@ -125,7 +122,7 @@ option {
 
 /* Condensed Header */
 .condensed-header {
-  margin-bottom: 0px;
+  margin-bottom: 4px;
 }
 
 .condensed-title {
@@ -191,12 +188,11 @@ option {
   line-height: 1;
 }
 
-/* View All Providers Button - Base Styles */
+/* View All Providers Button - Dropdown Style */
 .view-all-providers-btn {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  gap: 4px;
+  justify-content: space-between;
   background-color: transparent;
   border-radius: 4px;
   font-size: 10px;
@@ -205,29 +201,12 @@ option {
   cursor: pointer;
   transition: all 0.2s ease;
   border: none;
-  margin-top: 2px;
+  
+  
 }
 
 .view-all-providers-btn:hover {
   opacity: 0.7;
-}
-
-/* Desktop Version (in navigation) */
-.view-all-providers-btn-desktop {
-  /* Inherits base styles - add desktop-specific overrides here */
-}
-
-.view-all-providers-btn-desktop:hover {
-  /* Desktop-specific hover styles */
-}
-
-/* Mobile Version (in main content) */
-.view-all-providers-btn-mobile {
-  /* Inherits base styles - add mobile-specific overrides here */
-}
-
-.view-all-providers-btn-mobile:hover {
-  /* Mobile-specific hover styles */
 }
 
 .dropdown-icon {
@@ -372,7 +351,7 @@ option {
 .carousel-image {
   width: 100%;
   height: 100%;
-  border-radius: 16px;
+  border-radius: 20px;
   background-color: #fff;
   position: relative;
   overflow: hidden;
@@ -899,7 +878,6 @@ option {
   font-size: 14px;
   text-align: center;
   color: #423e3e;
-  margin-bottom: 8px;
 }
 
 .providers-list {
@@ -1277,41 +1255,11 @@ h1 .data-footnote:hover {
   color: #423e3e;
 }
 
-.property-address-title {
-  font-size: 32px;
-  font-weight: 600;
-  letter-spacing: 0em;
-  color: #423e3e;
-  line-height: 110%;
-  margin-bottom: 4px;
-  margin-top: 0;
-}
-
-/* Styling for the data footnote within the address title */
-.property-address-title .data-footnote {
-  font-size: 13px;
-  color: #8e8b8b;
-  font-weight: 400 !important;
-  vertical-align: super;
-  margin-left: 2px;
-  text-decoration: none;
-  cursor: pointer;
-  transition: color 0.2s ease;
-  line-height: 1;
-  position: relative;
-  top: -0.3em;
-}
-
-.property-address-title .data-footnote:hover {
-  color: #423e3e;
-}
-
 .breadcrumb {
   display: flex;
   list-style: none;
   padding: 0;
   margin: 0px 2px;
-  margin-bottom: 6px;
   gap: 8px;
   align-items: center;
 }
@@ -1353,16 +1301,10 @@ h1 .data-footnote:hover {
   .sidebar {
     width: 274px;
   }
-  .nav-providers-condensed {
-    width: 274px;
-  }
 }
 
 @media (max-width: 1280px) {
   .sidebar {
-    width: 274px;
-  }
-  .nav-providers-condensed {
     width: 274px;
   }
   .container {
@@ -1370,25 +1312,22 @@ h1 .data-footnote:hover {
   }
   .nav-content {
     padding: 0 104px;
-    max-width: 1536px;
-    margin: 0 auto;
   }
 }
 
 @media (max-width: 1024px) {
   .sidebar {
-    width: 220px;
-  }
-  .nav-providers-condensed {
-    width: 220px;
+    width: 208px;
   }
   .container {
     padding: 104px 52px;
   }
   .nav-content {
     padding: 0 52px;
-    max-width: 1536px;
-    margin: 0 auto;
+  }
+
+  .sidebar {
+    width: 220px;
   }
   .providers-card {
     padding: 8px;
@@ -1419,23 +1358,15 @@ h1 .data-footnote:hover {
 }
 
 @media (max-width: 768px) {
-  .navigation {
-    display: none;
-  }
   .sidebar {
     width: 220px;
   }
-  .nav-providers-condensed {
-    width: 220px;
-  }
   .container {
-    padding: 48px 24px 120px 24px;
+    padding: 104px 24px;
   }
   .nav-content {
     padding: 0 24px;
     height: 60px;
-    max-width: 1536px;
-    margin: 0 auto;
   }
 
   .main-layout {
@@ -1542,8 +1473,7 @@ h1 .data-footnote:hover {
   .nav-providers-condensed {
     gap: 6px;
     padding: 8px;
-    width: 100%;
-    max-width: 400px;
+    min-width: 240px;
   }
   
   .condensed-title {
@@ -1568,8 +1498,8 @@ h1 .data-footnote:hover {
     font-size: 10px;
   }
   
-  .view-all-providers-btn-desktop,
-  .view-all-providers-btn-mobile {
+  .view-all-providers-btn {
+    
     font-size: 10px;
   }
   
@@ -1756,7 +1686,7 @@ h1 .data-footnote:hover {
 .data-footnote {
   font-size: 10px;
   color: #8e8b8b;
-  font-weight: 600 !important;
+  font-weight: 400 !important;
   vertical-align: super;
   margin-left: 2px;
   text-decoration: none;
@@ -1765,7 +1695,7 @@ h1 .data-footnote:hover {
 }
 
 .data-footnote:hover {
-  color: #2be786;
+  color: #423e3e;
 }
 
 /* EXPANDING FOOTNOTE STYLES - COMMENTED OUT FOR FUTURE USE */
@@ -1848,9 +1778,9 @@ h1 .data-footnote:hover {
 .data-source-btn {
   display: inline-block;
   padding: 4px 14px;
-  background: #f0f0f0;
+  background: #f7f7f7;
   color: #423e3e;
-  border: 1px solid transparent;
+  border: 1px solid #d9d8d8;
   border-radius: 32px;
   font-size: 13px;
   font-weight: 600;
@@ -1862,13 +1792,10 @@ h1 .data-footnote:hover {
     border 0.15s;
   cursor: pointer;
 }
-.data-source-btn:hover {
+.data-source-btn:hover,
+.data-source-btn:focus {
   background-color: #aaf5cf;
   border: 1px solid #2be786;
-}
-
-.data-source-btn:focus {
-  outline: none;
 }
 
 .data-source-btn-row {
@@ -2061,7 +1988,7 @@ h1 .data-footnote:hover {
 }
 
 /* Mobile Provider Functionality */
-.view-all-providers-btn-mobile {
+.view-all-providers-btn {
   display: none;
   align-items: center;
   justify-content: center;
@@ -2073,19 +2000,20 @@ h1 .data-footnote:hover {
   color: #423e3e;
   cursor: pointer;
   transition: all 0.2s ease;
+  
 }
 
-.view-all-providers-btn-mobile:hover {
+.view-all-providers-btn:hover {
   opacity: 0.7;
 }
 
-.view-all-providers-btn-mobile .arrow {
+.view-all-providers-btn .arrow {
   width: 10px;
   height: 10px;
   transition: transform 0.3s ease;
 }
 
-.view-all-providers-btn-mobile.expanded .arrow {
+.view-all-providers-btn.expanded .arrow {
   transform: rotate(180deg);
 }
 
@@ -2118,7 +2046,7 @@ h1 .data-footnote:hover {
 
 /* Mobile breakpoint styles */
 @media (max-width: 768px) {
-  .view-all-providers-btn-mobile {
+  .view-all-providers-btn {
     display: flex;
   }
   
@@ -2138,7 +2066,7 @@ h1 .data-footnote:hover {
   }
   
   /* Hide view all button when expanded */
-  .providers-list.mobile-expanded .view-all-providers-btn-mobile {
+  .providers-list.mobile-expanded .view-all-providers-btn {
     display: none;
   }
 }
@@ -2450,7 +2378,7 @@ h1 .data-footnote:hover {
 .floor-rooms {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 .room-item {
   font-size: 13px;
@@ -2464,8 +2392,8 @@ h1 .data-footnote:hover {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  font-size: 12px;
+  gap: 10px;
+  font-size: 13px;
   font-weight: 400;
   color: #6a6a6a;
   margin-top: 8px;
@@ -2483,15 +2411,15 @@ h1 .data-footnote:hover {
 }
 
 .room-property-icon {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   vertical-align: middle;
   display: inline-block;
 }
 
 .room-expand-icon {
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   transition: transform 0.3s ease;
   cursor: pointer;
 }
@@ -2506,7 +2434,7 @@ h1 .data-footnote:hover {
 .floor-section {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
   flex: 1;
   min-width: 200px;
   margin: 8px 0px;
@@ -2718,7 +2646,7 @@ h1 .data-footnote:hover {
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   padding: 0px 0px;
   user-select: none;
 }
