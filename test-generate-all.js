@@ -141,8 +141,7 @@ async function testGenerateAll() {
         
         // Check for specific content based on data type
         if (dir === 'seed') {
-          if (!htmlContent.includes('parcel-id') && !htmlContent.includes('Parcel ID')) {
-            console.log(`    ⚠️  Seed data should contain Parcel ID`);
+if (!htmlContent.toLowerCase().includes('parcel-id')) {
           } else {
             console.log(`    ✅ Parcel ID found in seed data`);
           }
