@@ -130,12 +130,7 @@ async function testGenerateAll() {
           'provider-cards'
         ];
         
-        const foundSections = [];
-        for (const section of sections) {
-          if (htmlContent.includes(`data-section="${section}"`)) {
-            foundSections.push(section);
-          }
-        }
+const foundSections = sections.filter(section => htmlContent.includes(`data-section="${section}"`));
         
         console.log(`    ✅ Found sections: ${foundSections.join(', ')}`);
         
