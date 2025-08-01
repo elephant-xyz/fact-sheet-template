@@ -454,7 +454,7 @@ async function testGenerateAll() {
     }
   }
   
-  const qualityScore = Math.round((passedQualityChecks / totalQualityChecks) * 100);
+const qualityScore = totalQualityChecks > 0 ? Math.round((passedQualityChecks / totalQualityChecks) * 100) : 100;
   console.log(`\n🎯 Overall HTML Quality Score: ${qualityScore}% (${passedQualityChecks}/${totalQualityChecks} checks passed)`);
   
   return results;
