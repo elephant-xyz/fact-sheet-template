@@ -39,12 +39,28 @@ jobs:
         retention-days: 7
         
     - name: Check test output structure
+      if: always() # Run even if test fails
       run: |
         echo "📁 Test output structure:"
-        find test-output -type f -name "*.html" | head -10
-        echo ""
-        echo "📊 Total HTML files generated:"
-        find test-output -type f -name "*.html" | wc -l
-        echo ""
-        echo "📁 Total directories with content:"
-        find test-output -type d | wc -l 
+        if [ -d "test-output" ]; then
+          find test-output -type f -name "*.html" | head -10
+          echo ""
+          echo "📊 Total HTML files generated:"
+          find test-output -type f -name "*.html" | wc -l
+          echo ""
+          echo "📁 Total directories with content:"
+          find test-output -type d | wc -l
+        else
+          echo "❌ test-output directory not found"
+        fi
+        
+    - name: Test failure summary
+      if: failure()
+      run: |
+        echo "❌ Test failed - checking for partial output:"
+        if [ -d "test-output" ]; then
+          echo "📁 Partial test output found:"
+          ls -la test-output/
+        else
+          echo "📁 No test output directory found"
+        fi 
