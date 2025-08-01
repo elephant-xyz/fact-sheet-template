@@ -137,7 +137,7 @@ function updateSectionVisibility(label) {
                         <div class="condensed-phone">561-202-7707</div>
                     </div>
                 </div>
-                <button class="view-all-providers-btn" id="view-all-providers-btn">
+                <button class="view-all-providers-btn view-all-providers-btn-desktop" id="view-all-providers-btn">
                     <span>View All Providers</span>
                     <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" class="dropdown-icon">
                         <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -209,7 +209,7 @@ function updateSectionVisibility(label) {
                 <!-- Property Header -->
                 <header class="property-header" data-section="property-header">
                 <div class="property-address" data-section="property-address">
-                    <h1>
+                    <h1 class="property-address-title">
                         {% if homes[property_id].address %}
                             {% if homes[property_id].address.street_number %}{{ homes[property_id].address.street_number }}{% endif %}
                             {% if homes[property_id].address.street_pre_directional_text %}{{ homes[property_id].address.street_pre_directional_text }}{% endif %}
@@ -219,7 +219,7 @@ function updateSectionVisibility(label) {
                             {% if homes[property_id].address.unit_identifier and homes[property_id].address.unit_identifier != 'NA' %}, {{ homes[property_id].address.unit_identifier }}{% endif %}
                             {% if homes[property_id].address.city_name %}, {{ homes[property_id].address.city_name }}{% endif %}
                             {% if homes[property_id].address.state_code %}, {{ homes[property_id].address.state_code }}{% endif %}
-                            {% if homes[property_id].address.postal_code %} {{ homes[property_id].address.postal_code }}{% endif %}{% if homes[property_id].address.source_http_request %}<sup class="data-footnote"><a href="#addresssrc" style="color:inherit;text-decoration:none;">1</a></sup>{% endif %}
+                            {% if homes[property_id].address.postal_code %} {{ homes[property_id].address.postal_code }}{% endif %}{% if homes[property_id].address.source_http_request %}<sup class="data-footnote"><a href="#countysrc" style="color:inherit;text-decoration:none;">1</a></sup>{% endif %}
                         {% else %}
                             {{ homes[property_id].unormalized_address.full_address }}
                         {% endif %}
@@ -234,7 +234,9 @@ function updateSectionVisibility(label) {
                             <span class="county-info">Palm Beach County</span>
                             {% endif %}
                             {% if homes[property_id].address.county_name and (homes[property_id].address.latitude or homes[property_id].address.longitude) %}
-                            <img src="{{ 'ellipse-7.svg' | assetUrl }}" alt="">
+                            <svg width="4" height="4" viewBox="0 0 4 4" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
+                                <circle cx="2" cy="2" r="1.5" fill="#8e8b8b"/>
+                            </svg>
                             {% endif %}
                             {% if homes[property_id].address.latitude or homes[property_id].address.longitude %}
                             <span class="address-coordinates">
@@ -272,7 +274,7 @@ function updateSectionVisibility(label) {
             
             {% if has_sales_data or (homes[property_id].all_taxes | length > 0) %}
                 <section id="property-history" class="property-history-section scroll-offset-section" data-section="property-history">
-                  <h2 class="section-title">Property History</h2>
+                  <h2 class="section-title">Property History{% if homes[property_id].all_sales[0].data.source_http_request %}<sup class="data-footnote"><a href="#countysrc" style="color:inherit;text-decoration:none;">1</a></sup>{% endif %}</h2>
 
                   <div class="property-history-data-points">
                 {% set sales_count = 0 %}
@@ -353,7 +355,7 @@ function updateSectionVisibility(label) {
 
                 <!-- Tax Information Section -->
                 <section id="tax-information" class="tax-information-section scroll-offset-section">
-                  <h2 class="section-title">Tax Information</h2>
+                  <h2 class="section-title">Tax Information{% if homes[property_id].all_taxes[0].data.source_http_request %}<sup class="data-footnote"><a href="#countysrc" style="color:inherit;text-decoration:none;">1</a></sup>{% endif %}</h2>
                   
               <!-- Initial Tax Year -->
               {% if homes[property_id].all_taxes | length > 0 %}
@@ -685,10 +687,14 @@ function updateSectionVisibility(label) {
                         {% set total_sqft = property_config[property_id].total_sqft %}
                         
                         <span>{% if bedroom_count > 0 %}{{ bedroom_count | int }} Beds{% else %}Beds unknown{% endif %}</span>
-                        <img src="{{ 'ellipse-7.svg' | assetUrl }}" alt="">
+                        <svg width="4" height="4" viewBox="0 0 4 4" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
+                            <circle cx="2" cy="2" r="1.5" fill="#8e8b8b"/>
+                        </svg>
                         <span>{% if bathroom_count > 0 %}{{ bathroom_count }} Baths{% else %}Baths unknown{% endif %}</span>
                         {% if has_size_data %}
-                        <img src="{{ 'ellipse-7.svg' | assetUrl }}" alt="">
+                        <svg width="4" height="4" viewBox="0 0 4 4" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink: 0;">
+                            <circle cx="2" cy="2" r="1.5" fill="#8e8b8b"/>
+                        </svg>
                         <span>{{ total_sqft | number }} sqft</span>
                         {% endif %}
                     </div>
@@ -739,7 +745,7 @@ function updateSectionVisibility(label) {
                                     {% endif %}
                                 </div>
                                 <span class="room-title">{{ room.space_type.enumDescription or 'Room' }}</span>
-                                <img src="{{ 'uiicons-1.svg' | assetUrl }}" alt="Expand" class="room-expand-icon">
+                                <img src="{{ 'type=carat-down.svg' | assetUrl }}" alt="Expand" class="room-expand-icon">
                             </div>
                             <ul class="room-properties" style="display: none;">
                             {% for key, value in room %}
@@ -788,12 +794,12 @@ function updateSectionVisibility(label) {
                     </div>
                     {% endif %}
                     
-                    <!-- Other Rooms -->
+                    <!-- Other Floors -->
                     {% if other_rooms | length > 0 and other_rooms | selectattr('space_type') | list | length > 0 %}
                     <div class="floor-section">
                         <div class="floor-header">
-                            <img src="{{ 'featuresicons-33.svg' | assetUrl }}" alt="Other Rooms" class="floor-header-icon">
-                            <h3 class="section-subtitle">Other Rooms</h3>
+                            <img src="{{ 'featuresicons-33.svg' | assetUrl }}" alt="Other Floors" class="floor-header-icon">
+                            <h3 class="section-subtitle">Other Floors</h3>
                         </div>
                         {{ floorRooms(other_rooms) }}
                     </div>
@@ -826,7 +832,7 @@ function updateSectionVisibility(label) {
               {% endif %}
               
               {% if has_substantial_building_data %}
-              <h2 class="section-title">Building Details</h2>
+                              <h2 class="section-title">Building Details{% if homes[property_id].structure.source_http_request %}<sup class="data-footnote"><a href="#countysrc" style="color:inherit;text-decoration:none;">1</a></sup>{% endif %}</h2>
               {% endif %}
                 <div class="building-details-content">
                     <div class="building-details-grid">
@@ -952,7 +958,7 @@ function updateSectionVisibility(label) {
             
             {% if interior_features | length > 0 or exterior_features | length > 0 or utilities is defined %}
             <section class="section" id="features" data-section="features">
-                <h2 class="section-title">Property Features</h2>
+                <h2 class="section-title">Property Features{% if homes[property_id].structure.source_http_request %}<sup class="data-footnote"><a href="#countysrc" style="color:inherit;text-decoration:none;">1</a></sup>{% endif %}</h2>
                 <div class="features-container">
                     <div class="features-grid">
                         <!-- Interior Features -->
@@ -1082,7 +1088,7 @@ function updateSectionVisibility(label) {
                         {% endfor %}
                         
                         <!-- Mobile expand button after first provider -->
-                        <button class="view-all-providers-btn" onclick="toggleAllProviders(this)">
+                        <button class="view-all-providers-btn view-all-providers-btn-mobile" onclick="toggleAllProviders(this)">
                             <span>View all providers</span>
                             <img src="{{ 'type=carat-down.svg' | assetUrl }}" alt="Expand" class="arrow">
                         </button>
@@ -1126,7 +1132,7 @@ function updateSectionVisibility(label) {
                         </div>
                         
                         <!-- Mobile expand button after first provider -->
-                        <button class="view-all-providers-btn" onclick="toggleAllProviders(this)">
+                        <button class="view-all-providers-btn view-all-providers-btn-mobile" onclick="toggleAllProviders(this)">
                             <span>View all providers</span>
                             <img src="{{ 'type=carat-down.svg' | assetUrl }}" alt="Expand" class="arrow">
                         </button>
@@ -1357,12 +1363,8 @@ function updateSectionVisibility(label) {
                     <div class="property-divider"></div>
     <div id="datasrc" class="data-footnotes">
       <div class="data-source-btn-row" style="font-size:12px; color:#8E8B8B; padding-left:0;">
-        {% if homes[property_id].address.source_http_request %}
-        <a id="addresssrc" href="https://pbcpao.gov/Property/Details?parcelId={{ property_id }}" target="_blank" rel="noopener noreferrer" class="data-source-btn" tabindex="-1">View Address Data Source</a>
-        {% endif %}
-
-        {% if homes[property_id].property.sourceUrl %}
-          <a href="{{ homes[property_id].property.sourceUrl }}" target="_blank" rel="noopener noreferrer" class="data-source-btn">View County Data Source</a>
+        {% if homes[property_id].address.source_http_request or homes[property_id].structure.source_http_request or homes[property_id].all_taxes[0].data.source_http_request or homes[property_id].all_sales[0].data.source_http_request %}
+        <a id="countysrc" href="https://pbcpao.gov/Property/Details?parcelId={{ property_id }}" target="_blank" rel="noopener noreferrer" class="data-source-btn" tabindex="-1">View County Data Source</a>
         {% endif %}
         </div>
     </div>

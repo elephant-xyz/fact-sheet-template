@@ -1,8 +1,0 @@
-{
-  "to": {
-    "/": "./person_3_1.json"
-  },
-  "from": {
-    "/": "./sales_3.json"
-  }
-}
