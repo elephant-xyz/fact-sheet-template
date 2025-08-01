@@ -147,63 +147,83 @@ async function testGenerateAll() {
         
         console.log(`    ✅ Found sections: ${foundSections.join(', ')}`);
         
-        // Check for specific content based on data type
-        if (dir === 'seed') {
-          if (!htmlContent.includes('parcel-id') && !htmlContent.includes('Parcel ID')) {
-            console.log(`    ⚠️  Seed data should contain Parcel ID`);
-          } else {
-            console.log(`    ✅ Parcel ID found in seed data`);
+        // Data-driven content validation based on data type
+        const contentValidationChecks = [
+          {
+            name: 'Seed Data Parcel ID',
+            condition: () => dir === 'seed',
+            check: () => htmlContent.includes('parcel-id') || htmlContent.includes('Parcel ID'),
+            successMessage: 'Parcel ID found in seed data',
+            failureMessage: 'Seed data should contain Parcel ID'
+          },
+          {
+            name: 'Comprehensive Data Sections',
+            condition: () => dir === 'county' || dir === 'photo' || dir === 'photometadata',
+            check: () => {
+              const comprehensiveSections = ['property-history', 'floorplan', 'building-details', 'features'];
+              const foundSections = comprehensiveSections.filter(section => 
+                htmlContent.includes(`data-section="${section}"`)
+              );
+              console.log(`    ✅ Found comprehensive sections: ${foundSections.join(', ')}`);
+              return foundSections.length > 0;
+            },
+            successMessage: `Comprehensive sections found in ${dir} data`,
+            failureMessage: `No comprehensive sections found in ${dir} data`
+          },
+          {
+            name: 'Comprehensive Data Parcel ID',
+            condition: () => dir === 'county' || dir === 'photo' || dir === 'photometadata',
+            check: () => htmlContent.includes('parcel-id') || htmlContent.includes('Parcel ID'),
+            successMessage: `Parcel ID found in ${dir} data`,
+            failureMessage: `Parcel ID not found in ${dir} data`
           }
-        }
+        ];
         
-        if (dir === 'county' || dir === 'photo' || dir === 'photometadata') {
-          // These should have more comprehensive sections
-          const comprehensiveSections = [
-            'property-history',
-            'floorplan',
-            'building-details',
-            'features'
-          ];
-          
-          const foundComprehensiveSections = [];
-          for (const section of comprehensiveSections) {
-            if (htmlContent.includes(`data-section="${section}"`)) {
-              foundComprehensiveSections.push(section);
+        // Run content validation checks
+        for (const check of contentValidationChecks) {
+          if (check.condition()) {
+            if (check.check()) {
+              console.log(`    ✅ ${check.successMessage}`);
+            } else {
+              console.log(`    ⚠️  ${check.failureMessage}`);
             }
           }
-          
-          console.log(`    ✅ Found comprehensive sections: ${foundComprehensiveSections.join(', ')}`);
-          
-          // Check for parcel ID in comprehensive data
-          if (htmlContent.includes('parcel-id') || htmlContent.includes('Parcel ID')) {
-            console.log(`    ✅ Parcel ID found in ${dir} data`);
-          } else {
-            console.log(`    ⚠️  Parcel ID not found in ${dir} data`);
-          }
         }
         
-        // Validate section visibility configuration
+        // Data-driven section visibility validation
         console.log(`    🔍 Validating section visibility for ${dir}...`);
         
-        // Use the expectedSections constant defined at function scope
-        
-        const expectedForThisType = expectedSections[dir] || [];
-        const foundExpectedSections = [];
-        const missingExpectedSections = [];
-        
-        for (const expectedSection of expectedForThisType) {
-          if (htmlContent.includes(`data-section="${expectedSection}"`)) {
-            foundExpectedSections.push(expectedSection);
-          } else {
-            missingExpectedSections.push(expectedSection);
+        const sectionValidationChecks = [
+          {
+            name: 'Expected Sections',
+            check: () => {
+              const expectedForThisType = expectedSections[dir] || [];
+              const foundExpectedSections = [];
+              const missingExpectedSections = [];
+              
+              for (const expectedSection of expectedForThisType) {
+                if (htmlContent.includes(`data-section="${expectedSection}"`)) {
+                  foundExpectedSections.push(expectedSection);
+                } else {
+                  missingExpectedSections.push(expectedSection);
+                }
+              }
+              
+              console.log(`      ✅ Found expected sections: ${foundExpectedSections.join(', ')}`);
+              if (missingExpectedSections.length > 0) {
+                console.log(`      ❌ Missing expected sections: ${missingExpectedSections.join(', ')}`);
+                return false;
+              } else {
+                console.log(`      ✅ All expected sections present`);
+                return true;
+              }
+            }
           }
-        }
+        ];
         
-        console.log(`      ✅ Found expected sections: ${foundExpectedSections.join(', ')}`);
-        if (missingExpectedSections.length > 0) {
-          console.log(`      ❌ Missing expected sections: ${missingExpectedSections.join(', ')}`);
-        } else {
-          console.log(`      ✅ All expected sections present`);
+        // Run section validation checks
+        for (const check of sectionValidationChecks) {
+          check.check();
         }
         
         // Data-driven validation checks
