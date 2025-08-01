@@ -13,6 +13,14 @@ async function testGenerateAll() {
   const exampleDataDir = './example-data';
   const outputDir = './test-output';
   
+  // Define expected sections for each data type (DRY principle)
+  const expectedSections = {
+    'seed': ['header-section', 'property-header', 'property-address', 'provider-cards', 'building-details', 'parcel-id'],
+    'county': ['header-section', 'property-header', 'property-address', 'provider-cards', 'property-history', 'floorplan', 'building-details', 'features', 'parcel-id'],
+    'photo': ['header-section', 'property-header', 'property-address', 'provider-cards', 'property-history', 'floorplan', 'building-details', 'features', 'parcel-id'],
+    'photometadata': ['header-section', 'property-header', 'property-address', 'provider-cards', 'property-history', 'floorplan', 'floorplan-layout', 'building-details', 'features', 'parcel-id']
+  };
+  
   // Clean up previous test output
   if (await fs.pathExists(outputDir)) {
     await fs.remove(outputDir);
@@ -177,13 +185,7 @@ async function testGenerateAll() {
         // Validate section visibility configuration
         console.log(`    🔍 Validating section visibility for ${dir}...`);
         
-        // Define expected sections for each data type based on section-visibility.json
-        const expectedSections = {
-          'seed': ['header-section', 'property-header', 'property-address', 'provider-cards', 'building-details', 'parcel-id'],
-          'county': ['header-section', 'property-header', 'property-address', 'provider-cards', 'property-history', 'floorplan', 'building-details', 'features', 'parcel-id'],
-          'photo': ['header-section', 'property-header', 'property-address', 'provider-cards', 'property-history', 'floorplan', 'building-details', 'features', 'parcel-id'],
-          'photometadata': ['header-section', 'property-header', 'property-address', 'provider-cards', 'property-history', 'floorplan', 'floorplan-layout', 'building-details', 'features', 'parcel-id']
-        };
+        // Use the expectedSections constant defined at function scope
         
         const expectedForThisType = expectedSections[dir] || [];
         const foundExpectedSections = [];
@@ -204,38 +206,76 @@ async function testGenerateAll() {
           console.log(`      ✅ All expected sections present`);
         }
         
-        // Check for navigation
-        if (htmlContent.includes('nav-tab')) {
-          console.log(`    ✅ Navigation tabs found`);
-        } else {
-          console.log(`    ⚠️  Navigation tabs not found`);
+        // Data-driven validation checks
+        const validationChecks = [
+          {
+            name: 'Navigation',
+            check: () => htmlContent.includes('nav-tab'),
+            successMessage: 'Navigation tabs found',
+            failureMessage: 'Navigation tabs not found'
+          },
+          {
+            name: 'Property Address',
+            check: () => htmlContent.includes('property-address') || htmlContent.includes('address'),
+            successMessage: 'Property address found',
+            failureMessage: 'Property address not found'
+          },
+          {
+            name: 'CSS Styling',
+            check: () => htmlContent.includes('class='),
+            successMessage: 'CSS classes found',
+            failureMessage: 'No CSS classes found'
+          },
+          {
+            name: 'Images/Assets',
+            check: () => htmlContent.includes('img src=') || htmlContent.includes('assetUrl'),
+            successMessage: 'Images/assets found',
+            failureMessage: 'No images/assets found'
+          },
+          {
+            name: 'Responsive Design',
+            check: () => htmlContent.includes('viewport') || htmlContent.includes('meta name="viewport"'),
+            successMessage: 'Responsive viewport meta tag found',
+            failureMessage: 'No viewport meta tag found'
+          },
+          {
+            name: 'Accessibility',
+            check: () => htmlContent.includes('alt=') || htmlContent.includes('aria-'),
+            successMessage: 'Accessibility attributes found',
+            failureMessage: 'No accessibility attributes found'
+          },
+          {
+            name: 'Footer/Data Source',
+            check: () => htmlContent.includes('data-footnotes') || htmlContent.includes('datasrc'),
+            successMessage: 'Footer/data source section found',
+            failureMessage: 'Footer/data source section not found'
+          },
+          {
+            name: 'Links',
+            check: () => htmlContent.includes('<a href=') || htmlContent.includes('href='),
+            successMessage: 'Links found',
+            failureMessage: 'No links found'
+          },
+          {
+            name: 'External Links',
+            check: () => htmlContent.includes('https://') || htmlContent.includes('http://'),
+            successMessage: 'External links found',
+            failureMessage: 'No external links found'
+          }
+        ];
+        
+        // Run basic validation checks
+        for (const check of validationChecks) {
+          if (check.check()) {
+            console.log(`    ✅ ${check.successMessage}`);
+          } else {
+            console.log(`    ⚠️  ${check.failureMessage}`);
+          }
         }
         
-        // Check for property information
-        if (htmlContent.includes('property-address') || htmlContent.includes('address')) {
-          console.log(`    ✅ Property address found`);
-        } else {
-          console.log(`    ⚠️  Property address not found`);
-        }
-        
-        // Check for styling
-        if (htmlContent.includes('class=')) {
-          console.log(`    ✅ CSS classes found`);
-        } else {
-          console.log(`    ⚠️  No CSS classes found`);
-        }
-        
-        // Check for images/assets
-        if (htmlContent.includes('img src=') || htmlContent.includes('assetUrl')) {
-          console.log(`    ✅ Images/assets found`);
-        } else {
-          console.log(`    ⚠️  No images/assets found`);
-        }
-        
-        // Validate icon presence and accessibility
+        // Icon validation checks
         console.log(`    🔍 Validating icons and assets...`);
         
-        // Check for specific icon types
         const iconChecks = [
           { name: 'Provider Icons', pattern: /type=.*\.svg/g, description: 'Provider type icons (real-estate-agent, appraiser, etc.)' },
           { name: 'Feature Icons', pattern: /featuresicons/g, description: 'Property feature icons' },
@@ -253,7 +293,7 @@ async function testGenerateAll() {
           }
         }
         
-        // Check for icon accessibility (alt attributes)
+        // Accessibility validation
         const imgTags = htmlContent.match(/<img[^>]*>/g) || [];
         const imgWithAlt = imgTags.filter(img => img.includes('alt='));
         const imgWithoutAlt = imgTags.filter(img => !img.includes('alt='));
@@ -263,89 +303,47 @@ async function testGenerateAll() {
           console.log(`      ⚠️  ${imgWithoutAlt.length} images missing alt attributes`);
         }
         
-        // Check for broken image references
+        // Asset reference counting
         const assetUrls = htmlContent.match(/assetUrl[^"']*["']([^"']+)["']/g) || [];
         const imgSrcs = htmlContent.match(/src=["']([^"']+)["']/g) || [];
-        
         console.log(`      📊 Total asset references: ${assetUrls.length + imgSrcs.length}`);
         
-        // Check for specific expected icons based on data type
-        if (dir === 'county' || dir === 'photo' || dir === 'photometadata') {
-          // These should have comprehensive feature icons
-          const expectedFeatureIcons = [
-            'type=bedroom.svg',
-            'type=bathroom.svg', 
-            'type=flooring.svg',
-            'type=heating.svg',
-            'type=cooling.svg'
-          ];
-          
-          const foundFeatureIcons = [];
-          for (const expectedIcon of expectedFeatureIcons) {
-            if (htmlContent.includes(expectedIcon)) {
-              foundFeatureIcons.push(expectedIcon);
-            }
+        // Data type specific icon validation
+        const dataTypeIconChecks = [
+          {
+            name: 'Feature Icons',
+            condition: () => dir === 'county' || dir === 'photo' || dir === 'photometadata',
+            expectedIcons: ['type=bedroom.svg', 'type=bathroom.svg', 'type=flooring.svg', 'type=heating.svg', 'type=cooling.svg'],
+            description: 'comprehensive feature icons'
+          },
+          {
+            name: 'Provider Icons',
+            condition: () => true, // Always check
+            expectedIcons: ['type=real-estate-agent.svg', 'type=appraiser.svg', 'type=inspector.svg', 'type=photographer.svg'],
+            description: 'provider icons'
           }
-          
-          console.log(`      ✅ Feature icons found: ${foundFeatureIcons.length}/${expectedFeatureIcons.length}`);
-          if (foundFeatureIcons.length < expectedFeatureIcons.length) {
-            console.log(`      ⚠️  Missing feature icons: ${expectedFeatureIcons.filter(icon => !foundFeatureIcons.includes(icon)).join(', ')}`);
-          }
-        }
-        
-        // Check for provider icons
-        const providerIcons = [
-          'type=real-estate-agent.svg',
-          'type=appraiser.svg',
-          'type=inspector.svg',
-          'type=photographer.svg'
         ];
         
-        const foundProviderIcons = [];
-        for (const providerIcon of providerIcons) {
-          if (htmlContent.includes(providerIcon)) {
-            foundProviderIcons.push(providerIcon);
+        for (const iconCheck of dataTypeIconChecks) {
+          if (iconCheck.condition()) {
+            const foundIcons = [];
+            for (const expectedIcon of iconCheck.expectedIcons) {
+              if (htmlContent.includes(expectedIcon)) {
+                foundIcons.push(expectedIcon);
+              }
+            }
+            
+            console.log(`      ✅ ${iconCheck.name} found: ${foundIcons.length}/${iconCheck.expectedIcons.length}`);
+            if (foundIcons.length < iconCheck.expectedIcons.length) {
+              const missingIcons = iconCheck.expectedIcons.filter(icon => !foundIcons.includes(icon));
+              console.log(`      ⚠️  Missing ${iconCheck.name.toLowerCase()}: ${missingIcons.join(', ')}`);
+            }
+            
+            if (iconCheck.name === 'Provider Icons' && foundIcons.length > 0) {
+              const providerNames = foundIcons.map(icon => icon.replace('type=', '').replace('.svg', ''));
+              console.log(`      📋 Found providers: ${providerNames.join(', ')}`);
+            }
           }
-        }
-        
-        console.log(`      ✅ Provider icons found: ${foundProviderIcons.length}/${providerIcons.length}`);
-        if (foundProviderIcons.length > 0) {
-          console.log(`      📋 Found providers: ${foundProviderIcons.map(icon => icon.replace('type=', '').replace('.svg', '')).join(', ')}`);
-        }
-        
-        // Check for responsive design
-        if (htmlContent.includes('viewport') || htmlContent.includes('meta name="viewport"')) {
-          console.log(`    ✅ Responsive viewport meta tag found`);
-        } else {
-          console.log(`    ⚠️  No viewport meta tag found`);
-        }
-        
-        // Check for accessibility
-        if (htmlContent.includes('alt=') || htmlContent.includes('aria-')) {
-          console.log(`    ✅ Accessibility attributes found`);
-        } else {
-          console.log(`    ⚠️  No accessibility attributes found`);
-        }
-        
-        // Check for footer and data source information
-        if (htmlContent.includes('data-footnotes') || htmlContent.includes('datasrc')) {
-          console.log(`    ✅ Footer/data source section found`);
-        } else {
-          console.log(`    ⚠️  Footer/data source section not found`);
-        }
-        
-        // Check for links
-        if (htmlContent.includes('<a href=') || htmlContent.includes('href=')) {
-          console.log(`    ✅ Links found`);
-        } else {
-          console.log(`    ⚠️  No links found`);
-        }
-        
-        // Check for external links or data source URLs
-        if (htmlContent.includes('https://') || htmlContent.includes('http://')) {
-          console.log(`    ✅ External links found`);
-        } else {
-          console.log(`    ⚠️  No external links found`);
         }
       }
       
@@ -364,98 +362,112 @@ async function testGenerateAll() {
     console.log('');
   }
   
-  // Summary
-  console.log('📊 Test Results Summary:');
-  console.log('========================');
-  
-  const successful = results.filter(r => r.success);
-  const failed = results.filter(r => !r.success);
-  
-  console.log(`✅ Successful: ${successful.length}/${results.length}`);
-  successful.forEach(result => {
-    console.log(`  - ${result.directory}: ${result.htmlFiles.length} HTML file(s)`);
-  });
-  
-  if (failed.length > 0) {
-    console.log(`❌ Failed: ${failed.length}/${results.length}`);
-    failed.forEach(result => {
-      console.log(`  - ${result.directory}: ${result.error}`);
-    });
-  }
-  
-  console.log('');
-  console.log(`📁 Test output location: ${outputDir}`);
-  console.log(`🎯 Overall success rate: ${Math.round((successful.length / results.length) * 100)}%`);
-  
-  // Quality summary
-  console.log('\n📊 HTML Quality Summary:');
-  console.log('========================');
-  
-  let totalQualityChecks = 0;
-  let passedQualityChecks = 0;
-  
-  for (const result of results) {
-    if (result.success) {
-      console.log(`\n📄 ${result.directory.toUpperCase()} HTML Quality:`);
-      
-      // Count quality indicators in the HTML files
-      for (const htmlFile of result.htmlFiles) {
-        const htmlPath = path.join(outputDir, result.directory, htmlFile);
-        const htmlContent = await fs.readFile(htmlPath, 'utf8');
+  // Data-driven summary generation
+  const summarySections = [
+    {
+      title: '📊 Test Results Summary',
+      separator: '========================',
+      content: () => {
+        const successful = results.filter(r => r.success);
+        const failed = results.filter(r => !r.success);
         
-        const qualityChecks = [
-          { name: 'Basic HTML Structure', check: () => htmlContent.includes('<!DOCTYPE html>') && htmlContent.includes('<html') && htmlContent.includes('</html>') },
-          { name: 'CSS Styling', check: () => htmlContent.includes('class=') },
-          { name: 'Navigation', check: () => htmlContent.includes('nav-tab') },
-          { name: 'Property Address', check: () => htmlContent.includes('property-address') || htmlContent.includes('address') },
-          { name: 'Images/Assets', check: () => htmlContent.includes('img src=') || htmlContent.includes('assetUrl') },
-          { name: 'Icon Accessibility', check: () => {
-            const imgTags = htmlContent.match(/<img[^>]*>/g) || [];
-            const imgWithAlt = imgTags.filter(img => img.includes('alt='));
-            return imgTags.length === 0 || imgWithAlt.length === imgTags.length;
-          }},
-          { name: 'Provider Icons', check: () => htmlContent.includes('type=real-estate-agent.svg') || htmlContent.includes('type=appraiser.svg') },
-          { name: 'Feature Icons', check: () => {
-            // Seed data doesn't have features section, so don't expect feature icons
-            if (result.directory === 'seed') {
-              return true; // Skip this check for seed data
-            }
-            return htmlContent.includes('featuresicons') || htmlContent.includes('type=bedroom.svg');
-          }},
-          { name: 'Responsive Design', check: () => htmlContent.includes('viewport') },
-          { name: 'Accessibility', check: () => htmlContent.includes('alt=') || htmlContent.includes('aria-') },
-          { name: 'Section Visibility Logic', check: () => htmlContent.includes('data-section=') },
-          { name: 'Parcel ID Section', check: () => htmlContent.includes('parcel-id') || htmlContent.includes('Parcel ID') },
-          { name: 'Footer/Data Source', check: () => htmlContent.includes('data-footnotes') || htmlContent.includes('datasrc') },
-          { name: 'Links', check: () => htmlContent.includes('<a href=') || htmlContent.includes('href=') },
-          { name: 'External Links', check: () => htmlContent.includes('https://') || htmlContent.includes('http://') },
-          { name: 'Section Visibility Config', check: () => {
-            const expectedSections = {
-              'seed': ['header-section', 'property-header', 'property-address', 'provider-cards', 'building-details', 'parcel-id'],
-              'county': ['header-section', 'property-header', 'property-address', 'provider-cards', 'property-history', 'floorplan', 'building-details', 'features', 'parcel-id'],
-              'photo': ['header-section', 'property-header', 'property-address', 'provider-cards', 'property-history', 'floorplan', 'building-details', 'features', 'parcel-id'],
-              'photometadata': ['header-section', 'property-header', 'property-address', 'provider-cards', 'property-history', 'floorplan', 'floorplan-layout', 'building-details', 'features', 'parcel-id']
-            };
-            const expectedForThisType = expectedSections[result.directory] || [];
-            return expectedForThisType.every(section => htmlContent.includes(`data-section="${section}"`));
-          }}
+        const lines = [
+          `✅ Successful: ${successful.length}/${results.length}`,
+          ...successful.map(result => `  - ${result.directory}: ${result.htmlFiles.length} HTML file(s)`)
         ];
         
-        for (const check of qualityChecks) {
-          totalQualityChecks++;
-          if (check.check()) {
-            passedQualityChecks++;
-            console.log(`  ✅ ${check.name}`);
-          } else {
-            console.log(`  ❌ ${check.name}`);
+        if (failed.length > 0) {
+          lines.push(`❌ Failed: ${failed.length}/${results.length}`);
+          failed.forEach(result => {
+            lines.push(`  - ${result.directory}: ${result.error}`);
+          });
+        }
+        
+        lines.push('');
+        lines.push(`📁 Test output location: ${outputDir}`);
+        lines.push(`🎯 Overall success rate: ${Math.round((successful.length / results.length) * 100)}%`);
+        
+        return lines;
+      }
+    },
+    {
+      title: '📊 HTML Quality Summary',
+      separator: '========================',
+      content: async () => {
+        const lines = [];
+        let totalQualityChecks = 0;
+        let passedQualityChecks = 0;
+        
+        for (const result of results) {
+          if (result.success) {
+            lines.push(`\n📄 ${result.directory.toUpperCase()} HTML Quality:`);
+            
+            // Count quality indicators in the HTML files
+            for (const htmlFile of result.htmlFiles) {
+              const htmlPath = path.join(outputDir, result.directory, htmlFile);
+              const htmlContent = await fs.readFile(htmlPath, 'utf8');
+              
+              const qualityChecks = [
+                { name: 'Basic HTML Structure', check: () => htmlContent.includes('<!DOCTYPE html>') && htmlContent.includes('<html') && htmlContent.includes('</html>') },
+                { name: 'CSS Styling', check: () => htmlContent.includes('class=') },
+                { name: 'Navigation', check: () => htmlContent.includes('nav-tab') },
+                { name: 'Property Address', check: () => htmlContent.includes('property-address') || htmlContent.includes('address') },
+                { name: 'Images/Assets', check: () => htmlContent.includes('img src=') || htmlContent.includes('assetUrl') },
+                { name: 'Icon Accessibility', check: () => {
+                  const imgTags = htmlContent.match(/<img[^>]*>/g) || [];
+                  const imgWithAlt = imgTags.filter(img => img.includes('alt='));
+                  return imgTags.length === 0 || imgWithAlt.length === imgTags.length;
+                }},
+                { name: 'Provider Icons', check: () => htmlContent.includes('type=real-estate-agent.svg') || htmlContent.includes('type=appraiser.svg') },
+                { name: 'Feature Icons', check: () => {
+                  // Seed data doesn't have features section, so don't expect feature icons
+                  if (result.directory === 'seed') {
+                    return true; // Skip this check for seed data
+                  }
+                  return htmlContent.includes('featuresicons') || htmlContent.includes('type=bedroom.svg');
+                }},
+                { name: 'Responsive Design', check: () => htmlContent.includes('viewport') },
+                { name: 'Accessibility', check: () => htmlContent.includes('alt=') || htmlContent.includes('aria-') },
+                { name: 'Section Visibility Logic', check: () => htmlContent.includes('data-section=') },
+                { name: 'Parcel ID Section', check: () => htmlContent.includes('parcel-id') || htmlContent.includes('Parcel ID') },
+                { name: 'Footer/Data Source', check: () => htmlContent.includes('data-footnotes') || htmlContent.includes('datasrc') },
+                { name: 'Links', check: () => htmlContent.includes('<a href=') || htmlContent.includes('href=') },
+                { name: 'External Links', check: () => htmlContent.includes('https://') || htmlContent.includes('http://') },
+                { name: 'Section Visibility Config', check: () => {
+                  // Use the expectedSections constant defined at function scope
+                  const expectedForThisType = expectedSections[result.directory] || [];
+                  return expectedForThisType.every(section => htmlContent.includes(`data-section="${section}"`));
+                }}
+              ];
+              
+              for (const check of qualityChecks) {
+                totalQualityChecks++;
+                if (check.check()) {
+                  passedQualityChecks++;
+                  lines.push(`  ✅ ${check.name}`);
+                } else {
+                  lines.push(`  ❌ ${check.name}`);
+                }
+              }
+            }
           }
         }
+        
+        const qualityScore = Math.round((passedQualityChecks / totalQualityChecks) * 100);
+        lines.push(`\n🎯 Overall HTML Quality Score: ${qualityScore}% (${passedQualityChecks}/${totalQualityChecks} checks passed)`);
+        
+        return lines;
       }
     }
-  }
+  ];
   
-  const qualityScore = Math.round((passedQualityChecks / totalQualityChecks) * 100);
-  console.log(`\n🎯 Overall HTML Quality Score: ${qualityScore}% (${passedQualityChecks}/${totalQualityChecks} checks passed)`);
+  // Generate all summary sections
+  for (const section of summarySections) {
+    console.log(section.title);
+    console.log(section.separator);
+    const content = await section.content();
+    content.forEach(line => console.log(line));
+  }
   
   return results;
 }
