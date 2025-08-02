@@ -208,11 +208,7 @@ export class IPLDDataLoader {
 
       result[item.lexiconClass][item.lexiconProperty][item.enumValue] = {
         enumDescription: item.enumDescription,
-        iconName: existsSync(
-          `templates/assets/static/type=${item.iconName}.svg`,
-        )
-          ? `type=${item.iconName}.svg`
-          : null,
+        iconName: `type=${item.iconName}.svg`,
       };
     }
 
