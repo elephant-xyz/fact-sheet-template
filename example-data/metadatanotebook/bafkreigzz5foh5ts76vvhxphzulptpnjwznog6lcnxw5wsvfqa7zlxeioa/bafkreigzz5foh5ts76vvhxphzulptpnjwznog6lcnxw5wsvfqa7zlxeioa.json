@@ -1,0 +1,8 @@
+{
+  "label": "Seed",
+  "relationships": {
+    "property_seed": {
+      "/": "./connection.json"
+    }
+  }
+}

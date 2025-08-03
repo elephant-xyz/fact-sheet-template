@@ -1,0 +1,21 @@
+{
+  "monthly_tax_amount": 4980,
+  "period_end_date": null,
+  "period_start_date": null,
+  "property_assessed_value_amount": 240000,
+  "property_building_amount": 240000,
+  "property_land_amount": 0.01,
+  "property_market_value_amount": 240000,
+  "property_taxable_value_amount": 240000,
+  "request_identifier": "52434205310037080",
+  "source_http_request": {
+    "method": "GET",
+    "multiValueQueryString": {
+      "parcelId": [
+        "52434205310037080"
+      ]
+    },
+    "url": "https://pbcpao.gov/Property/Details"
+  },
+  "tax_year": 2018
+}
