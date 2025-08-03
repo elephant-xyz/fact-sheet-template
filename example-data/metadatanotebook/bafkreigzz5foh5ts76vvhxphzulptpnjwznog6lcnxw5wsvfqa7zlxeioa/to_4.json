@@ -1,0 +1,14 @@
+{
+  "ownership_transfer_date": "2005-10-11",
+  "purchase_price_amount": 400000,
+  "request_identifier": "52434205310037080",
+  "source_http_request": {
+    "method": "GET",
+    "multiValueQueryString": {
+      "parcelId": [
+        "52434205310037080"
+      ]
+    },
+    "url": "https://pbcpao.gov/Property/Details"
+  }
+}

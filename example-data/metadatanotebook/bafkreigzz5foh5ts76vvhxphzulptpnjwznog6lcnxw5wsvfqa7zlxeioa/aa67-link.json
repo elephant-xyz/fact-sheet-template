@@ -1,0 +1,8 @@
+{
+  "from": {
+    "/": "./property_seed.json"
+  },
+  "to": {
+    "/": "./aa67.json"
+  }
+}

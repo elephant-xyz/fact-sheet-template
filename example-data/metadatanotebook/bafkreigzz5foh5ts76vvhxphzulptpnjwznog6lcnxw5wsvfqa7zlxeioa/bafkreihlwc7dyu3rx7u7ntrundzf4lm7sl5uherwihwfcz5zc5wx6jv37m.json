@@ -1,0 +1,112 @@
+{
+  "label": "County",
+  "relationships": {
+    "company_has_property": null,
+    "person_has_property": [
+      {
+        "/": "./connection.json"
+      },
+      {
+        "/": "./connection_1.json"
+      },
+      {
+        "/": "./connection_2.json"
+      },
+      {
+        "/": "./connection_3.json"
+      }
+    ],
+    "property_has_address": {
+      "/": "./connection_4.json"
+    },
+    "property_has_file": null,
+    "property_has_flood_storm_information": null,
+    "property_has_layout": [
+      {
+        "/": "./connection_5.json"
+      },
+      {
+        "/": "./connection_5.json"
+      },
+      {
+        "/": "./connection_5.json"
+      },
+      {
+        "/": "./connection_6.json"
+      },
+      {
+        "/": "./connection_6.json"
+      },
+      {
+        "/": "./connection_7.json"
+      }
+    ],
+    "property_has_lot": {
+      "/": "./connection_8.json"
+    },
+    "property_has_sales_history": [
+      {
+        "/": "./connection_9.json"
+      },
+      {
+        "/": "./connection_10.json"
+      },
+      {
+        "/": "./connection_11.json"
+      }
+    ],
+    "property_has_structure": {
+      "/": "./connection_12.json"
+    },
+    "property_has_tax": [
+      {
+        "/": "./connection_13.json"
+      },
+      {
+        "/": "./connection_14.json"
+      },
+      {
+        "/": "./connection_15.json"
+      },
+      {
+        "/": "./connection_16.json"
+      },
+      {
+        "/": "./connection_17.json"
+      },
+      {
+        "/": "./connection_18.json"
+      },
+      {
+        "/": "./connection_19.json"
+      },
+      {
+        "/": "./connection_20.json"
+      },
+      {
+        "/": "./connection_21.json"
+      },
+      {
+        "/": "./connection_22.json"
+      }
+    ],
+    "property_has_utility": {
+      "/": "./connection_23.json"
+    },
+    "sales_history_has_company": null,
+    "sales_history_has_person": [
+      {
+        "/": "./connection_24.json"
+      },
+      {
+        "/": "./connection_25.json"
+      },
+      {
+        "/": "./connection_26.json"
+      },
+      {
+        "/": "./connection_27.json"
+      }
+    ]
+  }
+}

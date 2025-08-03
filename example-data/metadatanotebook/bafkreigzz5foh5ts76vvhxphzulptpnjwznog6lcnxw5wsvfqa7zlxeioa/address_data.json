@@ -1,0 +1,14 @@
+{
+  "full_address": "2558 Gardens Pkwy, palm beach gardens, FL 33410",
+  "source_http_request": {
+    "method": "GET",
+    "url": "https://pbcpao.gov/Property/Details",
+    "multiValueQueryString": {
+      "parcelId": [
+        "52434205310037080"
+      ]
+    }
+  },
+  "county_jurisdiction": "palm beach",
+  "request_identifier": "52434205310037080"
+}

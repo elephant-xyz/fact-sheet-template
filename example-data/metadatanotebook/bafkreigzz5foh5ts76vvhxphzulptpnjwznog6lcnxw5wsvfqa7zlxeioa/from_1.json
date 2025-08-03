@@ -1,0 +1,20 @@
+{
+  "birth_date": null,
+  "first_name": "Patti",
+  "last_name": "Ceravolo",
+  "middle_name": "Kreusler",
+  "prefix_name": null,
+  "request_identifier": "52434205310037080",
+  "source_http_request": {
+    "method": "GET",
+    "multiValueQueryString": {
+      "parcelId": [
+        "52434205310037080"
+      ]
+    },
+    "url": "https://pbcpao.gov/Property/Details"
+  },
+  "suffix_name": null,
+  "us_citizenship_status": null,
+  "veteran_status": null
+}

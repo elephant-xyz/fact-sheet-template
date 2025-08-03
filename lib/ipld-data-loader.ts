@@ -334,10 +334,7 @@ export class IPLDDataLoader {
     const taxNodes = this.findNodesByContent(graph, "tax_year");
     // const personNodes = this.findNodesByContent(graph, 'person_name');
     const lotNode = this.findNodeByContent(graph, "lot_size_sqft");
-    const structureNode =
-      this.findNodeByContent(graph, "flooring_material_primary") ||
-      this.findNodeByContent(graph, "exterior_wall_material_primary") ||
-      this.findNodeByContent(graph, "structure_rooms_total");
+    const structureNode = this.findStructureNode(graph);
     const utilityNode = this.findNodeByContent(graph, "cooling_system_type");
     const unnormalizedAddressNode = this.findNodeByContent(
       graph,
@@ -412,6 +409,87 @@ export class IPLDDataLoader {
     return nodes;
   }
 
+  private findStructureNode(graph: Map<string, DataNode>): DataNode | undefined {
+    // Find all nodes that contain structure-related fields
+    const structureFields = [
+      "flooring_material_primary",
+      "flooring_material_secondary", 
+      "exterior_wall_material_primary",
+      "exterior_wall_material_secondary",
+      "roof_covering_material",
+      "roof_structure_material",
+      "interior_wall_surface_material_primary",
+      "interior_wall_finish_primary",
+      "foundation_type",
+      "foundation_material",
+      "architectural_style_type"
+    ];
+    
+    const structureNodes: DataNode[] = [];
+    
+    for (const node of graph.values()) {
+      if (!node.data) continue;
+      
+      let matchCount = 0;
+      for (const field of structureFields) {
+        if (field in node.data) {
+          matchCount++;
+        }
+      }
+      
+      // Consider it a structure node if it has at least 2 structure fields
+      if (matchCount >= 2) {
+        structureNodes.push(node);
+        console.log('Found structure node:', node.cid, 'with', matchCount, 'structure fields');
+      }
+    }
+    
+    if (structureNodes.length === 0) {
+      console.log('No structure nodes found');
+      return undefined;
+    }
+    
+    // If we found multiple structure nodes, merge them into one
+    if (structureNodes.length > 1) {
+      console.log('Found', structureNodes.length, 'structure nodes, merging data...');
+      return this.mergeStructureNodes(structureNodes);
+    }
+    
+    // If only one structure node, return it
+    console.log('Selected single structure node:', structureNodes[0].cid);
+    return structureNodes[0];
+  }
+
+  private mergeStructureNodes(nodes: DataNode[]): DataNode {
+    // Create a merged data object
+    const mergedData: any = {};
+    
+    // Merge all data from all structure nodes
+    for (const node of nodes) {
+      if (node.data) {
+        for (const [key, value] of Object.entries(node.data)) {
+          // Only add non-null values, or if the key doesn't exist yet
+          if (value !== null && value !== undefined) {
+            mergedData[key] = value;
+          } else if (!(key in mergedData)) {
+            mergedData[key] = value;
+          }
+        }
+      }
+    }
+    
+    // Create a new merged node using the first node's metadata
+    const mergedNode: DataNode = {
+      cid: nodes[0].cid,
+      filePath: nodes[0].filePath,
+      data: mergedData,
+      relationships: new Map()
+    };
+    
+    console.log('Merged structure data with', Object.keys(mergedData).length, 'fields');
+    return mergedNode;
+  }
+
   private extractPropertyInfo(
     propertyNode?: DataNode,
     addressNode?: DataNode,
@@ -472,6 +550,7 @@ export class IPLDDataLoader {
           const spaceType = node.space_type;
           if (spaceType) {
             const lowerSpaceType = spaceType.enumDescription.toLowerCase();
+            console.log('Processing space_type:', spaceType.enumDescription);
 
             // Count bedrooms
             if (
@@ -483,12 +562,17 @@ export class IPLDDataLoader {
 
             // Count bathrooms
             if (lowerSpaceType.includes("full bathroom")) {
+              console.log('Found full bathroom:', spaceType.enumDescription);
               baths += 1;
             } else if (
               lowerSpaceType.includes("half bathroom") ||
-              lowerSpaceType.includes("half bath")
+              lowerSpaceType.includes("half bath") ||
+              lowerSpaceType.includes("powder room")
             ) {
+              console.log('Found half bathroom/powder room:', spaceType.enumDescription);
               baths += 0.5;
+            } else {
+              console.log('Checking bathroom - space_type:', spaceType.enumDescription, 'lowerSpaceType:', lowerSpaceType);
             }
           }
         });
@@ -850,6 +934,8 @@ export class IPLDDataLoader {
         // This node contains property_has_layout relationships
         const propertyHasLayoutLinks =
           node.data.relationships.property_has_layout;
+        
+        console.log('Found property_has_layout relationships:', propertyHasLayoutLinks.length);
 
         // Process each relationship link
         for (const relationshipLink of propertyHasLayoutLinks) {
@@ -861,6 +947,7 @@ export class IPLDDataLoader {
             );
 
             if (!relationshipNode) {
+              console.log('Could not resolve relationship node for:', relationshipLink);
               continue;
             }
 
@@ -872,11 +959,13 @@ export class IPLDDataLoader {
               );
 
               if (!layoutNode) {
+                console.log('Could not resolve layout node for:', relationshipNode.data.to);
                 continue;
               }
 
               // Extract layout data
               if (layoutNode?.data?.space_type) {
+                console.log('Loaded layout:', layoutNode.data.space_type);
                 (layoutsByDataGroup[node.data.label] ??= []).push(
                   layoutNode.data as LayoutInfo,
                 );
@@ -888,20 +977,30 @@ export class IPLDDataLoader {
     }
 
     let layouts: LayoutInfo[] = [];
+    console.log('Available data groups:', Object.keys(layoutsByDataGroup));
+    console.log('Data groups with layout counts:', Object.entries(layoutsByDataGroup).map(([group, layouts]) => `${group}: ${layouts.length} layouts`));
+    
     if (Object.keys(layoutsByDataGroup).length === 1) {
       layouts = layoutsByDataGroup[Object.keys(layoutsByDataGroup)[0]];
+      console.log('Selected single data group:', Object.keys(layoutsByDataGroup)[0]);
     } else if (Object.hasOwn(layoutsByDataGroup, "Photo Metadata")) {
       layouts = layoutsByDataGroup["Photo Metadata"];
+      console.log('Selected Photo Metadata data group');
     } else {
       if (Object.keys(layoutsByDataGroup).length === 0) {
         layouts = [];
+        console.log('No data groups found');
       } else {
         const [_, value] = Object.entries(layoutsByDataGroup).reduce(
           (max, current) => (current[1].length > max[1].length ? current : max),
         );
         layouts = value;
+        console.log('Selected largest data group');
       }
     }
+    
+    console.log('Final layouts count:', layouts.length);
+    console.log('Final layouts:', layouts.map(l => l.space_type));
 
     const firstFloorLayouts = layouts
       .filter((layout) => layout["floor_level"] === "1st Floor")
