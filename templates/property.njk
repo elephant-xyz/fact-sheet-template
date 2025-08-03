@@ -1363,8 +1363,8 @@ function updateSectionVisibility(label) {
                     <div class="property-divider"></div>
     <div id="datasrc" class="data-footnotes">
       <div class="data-source-btn-row" style="font-size:12px; color:#8E8B8B; padding-left:0;">
-        {% if homes[property_id].address.source_http_request or (homes[property_id].structure and homes[property_id].structure.source_http_request) or (homes[property_id].all_taxes and homes[property_id].all_taxes|length > 0 and homes[property_id].all_taxes[0].data.source_http_request) or (homes[property_id].all_sales and homes[property_id].all_sales|length > 0 and homes[property_id].all_sales[0].data.source_http_request) %}
-        <a id="countysrc" href="https://pbcpao.gov/Property/Details?parcelId={{ homes[property_id].property.parcel_identifier or property_id }}" target="_blank" rel="noopener noreferrer" class="data-source-btn" tabindex="-1">View County Data Source</a>
+        {% if homes[property_id].address.source_http_request or (homes[property_id].structure and homes[property_id].structure.source_http_request) or (homes[property_id].all_taxes and homes[property_id].all_taxes|length > 0 and homes[property_id].all_taxes[0].data.source_http_request) or (homes[property_id].all_sales and homes[property_id].all_sales|length > 0 and homes[property_id].all_sales[0].data.source_http_request) or homes[property_id].property.sourceUrl %}
+        <a id="countysrc" href="{{ homes[property_id].property.sourceUrl or 'https://pbcpao.gov/Property/Details?parcelId=' + (homes[property_id].property.parcel_identifier or property_id) }}" target="_blank" rel="noopener noreferrer" class="data-source-btn" tabindex="-1">View County Data Source</a>
         {% endif %}
         </div>
     </div>
