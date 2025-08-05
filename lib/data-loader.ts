@@ -72,6 +72,7 @@ export class DataLoader {
         postal_code: property.postalCode || "",
         latitude: property.coordinates?.split(",")[0]?.trim() || "",
         longitude: property.coordinates?.split(",")[1]?.trim() || "",
+        source_http_request: ipldData.address?.source_http_request || null,
       },
       building: {
         bedrooms: property.beds || 0,
@@ -96,6 +97,7 @@ export class DataLoader {
         data: {
           ownership_transfer_date: sale.date,
           purchase_price_amount: sale.price,
+          source_http_request: sale.source_http_request || null,
         },
         associatedEntity: sale.owner
           ? {
@@ -111,6 +113,7 @@ export class DataLoader {
           property_assessed_value_amount: tax.value,
           property_taxable_value_amount: tax.value,
           tax_year: tax.year,
+          source_http_request: tax.source_http_request || null,
         },
       })),
       features: ipldData.features || { interior: [], exterior: [] },
@@ -118,7 +121,10 @@ export class DataLoader {
       utility: ipldData.utility || null,
 
       carousel_images: ipldData.carousel_images || [],
-      layouts: ipldData.layouts || [],
+      layouts: ipldData.layouts ? {
+        ...ipldData.layouts,
+        source_http_request: ipldData.layouts.source_http_request || null,
+      } : [],
       sectionVisibility: ipldData.sectionVisibility || null,
       dataLabel: ipldData.dataLabel || null,
     };
