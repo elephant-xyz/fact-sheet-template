@@ -28,16 +28,47 @@ jobs:
       run: npm run build
       
     - name: Run comprehensive HTML generation test
-      run: node test-generate-all.js
+      run: node test/test-generate-all.js
 
         
     - name: Check test output structure
       run: |
         echo "📁 Test output structure:"
-        find test-output -type f -name "*.html" | head -10
+        find test/test-output -type f -name "*.html" | head -10
         echo ""
         echo "📊 Total HTML files generated:"
-        find test-output -type f -name "*.html" | wc -l
+        find test/test-output -type f -name "*.html" | wc -l
         echo ""
         echo "📁 Total directories with content:"
-        find test-output -type d | wc -l 
+        find test/test-output -type d | wc -l
+        
+    - name: Validate HTML files
+      run: |
+        echo "🔍 Validating HTML files..."
+        for file in $(find test/test-output -name "*.html"); do
+          echo "Checking $file"
+          if ! grep -q "<!DOCTYPE html>" "$file"; then
+            echo "❌ Missing DOCTYPE in $file"
+            exit 1
+          fi
+          if ! grep -q "<html" "$file"; then
+            echo "❌ Missing HTML tag in $file"
+            exit 1
+          fi
+          if ! grep -q "</html>" "$file"; then
+            echo "❌ Missing closing HTML tag in $file"
+            exit 1
+          fi
+        done
+        echo "✅ All HTML files are valid"
+        
+    - name: Check for county links
+      run: |
+        echo "🔗 Checking for county links..."
+        for file in $(find test/test-output -name "*.html"); do
+          if ! grep -q "countysrc" "$file"; then
+            echo "⚠️  No county link found in $file"
+          else
+            echo "✅ County link found in $file"
+          fi
+        done 

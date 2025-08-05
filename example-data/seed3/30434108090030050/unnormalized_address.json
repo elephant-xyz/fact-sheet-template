@@ -1,0 +1,14 @@
+{
+  "full_address": "1605 S US highway 1 3E, Jupiter, FL 33477",
+  "source_http_request": {
+    "method": "GET",
+    "url": "https://pbcpao.gov/Property/Details",
+    "multiValueQueryString": {
+      "parcelId": [
+        "30434108090030050"
+      ]
+    }
+  },
+  "county_jurisdiction": "palm beach",
+  "request_identifier": "30434108090030050"
+}

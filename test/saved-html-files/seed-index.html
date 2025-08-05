@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+
+  2558 Gardens Pkwy, palm beach gardens, FL 33410
+
+</title>
+    <meta name="description" content="
+
+  Property for sale in Palm Beach County
+
+">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://elephant.xyz/homes/public/homes/52434205310037080">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="place">
+    <meta property="og:url" content="https://elephant.xyz/homes/public/homes/52434205310037080">
+    <meta property="og:title" content="
+
+  2558 Gardens Pkwy, palm beach gardens, FL 33410
+
+">
+    <meta property="og:description" content="
+
+  Property for sale in Palm Beach County
+
+">
+    <meta property="og:image" content="">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://elephant.xyz/homes/public/homes/52434205310037080">
+    <meta property="twitter:title" content="
+
+  2558 Gardens Pkwy, palm beach gardens, FL 33410
+
+">
+    <meta property="twitter:description" content="
+
+  Property for sale in Palm Beach County
+
+">
+    <meta property="twitter:image" content="">
+
+    
+        
+            <link rel="stylesheet" href="./css/root_style.css">
+        
+    
+    
+    <!-- Adobe Typekit fonts -->
+    <link rel="stylesheet" href="https://use.typekit.net/vbh7qcn.css">
+</head>
+<body>
+    
+
+<script>
+// Section visibility configuration from backend
+const sectionVisibility = {
+  "label_to_div_mapping": {
+    "Seed": [
+      "header-section",
+      "property-header",
+      "property-address",
+      "provider-cards",
+      "building-details",
+      "parcel-id"
+    ],
+    "County": [
+      "header-section",
+      "property-header",
+      "property-address",
+      "provider-cards",
+      "property-history",
+      "floorplan",
+      "building-details",
+      "features",
+      "parcel-id"
+    ],
+    "Photo": [
+      "header-section",
+      "property-header",
+      "property-address",
+      "provider-cards",
+      "property-history",
+      "floorplan",
+      "building-details",
+      "features",
+      "parcel-id"
+    ],
+    "Photo Metadata": [
+      "header-section",
+      "property-header",
+      "property-address",
+      "provider-cards",
+      "property-history",
+      "floorplan",
+      "floorplan-layout",
+      "building-details",
+      "features",
+      "parcel-id"
+    ]
+  }
+};
+
+// Function to show/hide sections based on label
+function updateSectionVisibility(label) {
+  console.log('Updating section visibility for label:', label);
+  
+  if (!sectionVisibility || !sectionVisibility.label_to_div_mapping) {
+    console.log('No section visibility configuration found');
+    return;
+  }
+  
+  const sections = sectionVisibility.label_to_div_mapping[label];
+  if (!sections) {
+    console.log('No sections found for label:', label);
+    return;
+  }
+  
+  console.log('Sections to show:', sections);
+  
+  // Hide all sections first
+  document.querySelectorAll('[data-section]').forEach(section => {
+    console.log('Hiding section:', section.id);
+    section.classList.remove('show');
+  });
+  
+  // Show only the sections for this label
+  sections.forEach(sectionName => {
+    const section = document.querySelector(`[data-section="${sectionName}"]`);
+    if (section) {
+      console.log('Showing section:', sectionName, 'element:', section);
+      section.classList.add('show');
+    } else {
+      console.log('Section not found:', sectionName);
+      // Debug: list all data-section elements
+      const allSections = document.querySelectorAll('[data-section]');
+      console.log('All data-section elements:', allSections);
+    }
+  });
+}
+
+         // Initialize with the label determined from the data
+         document.addEventListener('DOMContentLoaded', function() {
+           updateSectionVisibility('Seed');
+         });
+</script>
+
+<a href="#main-content" style="position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;">Skip to main content</a>
+
+
+<!-- Navigation -->
+<nav class="navigation">
+    <div class="nav-content">
+                    <div class="nav-tabs">
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                <a href="#building-details" class="nav-tab">Building Details</a>
+                
+                
+                
+                
+                
+                
+            </div>
+            
+            <!-- Condensed Providers (hidden by default) -->
+            <div class="nav-providers-condensed" id="nav-providers-condensed">
+                <div class="condensed-header">
+                    <h4 class="condensed-title">Hire top rated providers</h4>
+                </div>
+                <div class="condensed-agent">
+                    <div class="condensed-avatar">
+                        <img src="./annette.jpg" alt="Annette Santiago">
+                    </div>
+                    <div class="condensed-info">
+                        <div class="condensed-name-row">
+                            <img src="./type=real-estate-agent.svg" alt="Real Estate Agent" class="condensed-icon">
+                            <span class="condensed-name">Annette Santiago</span>
+                        </div>
+                        <div class="condensed-phone">561-202-7707</div>
+                    </div>
+                </div>
+                <button class="view-all-providers-btn view-all-providers-btn-desktop" id="view-all-providers-btn">
+                    <span>View All Providers</span>
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg" class="dropdown-icon">
+                        <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Providers Overlay (hidden by default) -->
+            <div class="providers-overlay" id="providers-overlay">
+                <div class="providers-overlay-content">
+                    <div class="providers-overlay-header">
+                        <h3 class="providers-overlay-title">Hire top rated providers</h3>
+                        <button class="close-overlay-btn" id="close-overlay-btn">×</button>
+                    </div>
+                    <div class="providers-overlay-list">
+                        <!-- This will be populated with the same provider content -->
+                    </div>
+                </div>
+            </div>
+    </div>
+</nav>
+
+
+<div class="container">
+    <div class="main-layout" id="main-content">
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header section wrapper for breadcrumb, carousel, and address -->
+            <div class="header-section" data-section="header-section">
+                <nav class="breadcrumb" aria-label="Breadcrumb">
+                    <ol class="breadcrumb">
+                        <li><a href="/" class="elephant-link">elephant.xyz</a></li>
+                    </ol>
+                </nav>
+
+                <!-- Image Carousel -->
+                
+
+                <!-- Property Header -->
+                <header class="property-header" data-section="property-header">
+                <div class="property-address" data-section="property-address">
+                    <h1 class="property-address-title">
+                        
+                            2558
+                            
+                            Gardens Pkwy, palm beach gardens, FL
+                            33410
+                            
+                            
+                            
+                            
+                            
+                        
+                    </h1>
+                    
+                    
+                        
+                        <div class="location-details">
+                            
+                            <span class="county-info">Palm Beach County</span>
+                            
+                            
+                            
+                        </div>
+                        
+                    
+                    
+
+                    
+                </div>
+            </header>
+            </div>
+
+            <!-- Property History Section -->
+            
+            
+            
+            
+
+            <!-- Add your content sections here -->
+            
+            <!-- Floorplan -->
+            
+            
+            
+            
+            
+            <!-- Building Details -->
+            <section id="building-details" class="building-details-section scroll-offset-section" data-section="building-details">
+              
+              
+              
+              
+              
+              
+              
+              
+              
+                <div class="building-details-content">
+                    <div class="building-details-grid">
+                        <!-- First Column -->
+                        <div class="building-details-column">
+                            <!-- Year Built -->
+                            
+                            
+                            <!-- Legal Description -->
+                            
+                            
+                            <!-- Parcel ID -->
+                            
+                            <div class="building-spec-item" data-section="parcel-id">
+                                <div class="building-spec-label">Parcel ID (APN)</div>
+                                <div class="building-spec-value">
+                                    <div class="building-spec-text">52434205310037080</div>
+                                </div>
+                            </div>
+                            
+                                            
+                        <!-- Second Column -->
+                        <div class="building-details-column">
+                            <!-- Living Area -->
+                            
+                            
+                            <!-- Lot Type -->
+                            
+                            
+                            <!-- Lot Area -->
+                            
+                        </div>
+                    </div>
+                    
+                    <!-- Additional lot size info (if available) -->
+                    
+                </div>
+            </section>
+
+            <!-- Utility Systems -->
+            <!-- Property Features -->
+            
+            
+            
+
+            
+            
+            
+            <section class="section" id="features" data-section="features">
+                <h2 class="section-title">Property Features</h2>
+                <div class="features-container">
+                    <div class="features-grid">
+                        <!-- Interior Features -->
+                        
+
+                        <!-- Exterior Features -->
+                        
+
+                        <!-- Utility Systems -->
+                        
+                        <div class="features-section">
+                            <h3 class="section-subtitle">Utility Systems</h3>
+                            <div class="features-list">
+                                
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </section>
+            
+
+        </div>
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-content">
+                <!-- Rental Price Card -->
+                <div class="price-card">
+                    <div class="price-header">
+                        <div class="price-icon">
+                            <span class="dollar-sign">$</span>
+                        </div>
+                        <span class="price-label">Last Sale Price</span>
+                    </div>
+                    <div class="price-amount">$</div>
+
+                    <!-- Expanded Content (Always Visible) -->
+                    <div class="expanded-content">
+                        <div class="tax-assessment-section">
+                            <div class="expanded-content-label">Tax Assessment</div>
+                            <div class="tax-assessment-amount">$</div>
+                        </div>
+                        
+                    </div>
+
+                    <button class="less-info-btn" onclick="toggleMoreInfo()">
+                        <span>Less Info</span>
+                        <img src="./uiicons-1.svg" alt="Dropdown" class="dropdown-arrow rotated">
+                    </button>
+                </div>
+
+                <!-- Service Providers Card -->
+                <div class="providers-card" data-section="provider-cards">
+                    <h3 class="providers-title">Hire top rated providers</h3>
+                    <div class="providers-list">
+                        
+                        <!-- Default providers -->
+                        
+                        <!-- Provider 1: Real Estate Agent -->
+                        <div class="provider-item">
+                            <div class="provider-avatar">
+                                <img src="./annette.jpg" alt="Annette Santiago">
+                            </div>
+                            <div class="provider-info">
+                                <div class="provider-header">
+                                    <img src="./type=real-estate-agent.svg" alt="Provider icon" class="provider-icon">
+                                    <span class="provider-name" data-tooltip="Real Estate Agent">Annette Santiago</span>
+                                </div>
+                                <div class="provider-contact">
+                                    <div class="phone-info">
+                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" class="phone-icon">
+                                            <path d="M13.25 14C11.9611 14 10.6472 13.6889 9.30833 13.0667C7.96944 12.4444 6.72778 11.5611 5.58333 10.4167C4.43889 9.27222 3.55556 8.03056 2.93333 6.69167C2.31111 5.35278 2 4.03889 2 2.75C2 2.53567 2.07144 2.35711 2.21433 2.21433C2.35711 2.07144 2.53567 2 2.75 2H5.08333C5.23889 2 5.37222 2.05556 5.48333 2.16667C5.59444 2.27778 5.67222 2.41667 5.71667 2.58333L6.1655 4.67733C6.1885 4.83689 6.18611 4.98056 6.15833 5.10833C6.13056 5.23611 6.07094 5.34572 5.9795 5.43717L4.31667 7.11667C4.60556 7.60556 4.91111 8.06111 5.23333 8.48333C5.55556 8.90556 5.91111 9.30556 6.3 9.68333C6.71111 10.1056 7.14444 10.4917 7.6 10.8417C8.05556 11.1917 8.53333 11.5 9.03333 11.7667L10.6167 10.1333C10.7278 10.0111 10.8564 9.92778 11.0025 9.88333C11.1486 9.83889 11.2922 9.82778 11.4333 9.85L13.4167 10.2833C13.5833 10.3278 13.7222 10.4169 13.8333 10.5507C13.9444 10.6846 14 10.8343 14 11V13.25C14 13.4643 13.9286 13.6429 13.7857 13.7857C13.6429 13.9286 13.4643 14 13.25 14ZM3.81667 6.2L5.16667 4.83333L4.78333 3H3C3.02222 3.46667 3.09722 3.95833 3.225 4.475C3.35278 4.99167 3.55 5.56667 3.81667 6.2ZM9.96667 12.25C10.4222 12.4611 10.9167 12.6333 11.45 12.7667C11.9833 12.9 12.5 12.9778 13 13V11.2167L11.2833 10.8667L9.96667 12.25Z" fill="currentColor"/>
+                                        </svg>
+                                        <a href="tel:561-202-7707" class="phone-number">561-202-7707</a>
+                                    </div>
+                                    <button class="provider-more-info-btn" onclick="toggleProviderInfo(this)">
+                                        <span>More Info</span>
+                                        <img src="./type=carat-down.svg" alt="Dropdown" class="provider-dropdown-arrow">
+                                    </button>
+                                </div>
+                                <div class="provider-expanded-content" style="display: none;">
+                                    <div class="provider-details">
+                                        <div class="email-info">
+                                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" class="email-icon">
+                                              <path d="M9.36102 1.8977L15.0985 5.3402C15.2898 5.44145 15.4191 5.57926 15.4866 5.75363C15.5541 5.92801 15.5879 6.09957 15.5879 6.26832V14.0814C15.5879 14.3514 15.4866 14.5877 15.2841 14.7902C15.0816 14.9927 14.8454 15.0939 14.5754 15.0939H3.10039C2.83039 15.0939 2.59414 14.9927 2.39164 14.7902C2.18914 14.5877 2.08789 14.3514 2.08789 14.0814V6.26832C2.08789 6.09957 2.12445 5.92801 2.19758 5.75363C2.2707 5.57926 2.39727 5.44145 2.57727 5.3402L8.31477 1.8977C8.47767 1.8077 8.65339 1.7627 8.84194 1.7627C9.03049 1.7627 9.20352 1.8077 9.36102 1.8977ZM8.83789 9.4577L14.5079 6.13332L8.83789 2.72457L3.16789 6.13332L8.83789 9.4577ZM8.33164 10.2846L3.10039 7.21332V14.0814H14.5754V7.21332L9.34414 10.2846C9.1881 10.3746 9.01969 10.4196 8.8389 10.4196C8.65823 10.4196 8.48914 10.3746 8.33164 10.2846Z" fill="currentColor"/>
+                                            </svg>
+                                            <a href="mailto:asantiagorealty@gmail.com" class="email-address">asantiagorealty@gmail.com</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Mobile expand button after first provider -->
+                        <button class="view-all-providers-btn view-all-providers-btn-mobile" onclick="toggleAllProviders(this)">
+                            <span>View all providers</span>
+                            <img src="./type=carat-down.svg" alt="Expand" class="arrow">
+                        </button>
+
+                        <!-- Provider 2: Home Inspector -->
+                        <div class="provider-item">
+                            <div class="provider-avatar">
+                                <img src="./michael_headshot.png" alt="Michael Johnson">
+                            </div>
+                            <div class="provider-info">
+                                <div class="provider-header">
+                                    <img src="./type=inspector.svg" alt="Provider icon" class="provider-icon">
+                                    <span class="provider-name" data-tooltip="Home Inspector">Michael Johnson</span>
+                                </div>
+                                <div class="provider-contact">
+                                    <div class="phone-info">
+                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" class="phone-icon">
+                                            <path d="M13.25 14C11.9611 14 10.6472 13.6889 9.30833 13.0667C7.96944 12.4444 6.72778 11.5611 5.58333 10.4167C4.43889 9.27222 3.55556 8.03056 2.93333 6.69167C2.31111 5.35278 2 4.03889 2 2.75C2 2.53567 2.07144 2.35711 2.21433 2.21433C2.35711 2.07144 2.53567 2 2.75 2H5.08333C5.23889 2 5.37222 2.05556 5.48333 2.16667C5.59444 2.27778 5.67222 2.41667 5.71667 2.58333L6.1655 4.67733C6.1885 4.83689 6.18611 4.98056 6.15833 5.10833C6.13056 5.23611 6.07094 5.34572 5.9795 5.43717L4.31667 7.11667C4.60556 7.60556 4.91111 8.06111 5.23333 8.48333C5.55556 8.90556 5.91111 9.30556 6.3 9.68333C6.71111 10.1056 7.14444 10.4917 7.6 10.8417C8.05556 11.1917 8.53333 11.5 9.03333 11.7667L10.6167 10.1333C10.7278 10.0111 10.8564 9.92778 11.0025 9.88333C11.1486 9.83889 11.2922 9.82778 11.4333 9.85L13.4167 10.2833C13.5833 10.3278 13.7222 10.4169 13.8333 10.5507C13.9444 10.6846 14 10.8343 14 11V13.25C14 13.4643 13.9286 13.6429 13.7857 13.7857C13.6429 13.9286 13.4643 14 13.25 14ZM3.81667 6.2L5.16667 4.83333L4.78333 3H3C3.02222 3.46667 3.09722 3.95833 3.225 4.475C3.35278 4.99167 3.55 5.56667 3.81667 6.2ZM9.96667 12.25C10.4222 12.4611 10.9167 12.6333 11.45 12.7667C11.9833 12.9 12.5 12.9778 13 13V11.2167L11.2833 10.8667L9.96667 12.25Z" fill="currentColor"/>
+                                        </svg>
+                                        <a href="tel:561-555-0123" class="phone-number">561-555-0123</a>
+                                    </div>
+                                    <button class="provider-more-info-btn" onclick="toggleProviderInfo(this)">
+                                        <span>More Info</span>
+                                        <img src="./type=carat-down.svg" alt="Dropdown" class="provider-dropdown-arrow">
+                                    </button>
+                                </div>
+                                <div class="provider-expanded-content" style="display: none;">
+                                    <div class="provider-details">
+                                        <div class="email-info">
+                                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" class="email-icon">
+                                              <path d="M9.36102 1.8977L15.0985 5.3402C15.2898 5.44145 15.4191 5.57926 15.4866 5.75363C15.5541 5.92801 15.5879 6.09957 15.5879 6.26832V14.0814C15.5879 14.3514 15.4866 14.5877 15.2841 14.7902C15.0816 14.9927 14.8454 15.0939 14.5754 15.0939H3.10039C2.83039 15.0939 2.59414 14.9927 2.39164 14.7902C2.18914 14.5877 2.08789 14.3514 2.08789 14.0814V6.26832C2.08789 6.09957 2.12445 5.92801 2.19758 5.75363C2.2707 5.57926 2.39727 5.44145 2.57727 5.3402L8.31477 1.8977C8.47767 1.8077 8.65339 1.7627 8.84194 1.7627C9.03049 1.7627 9.20352 1.8077 9.36102 1.8977ZM8.83789 9.4577L14.5079 6.13332L8.83789 2.72457L3.16789 6.13332L8.83789 9.4577ZM8.33164 10.2846L3.10039 7.21332V14.0814H14.5754V7.21332L9.34414 10.2846C9.1881 10.3746 9.01969 10.4196 8.8389 10.4196C8.65823 10.4196 8.48914 10.3746 8.33164 10.2846Z" fill="currentColor"/>
+                                            </svg>
+                                            <a href="mailto:michael@homeinspections.com" class="email-address">michael@homeinspections.com</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Provider 3: Mortgage Broker -->
+                        <div class="provider-item">
+                            <div class="provider-avatar">
+                                <img src="./sarah_headshot.png" alt="Sarah Williams">
+                            </div>
+                            <div class="provider-info">
+                                <div class="provider-header">
+                                    <img src="./type=mortgage-broker.svg" alt="Provider icon" class="provider-icon">
+                                    <span class="provider-name" data-tooltip="Mortgage Broker">Sarah Williams</span>
+                                </div>
+                                <div class="provider-contact">
+                                    <div class="phone-info">
+                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" class="phone-icon">
+                                            <path d="M13.25 14C11.9611 14 10.6472 13.6889 9.30833 13.0667C7.96944 12.4444 6.72778 11.5611 5.58333 10.4167C4.43889 9.27222 3.55556 8.03056 2.93333 6.69167C2.31111 5.35278 2 4.03889 2 2.75C2 2.53567 2.07144 2.35711 2.21433 2.21433C2.35711 2.07144 2.53567 2 2.75 2H5.08333C5.23889 2 5.37222 2.05556 5.48333 2.16667C5.59444 2.27778 5.67222 2.41667 5.71667 2.58333L6.1655 4.67733C6.1885 4.83689 6.18611 4.98056 6.15833 5.10833C6.13056 5.23611 6.07094 5.34572 5.9795 5.43717L4.31667 7.11667C4.60556 7.60556 4.91111 8.06111 5.23333 8.48333C5.55556 8.90556 5.91111 9.30556 6.3 9.68333C6.71111 10.1056 7.14444 10.4917 7.6 10.8417C8.05556 11.1917 8.53333 11.5 9.03333 11.7667L10.6167 10.1333C10.7278 10.0111 10.8564 9.92778 11.0025 9.88333C11.1486 9.83889 11.2922 9.82778 11.4333 9.85L13.4167 10.2833C13.5833 10.3278 13.7222 10.4169 13.8333 10.5507C13.9444 10.6846 14 10.8343 14 11V13.25C14 13.4643 13.9286 13.6429 13.7857 13.7857C13.6429 13.9286 13.4643 14 13.25 14ZM3.81667 6.2L5.16667 4.83333L4.78333 3H3C3.02222 3.46667 3.09722 3.95833 3.225 4.475C3.35278 4.99167 3.55 5.56667 3.81667 6.2ZM9.96667 12.25C10.4222 12.4611 10.9167 12.6333 11.45 12.7667C11.9833 12.9 12.5 12.9778 13 13V11.2167L11.2833 10.8667L9.96667 12.25Z" fill="currentColor"/>
+                                        </svg>
+                                        <a href="tel:561-555-0456" class="phone-number">561-555-0456</a>
+                                    </div>
+                                    <button class="provider-more-info-btn" onclick="toggleProviderInfo(this)">
+                                        <span>More Info</span>
+                                        <img src="./type=carat-down.svg" alt="Dropdown" class="provider-dropdown-arrow">
+                                    </button>
+                                </div>
+                                <div class="provider-expanded-content" style="display: none;">
+                                    <div class="provider-details">
+                                        <div class="email-info">
+                                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" class="email-icon">
+                                              <path d="M9.36102 1.8977L15.0985 5.3402C15.2898 5.44145 15.4191 5.57926 15.4866 5.75363C15.5541 5.92801 15.5879 6.09957 15.5879 6.26832V14.0814C15.5879 14.3514 15.4866 14.5877 15.2841 14.7902C15.0816 14.9927 14.8454 15.0939 14.5754 15.0939H3.10039C2.83039 15.0939 2.59414 14.9927 2.39164 14.7902C2.18914 14.5877 2.08789 14.3514 2.08789 14.0814V6.26832C2.08789 6.09957 2.12445 5.92801 2.19758 5.75363C2.2707 5.57926 2.39727 5.44145 2.57727 5.3402L8.31477 1.8977C8.47767 1.8077 8.65339 1.7627 8.84194 1.7627C9.03049 1.7627 9.20352 1.8077 9.36102 1.8977ZM8.83789 9.4577L14.5079 6.13332L8.83789 2.72457L3.16789 6.13332L8.83789 9.4577ZM8.33164 10.2846L3.10039 7.21332V14.0814H14.5754V7.21332L9.34414 10.2846C9.1881 10.3746 9.01969 10.4196 8.8389 10.4196C8.65823 10.4196 8.48914 10.3746 8.33164 10.2846Z" fill="currentColor"/>
+                                            </svg>
+                                            <a href="mailto:sarah@mortgageexperts.com" class="email-address">sarah@mortgageexperts.com</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Provider 4: Appraiser -->
+                        <div class="provider-item">
+                            <div class="provider-avatar">
+                                <img src="./david_headshot.png" alt="David Rodriguez">
+                            </div>
+                            <div class="provider-info">
+                                <div class="provider-header">
+                                    <img src="./type=appraiser.svg" alt="Provider icon" class="provider-icon">
+                                    <span class="provider-name" data-tooltip="Licensed Appraiser">David Rodriguez</span>
+                                </div>
+                                <div class="provider-contact">
+                                    <div class="phone-info">
+                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" class="phone-icon">
+                                            <path d="M13.25 14C11.9611 14 10.6472 13.6889 9.30833 13.0667C7.96944 12.4444 6.72778 11.5611 5.58333 10.4167C4.43889 9.27222 3.55556 8.03056 2.93333 6.69167C2.31111 5.35278 2 4.03889 2 2.75C2 2.53567 2.07144 2.35711 2.21433 2.21433C2.35711 2.07144 2.53567 2 2.75 2H5.08333C5.23889 2 5.37222 2.05556 5.48333 2.16667C5.59444 2.27778 5.67222 2.41667 5.71667 2.58333L6.1655 4.67733C6.1885 4.83689 6.18611 4.98056 6.15833 5.10833C6.13056 5.23611 6.07094 5.34572 5.9795 5.43717L4.31667 7.11667C4.60556 7.60556 4.91111 8.06111 5.23333 8.48333C5.55556 8.90556 5.91111 9.30556 6.3 9.68333C6.71111 10.1056 7.14444 10.4917 7.6 10.8417C8.05556 11.1917 8.53333 11.5 9.03333 11.7667L10.6167 10.1333C10.7278 10.0111 10.8564 9.92778 11.0025 9.88333C11.1486 9.83889 11.2922 9.82778 11.4333 9.85L13.4167 10.2833C13.5833 10.3278 13.7222 10.4169 13.8333 10.5507C13.9444 10.6846 14 10.8343 14 11V13.25C14 13.4643 13.9286 13.6429 13.7857 13.7857C13.6429 13.9286 13.4643 14 13.25 14ZM3.81667 6.2L5.16667 4.83333L4.78333 3H3C3.02222 3.46667 3.09722 3.95833 3.225 4.475C3.35278 4.99167 3.55 5.56667 3.81667 6.2ZM9.96667 12.25C10.4222 12.4611 10.9167 12.6333 11.45 12.7667C11.9833 12.9 12.5 12.9778 13 13V11.2167L11.2833 10.8667L9.96667 12.25Z" fill="currentColor"/>
+                                        </svg>
+                                        <a href="tel:561-555-0789" class="phone-number">561-555-0789</a>
+                                    </div>
+                                    <button class="provider-more-info-btn" onclick="toggleProviderInfo(this)">
+                                        <span>More Info</span>
+                                        <img src="./type=carat-down.svg" alt="Dropdown" class="provider-dropdown-arrow">
+                                    </button>
+                                </div>
+                                <div class="provider-expanded-content" style="display: none;">
+                                    <div class="provider-details">
+                                        <div class="email-info">
+                                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" class="email-icon">
+                                              <path d="M9.36102 1.8977L15.0985 5.3402C15.2898 5.44145 15.4191 5.57926 15.4866 5.75363C15.5541 5.92801 15.5879 6.09957 15.5879 6.26832V14.0814C15.5879 14.3514 15.4866 14.5877 15.2841 14.7902C15.0816 14.9927 14.8454 15.0939 14.5754 15.0939H3.10039C2.83039 15.0939 2.59414 14.9927 2.39164 14.7902C2.18914 14.5877 2.08789 14.3514 2.08789 14.0814V6.26832C2.08789 6.09957 2.12445 5.92801 2.19758 5.75363C2.2707 5.57926 2.39727 5.44145 2.57727 5.3402L8.31477 1.8977C8.47767 1.8077 8.65339 1.7627 8.84194 1.7627C9.03049 1.7627 9.20352 1.8077 9.36102 1.8977ZM8.83789 9.4577L14.5079 6.13332L8.83789 2.72457L3.16789 6.13332L8.83789 9.4577ZM8.33164 10.2846L3.10039 7.21332V14.0814H14.5754V7.21332L9.34414 10.2846C9.1881 10.3746 9.01969 10.4196 8.8389 10.4196C8.65823 10.4196 8.48914 10.3746 8.33164 10.2846Z" fill="currentColor"/>
+                                            </svg>
+                                            <a href="mailto:david@propertyappraisals.com" class="email-address">david@propertyappraisals.com</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Provider 5: Title Agent -->
+                        <div class="provider-item">
+                            <div class="provider-avatar">
+                                <img src="./jennifer_headshot.png" alt="Jennifer Chen">
+                            </div>
+                            <div class="provider-info">
+                                <div class="provider-header">
+                                    <img src="./type=title-agent.svg" alt="Provider icon" class="provider-icon">
+                                    <span class="provider-name" data-tooltip="Title Agent">Jennifer Chen</span>
+                                </div>
+                                <div class="provider-contact">
+                                    <div class="phone-info">
+                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" class="phone-icon">
+                                            <path d="M13.25 14C11.9611 14 10.6472 13.6889 9.30833 13.0667C7.96944 12.4444 6.72778 11.5611 5.58333 10.4167C4.43889 9.27222 3.55556 8.03056 2.93333 6.69167C2.31111 5.35278 2 4.03889 2 2.75C2 2.53567 2.07144 2.35711 2.21433 2.21433C2.35711 2.07144 2.53567 2 2.75 2H5.08333C5.23889 2 5.37222 2.05556 5.48333 2.16667C5.59444 2.27778 5.67222 2.41667 5.71667 2.58333L6.1655 4.67733C6.1885 4.83689 6.18611 4.98056 6.15833 5.10833C6.13056 5.23611 6.07094 5.34572 5.9795 5.43717L4.31667 7.11667C4.60556 7.60556 4.91111 8.06111 5.23333 8.48333C5.55556 8.90556 5.91111 9.30556 6.3 9.68333C6.71111 10.1056 7.14444 10.4917 7.6 10.8417C8.05556 11.1917 8.53333 11.5 9.03333 11.7667L10.6167 10.1333C10.7278 10.0111 10.8564 9.92778 11.0025 9.88333C11.1486 9.83889 11.2922 9.82778 11.4333 9.85L13.4167 10.2833C13.5833 10.3278 13.7222 10.4169 13.8333 10.5507C13.9444 10.6846 14 10.8343 14 11V13.25C14 13.4643 13.9286 13.6429 13.7857 13.7857C13.6429 13.9286 13.4643 14 13.25 14ZM3.81667 6.2L5.16667 4.83333L4.78333 3H3C3.02222 3.46667 3.09722 3.95833 3.225 4.475C3.35278 4.99167 3.55 5.56667 3.81667 6.2ZM9.96667 12.25C10.4222 12.4611 10.9167 12.6333 11.45 12.7667C11.9833 12.9 12.5 12.9778 13 13V11.2167L11.2833 10.8667L9.96667 12.25Z" fill="currentColor"/>
+                                        </svg>
+                                        <a href="tel:561-555-0321" class="phone-number">561-555-0321</a>
+                                    </div>
+                                    <button class="provider-more-info-btn" onclick="toggleProviderInfo(this)">
+                                        <span>More Info</span>
+                                        <img src="./type=carat-down.svg" alt="Dropdown" class="provider-dropdown-arrow">
+                                    </button>
+                                </div>
+                                <div class="provider-expanded-content" style="display: none;">
+                                    <div class="provider-details">
+                                        <div class="email-info">
+                                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" class="email-icon">
+                                              <path d="M9.36102 1.8977L15.0985 5.3402C15.2898 5.44145 15.4191 5.57926 15.4866 5.75363C15.5541 5.92801 15.5879 6.09957 15.5879 6.26832V14.0814C15.5879 14.3514 15.4866 14.5877 15.2841 14.7902C15.0816 14.9927 14.8454 15.0939 14.5754 15.0939H3.10039C2.83039 15.0939 2.59414 14.9927 2.39164 14.7902C2.18914 14.5877 2.08789 14.3514 2.08789 14.0814V6.26832C2.08789 6.09957 2.12445 5.92801 2.19758 5.75363C2.2707 5.57926 2.39727 5.44145 2.57727 5.3402L8.31477 1.8977C8.47767 1.8077 8.65339 1.7627 8.84194 1.7627C9.03049 1.7627 9.20352 1.8077 9.36102 1.8977ZM8.83789 9.4577L14.5079 6.13332L8.83789 2.72457L3.16789 6.13332L8.83789 9.4577ZM8.33164 10.2846L3.10039 7.21332V14.0814H14.5754V7.21332L9.34414 10.2846C9.1881 10.3746 9.01969 10.4196 8.8389 10.4196C8.65823 10.4196 8.48914 10.3746 8.33164 10.2846Z" fill="currentColor"/>
+                                            </svg>
+                                            <a href="mailto:jennifer@titleservices.com" class="email-address">jennifer@titleservices.com</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Provider 6: Insurance Broker -->
+                        <div class="provider-item">
+                            <div class="provider-avatar">
+                                <img src="./robert_headshot.png" alt="Robert Thompson">
+                            </div>
+                            <div class="provider-info">
+                                <div class="provider-header">
+                                    <img src="./type=insurance-broker.svg" alt="Provider icon" class="provider-icon">
+                                    <span class="provider-name" data-tooltip="Insurance Broker">Robert Thompson</span>
+                                </div>
+                                <div class="provider-contact">
+                                    <div class="phone-info">
+                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" class="phone-icon">
+                                            <path d="M13.25 14C11.9611 14 10.6472 13.6889 9.30833 13.0667C7.96944 12.4444 6.72778 11.5611 5.58333 10.4167C4.43889 9.27222 3.55556 8.03056 2.93333 6.69167C2.31111 5.35278 2 4.03889 2 2.75C2 2.53567 2.07144 2.35711 2.21433 2.21433C2.35711 2.07144 2.53567 2 2.75 2H5.08333C5.23889 2 5.37222 2.05556 5.48333 2.16667C5.59444 2.27778 5.67222 2.41667 5.71667 2.58333L6.1655 4.67733C6.1885 4.83689 6.18611 4.98056 6.15833 5.10833C6.13056 5.23611 6.07094 5.34572 5.9795 5.43717L4.31667 7.11667C4.60556 7.60556 4.91111 8.06111 5.23333 8.48333C5.55556 8.90556 5.91111 9.30556 6.3 9.68333C6.71111 10.1056 7.14444 10.4917 7.6 10.8417C8.05556 11.1917 8.53333 11.5 9.03333 11.7667L10.6167 10.1333C10.7278 10.0111 10.8564 9.92778 11.0025 9.88333C11.1486 9.83889 11.2922 9.82778 11.4333 9.85L13.4167 10.2833C13.5833 10.3278 13.7222 10.4169 13.8333 10.5507C13.9444 10.6846 14 10.8343 14 11V13.25C14 13.4643 13.9286 13.6429 13.7857 13.7857C13.6429 13.9286 13.4643 14 13.25 14ZM3.81667 6.2L5.16667 4.83333L4.78333 3H3C3.02222 3.46667 3.09722 3.95833 3.225 4.475C3.35278 4.99167 3.55 5.56667 3.81667 6.2ZM9.96667 12.25C10.4222 12.4611 10.9167 12.6333 11.45 12.7667C11.9833 12.9 12.5 12.9778 13 13V11.2167L11.2833 10.8667L9.96667 12.25Z" fill="currentColor"/>
+                                        </svg>
+                                        <a href="tel:561-555-0654" class="phone-number">561-555-0654</a>
+                                    </div>
+                                    <button class="provider-more-info-btn" onclick="toggleProviderInfo(this)">
+                                        <span>More Info</span>
+                                        <img src="./type=carat-down.svg" alt="Dropdown" class="provider-dropdown-arrow">
+                                    </button>
+                                </div>
+                                <div class="provider-expanded-content" style="display: none;">
+                                    <div class="provider-details">
+                                        <div class="email-info">
+                                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" class="email-icon">
+                                              <path d="M9.36102 1.8977L15.0985 5.3402C15.2898 5.44145 15.4191 5.57926 15.4866 5.75363C15.5541 5.92801 15.5879 6.09957 15.5879 6.26832V14.0814C15.5879 14.3514 15.4866 14.5877 15.2841 14.7902C15.0816 14.9927 14.8454 15.0939 14.5754 15.0939H3.10039C2.83039 15.0939 2.59414 14.9927 2.39164 14.7902C2.18914 14.5877 2.08789 14.3514 2.08789 14.0814V6.26832C2.08789 6.09957 2.12445 5.92801 2.19758 5.75363C2.2707 5.57926 2.39727 5.44145 2.57727 5.3402L8.31477 1.8977C8.47767 1.8077 8.65339 1.7627 8.84194 1.7627C9.03049 1.7627 9.20352 1.8077 9.36102 1.8977ZM8.83789 9.4577L14.5079 6.13332L8.83789 2.72457L3.16789 6.13332L8.83789 9.4577ZM8.33164 10.2846L3.10039 7.21332V14.0814H14.5754V7.21332L9.34414 10.2846C9.1881 10.3746 9.01969 10.4196 8.8389 10.4196C8.65823 10.4196 8.48914 10.3746 8.33164 10.2846Z" fill="currentColor"/>
+                                            </svg>
+                                            <a href="mailto:robert@insuranceexperts.com" class="email-address">robert@insuranceexperts.com</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Provider 7: Photographer -->
+                        <div class="provider-item">
+                            <div class="provider-avatar">
+                                <img src="./lisa_headshot.png" alt="Lisa Martinez">
+                            </div>
+                            <div class="provider-info">
+                                <div class="provider-header">
+                                    <img src="./type=photographer.svg" alt="Provider icon" class="provider-icon">
+                                    <span class="provider-name" data-tooltip="Real Estate Photographer">Lisa Martinez</span>
+                                </div>
+                                <div class="provider-contact">
+                                    <div class="phone-info">
+                                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" class="phone-icon">
+                                            <path d="M13.25 14C11.9611 14 10.6472 13.6889 9.30833 13.0667C7.96944 12.4444 6.72778 11.5611 5.58333 10.4167C4.43889 9.27222 3.55556 8.03056 2.93333 6.69167C2.31111 5.35278 2 4.03889 2 2.75C2 2.53567 2.07144 2.35711 2.21433 2.21433C2.35711 2.07144 2.53567 2 2.75 2H5.08333C5.23889 2 5.37222 2.05556 5.48333 2.16667C5.59444 2.27778 5.67222 2.41667 5.71667 2.58333L6.1655 4.67733C6.1885 4.83689 6.18611 4.98056 6.15833 5.10833C6.13056 5.23611 6.07094 5.34572 5.9795 5.43717L4.31667 7.11667C4.60556 7.60556 4.91111 8.06111 5.23333 8.48333C5.55556 8.90556 5.91111 9.30556 6.3 9.68333C6.71111 10.1056 7.14444 10.4917 7.6 10.8417C8.05556 11.1917 8.53333 11.5 9.03333 11.7667L10.6167 10.1333C10.7278 10.0111 10.8564 9.92778 11.0025 9.88333C11.1486 9.83889 11.2922 9.82778 11.4333 9.85L13.4167 10.2833C13.5833 10.3278 13.7222 10.4169 13.8333 10.5507C13.9444 10.6846 14 10.8343 14 11V13.25C14 13.4643 13.9286 13.6429 13.7857 13.7857C13.6429 13.9286 13.4643 14 13.25 14ZM3.81667 6.2L5.16667 4.83333L4.78333 3H3C3.02222 3.46667 3.09722 3.95833 3.225 4.475C3.35278 4.99167 3.55 5.56667 3.81667 6.2ZM9.96667 12.25C10.4222 12.4611 10.9167 12.6333 11.45 12.7667C11.9833 12.9 12.5 12.9778 13 13V11.2167L11.2833 10.8667L9.96667 12.25Z" fill="currentColor"/>
+                                        </svg>
+                                        <a href="tel:561-555-0987" class="phone-number">561-555-0987</a>
+                                    </div>
+                                    <button class="provider-more-info-btn" onclick="toggleProviderInfo(this)">
+                                        <span>More Info</span>
+                                        <img src="./type=carat-down.svg" alt="Dropdown" class="provider-dropdown-arrow">
+                                    </button>
+                                </div>
+                                <div class="provider-expanded-content" style="display: none;">
+                                    <div class="provider-details">
+                                        <div class="email-info">
+                                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" class="email-icon">
+                                              <path d="M9.36102 1.8977L15.0985 5.3402C15.2898 5.44145 15.4191 5.57926 15.4866 5.75363C15.5541 5.92801 15.5879 6.09957 15.5879 6.26832V14.0814C15.5879 14.3514 15.4866 14.5877 15.2841 14.7902C15.0816 14.9927 14.8454 15.0939 14.5754 15.0939H3.10039C2.83039 15.0939 2.59414 14.9927 2.39164 14.7902C2.18914 14.5877 2.08789 14.3514 2.08789 14.0814V6.26832C2.08789 6.09957 2.12445 5.92801 2.19758 5.75363C2.2707 5.57926 2.39727 5.44145 2.57727 5.3402L8.31477 1.8977C8.47767 1.8077 8.65339 1.7627 8.84194 1.7627C9.03049 1.7627 9.20352 1.8077 9.36102 1.8977ZM8.83789 9.4577L14.5079 6.13332L8.83789 2.72457L3.16789 6.13332L8.83789 9.4577ZM8.33164 10.2846L3.10039 7.21332V14.0814H14.5754V7.21332L9.34414 10.2846C9.1881 10.3746 9.01969 10.4196 8.8389 10.4196C8.65823 10.4196 8.48914 10.3746 8.33164 10.2846Z" fill="currentColor"/>
+                                            </svg>
+                                            <a href="mailto:lisa@propertyphotos.com" class="email-address">lisa@propertyphotos.com</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- Mobile collapse button at bottom (only shows when expanded) -->
+                        <button class="view-less-providers-btn" onclick="toggleAllProviders(this)">
+                            <span>View less</span>
+                            <img src="./type=carat-down.svg" alt="Collapse" class="arrow">
+                        </button>
+                        
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+                    <div class="property-divider"></div>
+    <div id="datasrc" class="data-footnotes">
+      <div class="data-source-btn-row" style="font-size:12px; color:#8E8B8B; padding-left:0;">
+        
+        <a id="countysrc" href="https://pbcpao.gov/Property/Details?parcelId=52434205310037080" target="_blank" rel="noopener noreferrer" class="data-source-btn" tabindex="-1">View County Data Source</a>
+        
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="./js/property.js"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded',()=>{
+    if(location.hash){
+      const el=document.querySelector(location.hash);
+      if(el){
+        el.focus();
+      }
+    }
+    
+    // Auto-hide navigation when main-content doesn't exceed viewport
+    checkNavigationVisibility();
+  });
+
+  // Check if navigation should be hidden based on main-content height
+  function checkNavigationVisibility() {
+    const navigation = document.querySelector('.navigation');
+    const mainContent = document.querySelector('.main-content');
+    
+    if (!mainContent) return;
+    
+    const mainContentHeight = mainContent.offsetHeight;
+    const viewportHeight = window.innerHeight;
+    
+    if (mainContentHeight <= viewportHeight) {
+      // Main content fits in viewport, hide navigation
+      navigation.classList.add('auto-hide');
+    } else {
+      // Main content exceeds viewport, show navigation
+      navigation.classList.remove('auto-hide');
+    }
+  }
+  
+  // Recheck on window resize
+  window.addEventListener('resize', checkNavigationVisibility);
+
+  function toggleRoomDetails(header) {
+    const roomItem = header.parentElement;
+    const properties = roomItem.querySelector('.room-properties');
+    const expandIcon = header.querySelector('.room-expand-icon');
+    
+    // Check if this room is currently open
+    const isCurrentlyOpen = properties.style.display === 'flex' || properties.style.display === 'block';
+    
+    // Close all room dropdowns first
+    const allRoomProperties = document.querySelectorAll('.room-properties');
+    const allExpandIcons = document.querySelectorAll('.room-expand-icon');
+    
+    allRoomProperties.forEach(roomProps => {
+      roomProps.style.display = 'none';
+    });
+    
+    allExpandIcons.forEach(icon => {
+      icon.style.transform = 'rotate(0deg)';
+    });
+    
+    // If the clicked room was closed, open it
+    if (!isCurrentlyOpen) {
+      properties.style.display = 'flex';
+      expandIcon.style.transform = 'rotate(180deg)';
+    }
+  }
+
+  function getCurrentSlide(propertyId) {
+    const radioButtons = document.querySelectorAll(`input[name="carousel-radio-${propertyId}"]`);
+    for (let i = 0; i < radioButtons.length; i++) {
+      if (radioButtons[i].checked) {
+        return i;
+      }
+    }
+    return 0;
+  }
+
+  function setSlide(propertyId, index) {
+    const radioButtons = document.querySelectorAll(`input[name="carousel-radio-${propertyId}"]`);
+    if (radioButtons[index]) {
+      radioButtons[index].checked = true;
+    }
+  }
+
+  function nextSlide(propertyId) {
+    const radioButtons = document.querySelectorAll(`input[name="carousel-radio-${propertyId}"]`);
+    const currentIndex = getCurrentSlide(propertyId);
+    const nextIndex = (currentIndex + 1) % radioButtons.length;
+    setSlide(propertyId, nextIndex);
+  }
+
+  function previousSlide(propertyId) {
+    const radioButtons = document.querySelectorAll(`input[name="carousel-radio-${propertyId}"]`);
+    const currentIndex = getCurrentSlide(propertyId);
+    const prevIndex = currentIndex === 0 ? radioButtons.length - 1 : currentIndex - 1;
+    setSlide(propertyId, prevIndex);
+  }
+
+  function toggleAllProviders(button) {
+    const providersList = button.closest('.providers-list');
+    
+    if (providersList.classList.contains('mobile-expanded')) {
+      // Currently expanded, so collapse
+      providersList.classList.remove('mobile-expanded');
+    } else {
+      // Currently collapsed, so expand
+      providersList.classList.add('mobile-expanded');
+    }
+  }
+
+  // Handle building details grid gap when second column is empty
+  function handleBuildingDetailsGap() {
+    const buildingDetailsGrids = document.querySelectorAll('.building-details-grid');
+    
+    buildingDetailsGrids.forEach(grid => {
+      const secondColumn = grid.querySelector('.building-details-column:nth-child(2)');
+      if (secondColumn) {
+        const hasItems = secondColumn.querySelector('.building-spec-item');
+        if (!hasItems) {
+          grid.classList.add('single-column');
+        }
+      }
+    });
+  }
+
+  // Run on page load
+  document.addEventListener('DOMContentLoaded', handleBuildingDetailsGap);
+</script>
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+        
+            <script src="./js/property.js"></script>
+        
+    
+</body>
+</html> 

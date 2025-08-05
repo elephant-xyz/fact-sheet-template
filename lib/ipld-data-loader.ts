@@ -606,11 +606,16 @@ export class IPLDDataLoader {
         url.searchParams.append(key as string, value),
       );
     }
+    // Get county from either address node or unnormalized address node
+    const countyFromAddress = addressData.county_name || addressData.county_jurisdiction;
+    const countyFromUnnormalized = unnormalizedAddress?.data?.county_jurisdiction;
+    const county = countyFromAddress || countyFromUnnormalized;
+
     return {
       address: fullAddress || addressData.street_address || "",
       city: this.capitalizeWords(addressData.city_name) || "",
       state: addressData.state_code || "",
-      county: this.capitalizeWords(addressData.county_name) || "",
+      county: this.capitalizeWords(county) || "",
       postalCode: addressData.postal_code || "",
       coordinates,
       parcelId: propertyData.parcel_identifier,

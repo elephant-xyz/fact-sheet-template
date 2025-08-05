@@ -7,6 +7,40 @@ import { promisify } from 'util';
 
 const execAsync = promisify(exec);
 
+// Function to compare HTML files with reference files
+async function compareHTMLWithReference(generatedPath, referencePath) {
+  try {
+    const generatedContent = await fs.readFile(generatedPath, 'utf8');
+    const referenceContent = await fs.readFile(referencePath, 'utf8');
+    
+    // Normalize content for comparison (remove whitespace differences)
+    const normalizeHTML = (html) => {
+      return html
+        .replace(/\s+/g, ' ')
+        .replace(/>\s+</g, '><')
+        .trim();
+    };
+    
+    const normalizedGenerated = normalizeHTML(generatedContent);
+    const normalizedReference = normalizeHTML(referenceContent);
+    
+    const isExactMatch = normalizedGenerated === normalizedReference;
+    
+    return {
+      isExactMatch,
+      generatedLength: generatedContent.length,
+      referenceLength: referenceContent.length,
+      normalizedGeneratedLength: normalizedGenerated.length,
+      normalizedReferenceLength: normalizedReference.length
+    };
+  } catch (error) {
+    return {
+      isExactMatch: false,
+      error: error.message
+    };
+  }
+}
+
 // Function to validate county links in generated HTML
 async function validateCountyLinks(outputPath, htmlFiles) {
   console.log('  🔗 Validating county links...');
@@ -86,6 +120,55 @@ async function validateCountyLinks(outputPath, htmlFiles) {
     valid: validLinks.length,
     invalid: invalidLinks.length,
     results: countyLinkResults
+  };
+}
+
+// Function to compare generated HTML files with reference files
+async function compareHTMLFiles(generatedDir, referenceDir, htmlFiles) {
+  const comparisonResults = [];
+  
+  for (const htmlFile of htmlFiles) {
+    const generatedPath = path.join(generatedDir, htmlFile);
+    const referencePath = path.join(referenceDir, htmlFile);
+    
+    if (await fs.pathExists(referencePath)) {
+      const comparison = await compareHTMLWithReference(generatedPath, referencePath);
+      comparisonResults.push({
+        file: htmlFile,
+        ...comparison
+      });
+      
+      if (comparison.isExactMatch) {
+        console.log(`    ✅ ${htmlFile}: Exact match with reference`);
+      } else {
+        console.log(`    ❌ ${htmlFile}: Does not match reference`);
+        if (comparison.error) {
+          console.log(`      Error: ${comparison.error}`);
+        } else {
+          console.log(`      Generated: ${comparison.generatedLength} chars`);
+          console.log(`      Reference: ${comparison.referenceLength} chars`);
+        }
+      }
+    } else {
+      console.log(`    ⚠️  ${htmlFile}: No reference file found`);
+      comparisonResults.push({
+        file: htmlFile,
+        isExactMatch: false,
+        error: 'No reference file found'
+      });
+    }
+  }
+  
+  const exactMatches = comparisonResults.filter(r => r.isExactMatch);
+  const mismatches = comparisonResults.filter(r => !r.isExactMatch);
+  
+  console.log(`    📊 HTML comparison: ${exactMatches.length} exact matches, ${mismatches.length} mismatches`);
+  
+  return {
+    total: comparisonResults.length,
+    exactMatches: exactMatches.length,
+    mismatches: mismatches.length,
+    results: comparisonResults
   };
 }
 
@@ -205,15 +288,24 @@ async function testGenerateAll() {
       if (htmlValidation) {
         console.log(`  ✅ HTML validation passed`);
         
-        // Validate county links
-        const countyLinkValidation = await validateCountyLinks(outputPath, htmlFiles);
-        
-        results.push({ 
-          directory: dir, 
-          success: true, 
-          htmlFiles,
-          countyLinks: countyLinkValidation
-        });
+              // Validate county links
+      const countyLinkValidation = await validateCountyLinks(outputPath, htmlFiles);
+      
+      // HTML-to-HTML comparison with reference files
+      let htmlComparison = null;
+      const referenceDir = path.join('./reference-output', dir);
+      if (await fs.pathExists(referenceDir)) {
+        console.log('  🔍 Comparing with reference HTML files...');
+        htmlComparison = await compareHTMLFiles(outputPath, referenceDir, htmlFiles);
+      }
+      
+      results.push({ 
+        directory: dir, 
+        success: true, 
+        htmlFiles,
+        countyLinks: countyLinkValidation,
+        htmlComparison
+      });
       } else {
         results.push({ directory: dir, success: false, error: 'HTML validation failed' });
       }
@@ -238,6 +330,9 @@ async function testGenerateAll() {
     console.log(`  - ${result.directory}: ${result.htmlFiles.length} HTML file(s)`);
     if (result.countyLinks) {
       console.log(`    County links: ${result.countyLinks.valid}/${result.countyLinks.total} valid`);
+    }
+    if (result.htmlComparison) {
+      console.log(`    HTML comparison: ${result.htmlComparison.exactMatches}/${result.htmlComparison.total} exact matches`);
     }
   });
   
@@ -270,6 +365,28 @@ async function testGenerateAll() {
     }
   }
   
+  // HTML comparison summary
+  const allHTMLComparisons = successful
+    .filter(r => r.htmlComparison)
+    .flatMap(r => r.htmlComparison.results);
+  
+  if (allHTMLComparisons.length > 0) {
+    const exactMatches = allHTMLComparisons.filter(r => r.isExactMatch);
+    const mismatches = allHTMLComparisons.filter(r => !r.isExactMatch);
+    
+    console.log(`\n📄 HTML Comparison Summary:`);
+    console.log(`  Total comparisons: ${allHTMLComparisons.length}`);
+    console.log(`  Exact matches: ${exactMatches.length}`);
+    console.log(`  Mismatches: ${mismatches.length}`);
+    
+    if (mismatches.length > 0) {
+      console.log(`  Mismatch details:`);
+      mismatches.forEach(mismatch => {
+        console.log(`    - ${mismatch.file}: ${mismatch.error || 'Content differs'}`);
+      });
+    }
+  }
+  
   console.log('');
   console.log(`📁 Test output location: ${outputDir}`);
   console.log(`🎯 Overall success rate: ${Math.round((successful.length / results.length) * 100)}%`);
@@ -277,5 +394,40 @@ async function testGenerateAll() {
   return results;
 }
 
-// Run the test
-testGenerateAll().catch(console.error); 
+// Function to create reference files from current output
+async function createReferenceFiles() {
+  console.log('📁 Creating reference files from current test output...\n');
+  
+  const testOutputDir = './test-output';
+  const referenceOutputDir = './reference-output';
+  
+  if (!await fs.pathExists(testOutputDir)) {
+    console.log('❌ No test output found. Run the test first.');
+    return;
+  }
+  
+  // Clean up previous reference output
+  if (await fs.pathExists(referenceOutputDir)) {
+    await fs.remove(referenceOutputDir);
+  }
+  
+  // Copy test output to reference output
+  await fs.copy(testOutputDir, referenceOutputDir);
+  
+  console.log('✅ Reference files created successfully!');
+  console.log(`📁 Reference location: ${referenceOutputDir}`);
+  console.log('');
+  console.log('💡 To use these as reference files:');
+  console.log('   1. Review the generated HTML files in reference-output/');
+  console.log('   2. Make any manual adjustments if needed');
+  console.log('   3. Run the test again to compare future outputs with these references');
+}
+
+// Check command line arguments
+const args = process.argv.slice(2);
+if (args.includes('--create-reference')) {
+  createReferenceFiles().catch(console.error);
+} else {
+  // Run the test
+  testGenerateAll().catch(console.error);
+} 

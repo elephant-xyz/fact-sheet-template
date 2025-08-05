@@ -272,7 +272,7 @@ function updateSectionVisibility(label) {
               {% endif %}
             {% endfor %}
             
-            {% if has_sales_data or (homes[property_id].all_taxes | length > 0) %}
+            {% if has_sales_data or (homes[property_id].all_taxes | length > 0) or homes[property_id].property.parcel_identifier %}
                 <section id="property-history" class="property-history-section scroll-offset-section" data-section="property-history">
                   <h2 class="section-title">Property History{% if homes[property_id].all_sales and homes[property_id].all_sales|length > 0 and homes[property_id].all_sales[0].data.source_http_request %}<sup class="data-footnote"><a href="#countysrc" style="color:inherit;text-decoration:none;">1</a></sup>{% endif %}</h2>
 
