@@ -610,7 +610,7 @@ export class IPLDDataLoader {
       address: fullAddress || addressData.street_address || "",
       city: this.capitalizeWords(addressData.city_name) || "",
       state: addressData.state_code || "",
-      county: this.capitalizeWords(addressData.county_name) || "",
+      county: this.capitalizeWords(addressData.county_name) || this.capitalizeWords(unnormalizedAddress?.data?.county_jurisdiction) || "",
       postalCode: addressData.postal_code || "",
       coordinates,
       parcelId: propertyData.parcel_identifier,
@@ -655,15 +655,18 @@ export class IPLDDataLoader {
     for (const saleNode of salesNodes) {
       const saleData = saleNode.data;
 
-      // Find related person through relationships
-      let ownerName = "";
+      // Find all related persons through relationships
+      const ownerNames: string[] = [];
 
-      // Look for relationship files that connect this sale to a person
+      // Look for relationship files that connect this sale to owners (persons or companies)
       for (const node of graph.values()) {
+        // Check if this node has from/to structure typical of relationships
         if (
-          node.cid.includes("relationship") &&
-          node.cid.includes("sales") &&
-          node.cid.includes("person")
+          node.data &&
+          node.data.from &&
+          node.data.to &&
+          typeof node.data.from === "object" &&
+          typeof node.data.to === "object"
         ) {
           // Check if this relationship connects to our sale
           const fromLink = node.data.from;
@@ -673,24 +676,70 @@ export class IPLDDataLoader {
             // Check if this relationship is for our sale
             const saleCid = this.extractCidFromLink(fromLink);
             if (saleCid === saleNode.cid) {
-              // Find the person node
-              const personCid = this.extractCidFromLink(toLink);
-              const personNode = Array.from(graph.values()).find(
-                (n) => n.cid === personCid,
+              // Find the owner node (person or company)
+              const ownerCid = this.extractCidFromLink(toLink);
+              const ownerNode = Array.from(graph.values()).find(
+                (n) => n.cid === ownerCid,
               );
 
-              if (personNode) {
-                // Extract person name from data
-                if (personNode.data.person_name) {
-                  ownerName = personNode.data.person_name;
+              if (ownerNode) {
+                // Extract owner name from data - try various field names
+                let ownerName = "";
+                
+                // Try common person name fields
+                if (ownerNode.data.person_name) {
+                  // If we have a full name, split it and format as "Last, First"
+                  const nameParts = ownerNode.data.person_name.trim().split(" ");
+                  if (nameParts.length >= 2) {
+                    const lastName = nameParts[0];
+                    const firstName = nameParts.slice(1).join(" ");
+                    ownerName = `${lastName}, ${firstName}`;
+                  } else {
+                    ownerName = ownerNode.data.person_name;
+                  }
                 } else if (
-                  personNode.data.first_name ||
-                  personNode.data.last_name
+                  ownerNode.data.first_name ||
+                  ownerNode.data.last_name
                 ) {
-                  ownerName =
-                    `${personNode.data.first_name || ""} ${personNode.data.last_name || ""}`.trim();
+                  // If we have separate first and last names
+                  const firstName = ownerNode.data.first_name || "";
+                  const lastName = ownerNode.data.last_name || "";
+                  if (firstName && lastName) {
+                    ownerName = `${lastName}, ${firstName}`;
+                  } else {
+                    ownerName = `${firstName}${lastName}`.trim();
+                  }
                 }
-                break;
+                // Try common company name fields
+                else if (ownerNode.data.company_name) {
+                  ownerName = ownerNode.data.company_name;
+                } else if (ownerNode.data.organization_name) {
+                  ownerName = ownerNode.data.organization_name;
+                } else if (ownerNode.data.business_name) {
+                  ownerName = ownerNode.data.business_name;
+                } else if (ownerNode.data.name) {
+                  ownerName = ownerNode.data.name;
+                }
+                // Try any field that might contain a name
+                else {
+                  // Scan all fields for potential name data
+                  for (const [key, value] of Object.entries(ownerNode.data)) {
+                    if (
+                      typeof value === "string" &&
+                      value.length > 0 &&
+                      (key.toLowerCase().includes("name") ||
+                       key.toLowerCase().includes("title"))
+                    ) {
+                      ownerName = value;
+                      break;
+                    }
+                  }
+                }
+                
+                // Add to owners list if not already present
+                if (ownerName && !ownerNames.includes(ownerName)) {
+                  ownerNames.push(ownerName);
+                }
               }
             }
           }
@@ -703,7 +752,7 @@ export class IPLDDataLoader {
       sales.push({
         date,
         price: saleData.purchase_price_amount || 0,
-        owner: ownerName,
+        owner: ownerNames.join("; "), // Join multiple owners with semicolon
       });
     }
 
