@@ -675,7 +675,7 @@ function updateSectionVisibility(label) {
             {% if has_floorplan_data %}
             <div id="floorplan" class="section scroll-offset-section" data-section="floorplan">
                 <div class="floorplan-header">
-                    <h2 class="section-title">Floorplan</h2>
+                    <h2 class="section-title">Floorplan{% if homes[property_id].layouts and homes[property_id].layouts.source_http_request %}<sup class="data-footnote"><a href="#countysrc" style="color:inherit;text-decoration:none;">1</a></sup>{% endif %}</h2>
                 </div>
                 <div class="floorplan-info">
                     <div class="floorplan-specs">

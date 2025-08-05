@@ -32,6 +32,7 @@ interface PropertyInfo {
   lotArea: string;
   lotType: string;
   sourceUrl: string;
+  source_http_request?: any;
 }
 
 interface SaleInfo {
@@ -95,6 +96,7 @@ export interface LayoutSummary {
   firstFloorLayouts: RenderItem[];
   secondFloorLayouts: RenderItem[];
   otherLayouts: RenderItem[];
+  source_http_request?: any;
 }
 
 interface SectionVisibility {
@@ -103,6 +105,7 @@ interface SectionVisibility {
 
 export interface PropertyData {
   property: PropertyInfo;
+  address?: any;
   sales: SaleInfo[];
   taxes: TaxInfo[];
   features: PropertyFeatures | null;
@@ -370,15 +373,49 @@ export class IPLDDataLoader {
     // Determine the data label based on available data
     const dataLabel = this.determineDataLabel(graph, carousel_images);
 
+    // Create address data with source information
+    const addressData = {
+      street_address: property.address,
+      street_number: addressNode?.data?.street_number,
+      street_name: addressNode?.data?.street_name,
+      street_suffix_type: addressNode?.data?.street_suffix_type,
+      city_name: property.city,
+      state_code: property.state,
+      county_name: property.county,
+      postal_code: property.postalCode,
+      latitude: addressNode?.data?.latitude,
+      longitude: addressNode?.data?.longitude,
+      source_http_request: addressNode?.data?.source_http_request || null,
+    };
+
+    // Create sales data with source information
+    const salesData = sales.map((sale, index) => ({
+      ...sale,
+      source_http_request: salesNodes[index]?.data?.source_http_request || null,
+    }));
+
+    // Create tax data with source information
+    const taxData = taxes.map((tax, index) => ({
+      ...tax,
+      source_http_request: taxNodes[index]?.data?.source_http_request || null,
+    }));
+
+    // Create layout data with source information
+    const layoutData = layouts ? {
+      ...layouts,
+      source_http_request: propertyNode?.data?.source_http_request || null,
+    } : undefined;
+
     return {
       property,
-      sales,
-      taxes,
+      address: addressData,
+      sales: salesData,
+      taxes: taxData,
       features,
       structure: structureNode?.data || null,
       utility,
       carousel_images,
-      layouts,
+      layouts: layoutData,
       sectionVisibility: this.sectionVisibility,
       dataLabel,
     };
@@ -626,6 +663,7 @@ export class IPLDDataLoader {
       lotArea: lotData.lot_size_sqft ? `${lotData.lot_size_sqft} sqft` : "",
       lotType: this.determineLotType(lotData.lot_size_sqft) || "",
       sourceUrl: url.toString(),
+      source_http_request: propertyData.source_http_request || null,
     };
   }
 
