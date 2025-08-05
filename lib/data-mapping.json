@@ -1212,6 +1212,12 @@
       "enumDescription": "Staged"
     },
     {
+      "lexiconClass": "address",
+      "lexiconProperty": "county_name",
+      "enumValue": "palm beach",
+      "enumDescription": "Palm Beach County"
+    },
+    {
       "lexiconClass": "layout",
       "lexiconProperty": "condition_issues",
       "iconName": "warning",

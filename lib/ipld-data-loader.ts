@@ -606,11 +606,14 @@ export class IPLDDataLoader {
         url.searchParams.append(key as string, value),
       );
     }
+    // Use enum mapping for address data
+    const addressRenderItem = this.buildRenderItem(addressData, "address");
+    
     return {
       address: fullAddress || addressData.street_address || "",
-      city: this.capitalizeWords(addressData.city_name) || "",
+      city: addressData.city_name || "",
       state: addressData.state_code || "",
-      county: this.capitalizeWords(addressData.county_name) || this.capitalizeWords(unnormalizedAddress?.data?.county_jurisdiction) || "",
+      county: addressRenderItem.county_name?.enumDescription || addressData.county_name || unnormalizedAddress?.data?.county_jurisdiction || "",
       postalCode: addressData.postal_code || "",
       coordinates,
       parcelId: propertyData.parcel_identifier,
@@ -1094,13 +1097,7 @@ export class IPLDDataLoader {
     return renderItem;
   }
 
-  private capitalizeWords(str?: string): string {
-    if (!str) return "";
-    return str
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(" ");
-  }
+
 
   private resolveNodeFromLink(
     link: any,
