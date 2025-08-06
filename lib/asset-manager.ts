@@ -2,7 +2,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import { BuilderOptions, PropertyData } from '../types/property.js';
+import { BuilderOptions, TemplateData } from '../types/property.js';
 import { Logger } from './logger.js';
 import { Minifier } from './minifier.js';
 
@@ -27,7 +27,7 @@ export class AssetManager {
     this.minifier = new Minifier(options.minify || false, this.logger);
   }
 
-  async copyAssets(outputDir: string, propertyId: string, propertyDataPath?: string, propertyData?: PropertyData): Promise<void> {
+  async copyAssets(outputDir: string, propertyId: string, propertyDataPath?: string, propertyData?: TemplateData): Promise<void> {
     const propertyDir = path.join(outputDir, propertyId);
     
     this.logger.debug(`Copying assets for ${propertyId}...`);
@@ -150,7 +150,7 @@ export class AssetManager {
     }
   }
 
-  async createManifest(outputDir: string, propertyId: string, propertyData: PropertyData): Promise<void> {
+  async createManifest(outputDir: string, propertyId: string, propertyData: TemplateData): Promise<void> {
     const propertyDir = path.join(outputDir, propertyId);
     const manifestPath = path.join(propertyDir, 'manifest.json');
 
@@ -183,7 +183,7 @@ export class AssetManager {
     this.logger.debug(`Asset optimization not yet implemented`);
   }
 
-  private async copyPropertyImages(propertyDir: string, propertyDataPath: string, propertyData: PropertyData): Promise<void> {
+  private async copyPropertyImages(propertyDir: string, propertyDataPath: string, propertyData: TemplateData): Promise<void> {
     // Only copy images that are referenced in carousel_images
     if (await fs.pathExists(propertyDataPath) && propertyData.carousel_images) {
       for (const image of propertyData.carousel_images) {
