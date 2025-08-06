@@ -5,6 +5,8 @@ import fs from "fs-extra";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import { BuilderOptions, PropertyData } from "../types/property.js";
+import { Minifier } from "./minifier.js";
+import { Logger } from "./logger.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -12,6 +14,7 @@ const __dirname = dirname(__filename);
 export class TemplateRenderer {
   private options: BuilderOptions;
   private env: nunjucks.Environment;
+  private minifier: Minifier;
 
   constructor(options: BuilderOptions) {
     this.options = options;
@@ -22,6 +25,15 @@ export class TemplateRenderer {
       autoescape: true,
       throwOnUndefined: false,
     });
+
+    // Initialize minifier
+    const logger = new Logger({
+      quiet: options.quiet,
+      verbose: options.verbose,
+      ci: options.ci,
+      logFile: options.logFile
+    });
+    this.minifier = new Minifier(options.minify || false, logger);
 
     this.setupFilters();
   }
@@ -510,7 +522,11 @@ export class TemplateRenderer {
         }
       }
 
-      templateData.config.inlineCssContent = cssContents.join("\n");
+      let combinedCss = cssContents.join("\n");
+      if (this.options.minify) {
+        combinedCss = await this.minifier.minifyCSS(combinedCss);
+      }
+      templateData.config.inlineCssContent = combinedCss;
     }
 
     // Handle inline JS if requested
@@ -555,10 +571,21 @@ export class TemplateRenderer {
         }
       }
 
-      templateData.config.inlineJsContent = jsContents.join("\n");
+      let combinedJs = jsContents.join("\n");
+      if (this.options.minify) {
+        combinedJs = await this.minifier.minifyJS(combinedJs);
+      }
+      templateData.config.inlineJsContent = combinedJs;
     }
 
     // Render the template
-    return this.env.render("property.njk", templateData);
+    let html = this.env.render("property.njk", templateData);
+    
+    // Minify HTML if enabled
+    if (this.options.minify) {
+      html = await this.minifier.minifyHTML(html);
+    }
+    
+    return html;
   }
 }

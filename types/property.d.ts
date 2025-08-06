@@ -131,6 +131,7 @@ export interface BuilderOptions {
   ci?: boolean;
   logFile?: string | false;
   dev?: boolean;
+  minify?: boolean;
 }
 
 export interface LoggerOptions {

@@ -14,7 +14,7 @@ curl -fsSL https://raw.githubusercontent.com/elephant-xyz/fact-sheet-template/ma
 
 # After installation, use the command anywhere
 fact-sheet generate --input ./data --output ./websites
-```
+
 
 The installer will:
 - Clone the repository to `~/.elephant-fact-sheet`
@@ -238,6 +238,7 @@ npm run example-inline
 | `--domain, -d`  | Domain for asset URLs              | https://elephant.xyz |
 | `--inline-css`  | Embed CSS directly in HTML         | false                |
 | `--inline-js`   | Embed JavaScript directly in HTML  | false                |
+| `--minify`      | Minify HTML, CSS, and JavaScript   | false                |
 | `--verbose, -v` | Show detailed build information    | false                |
 
 ### Advanced Usage
@@ -259,6 +260,14 @@ npx github:elephant-xyz/fact-sheet-template generate \
 npx github:elephant-xyz/fact-sheet-template generate \
   --input ./data \
   --output ./ipfs-ready \
+  --inline-css \
+  --inline-js
+
+# Production build with minification
+npx github:elephant-xyz/fact-sheet-template generate \
+  --input ./data \
+  --output ./production \
+  --minify \
   --inline-css \
   --inline-js
 ```

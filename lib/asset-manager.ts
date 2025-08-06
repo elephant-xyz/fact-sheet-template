@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { BuilderOptions, PropertyData } from '../types/property.js';
 import { Logger } from './logger.js';
+import { Minifier } from './minifier.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -12,6 +13,7 @@ export class AssetManager {
   private options: BuilderOptions;
   private templatesPath: string;
   private logger: Logger;
+  private minifier: Minifier;
 
   constructor(options: BuilderOptions) {
     this.options = options;
@@ -22,6 +24,7 @@ export class AssetManager {
       ci: options.ci,
       logFile: options.logFile
     });
+    this.minifier = new Minifier(options.minify || false, this.logger);
   }
 
   async copyAssets(outputDir: string, propertyId: string, propertyDataPath?: string, propertyData?: PropertyData): Promise<void> {
@@ -54,7 +57,25 @@ export class AssetManager {
 
     if (await fs.pathExists(cssSourceDir)) {
       await fs.ensureDir(cssTargetDir);
-      await fs.copy(cssSourceDir, cssTargetDir);
+      
+      // Copy and optionally minify CSS files
+      const files = await fs.readdir(cssSourceDir);
+      for (const file of files) {
+        if (file.endsWith('.css')) {
+          const sourcePath = path.join(cssSourceDir, file);
+          const targetPath = path.join(cssTargetDir, file);
+          let content = await fs.readFile(sourcePath, 'utf8');
+          
+          if (this.options.minify) {
+            content = await this.minifier.minifyCSS(content, file);
+          }
+          
+          await fs.writeFile(targetPath, content, 'utf8');
+        } else {
+          // Copy non-CSS files as-is
+          await fs.copy(path.join(cssSourceDir, file), path.join(cssTargetDir, file));
+        }
+      }
       
       this.logger.debug(`Copied CSS assets to css/`);
     }
@@ -66,7 +87,25 @@ export class AssetManager {
 
     if (await fs.pathExists(jsSourceDir)) {
       await fs.ensureDir(jsTargetDir);
-      await fs.copy(jsSourceDir, jsTargetDir);
+      
+      // Copy and optionally minify JS files
+      const files = await fs.readdir(jsSourceDir);
+      for (const file of files) {
+        if (file.endsWith('.js') && !file.endsWith('.min.js')) {
+          const sourcePath = path.join(jsSourceDir, file);
+          const targetPath = path.join(jsTargetDir, file);
+          let content = await fs.readFile(sourcePath, 'utf8');
+          
+          if (this.options.minify) {
+            content = await this.minifier.minifyJS(content, file);
+          }
+          
+          await fs.writeFile(targetPath, content, 'utf8');
+        } else {
+          // Copy already minified or non-JS files as-is
+          await fs.copy(path.join(jsSourceDir, file), path.join(jsTargetDir, file));
+        }
+      }
       
       this.logger.debug(`Copied JS assets to js/`);
     }
