@@ -10,13 +10,6 @@
     "lexiconClass": "utility",
     "lexiconProperty": "cooling_system_type",
     "iconName": "cooling",
-    "enumValue": "CeilingFan",
-    "enumDescription": "Ceiling Fan"
-  },
-  {
-    "lexiconClass": "utility",
-    "lexiconProperty": "cooling_system_type",
-    "iconName": "cooling",
     "enumValue": "CeilingFans",
     "enumDescription": "Ceiling Fans"
   },
