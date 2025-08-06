@@ -1,6 +1,5 @@
 export interface Address {
   street_number?: string;
-  route_number?: string;
   street_name?: string;
   street_suffix?: string;
   city?: string;

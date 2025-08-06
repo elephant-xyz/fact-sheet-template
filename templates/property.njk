@@ -214,7 +214,6 @@ function updateSectionVisibility(label) {
                             {% if homes[property_id].address.street_number %}{{ homes[property_id].address.street_number }}{% endif %}
                             {% if homes[property_id].address.street_pre_directional_text %}{{ homes[property_id].address.street_pre_directional_text }}{% endif %}
                             {% if homes[property_id].address.street_name %}{{ homes[property_id].address.street_name }}{% endif %}
-                            {% if homes[property_id].address.route_number %} {{ homes[property_id].address.route_number }}{% endif %}
                             {% if homes[property_id].address.street_suffix_type and (homes[property_id].address.street_suffix_type | lower | trim not in (homes[property_id].address.street_name | lower | trim)) %}{{ homes[property_id].address.street_suffix_type }}{% endif %}
                             {% if homes[property_id].address.street_post_directional_text %}{{ homes[property_id].address.street_post_directional_text }}{% endif %}
                             {% if homes[property_id].address.unit_identifier and homes[property_id].address.unit_identifier != 'NA' %}, {{ homes[property_id].address.unit_identifier }}{% endif %}

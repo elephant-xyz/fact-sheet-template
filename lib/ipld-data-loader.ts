@@ -379,7 +379,6 @@ export class IPLDDataLoader {
       street_number: addressNode?.data?.street_number,
       street_name: addressNode?.data?.street_name,
       street_suffix_type: addressNode?.data?.street_suffix_type,
-      route_number: addressNode?.data?.route_number,
       city_name: property.city,
       state_code: property.state,
       county_name: property.county,
