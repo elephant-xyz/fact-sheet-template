@@ -73,6 +73,7 @@ program
         minify: true
       });
 
+      options.minify = true;
       const builder = new Builder(options);
       await builder.build();
 

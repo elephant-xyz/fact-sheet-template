@@ -939,6 +939,7 @@ function updateSectionVisibility(label) {
             {% set interior_features = homes[property_id].features.interior %}
             {% set exterior_features = homes[property_id].features.exterior %}
             {% set utilities = homes[property_id].utility %}
+            {% set appliances = homes[property_id].appliances %}
 
             {% macro renderFeature(features) %}
               <div class="features-list">
@@ -993,6 +994,28 @@ function updateSectionVisibility(label) {
                                       {% endif %}
                                       <div class="feature-text-content">
                                           <div class="feature-main-text">{{ util.enumDescription }}</div>
+                                      </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Appliances -->
+                        {% if appliances %}
+                        <div class="features-section">
+                          <h3 class="section-subtitle">Appliances</h3>
+                            <div class="features-list">
+                                {% for appliance in appliances  %}
+                                <div class="feature-item-detailed">
+                                    <div class="feature-row">
+                                      {% set iconPath = appliance.appliance_type.iconName %}
+                                      {% if iconPath %}
+                                        <img src="{{ iconPath | assetUrl }}" alt="{{ appliance.appliance_type.enumDescription }}">
+                                      {% endif %}
+                                      <div class="feature-text-content">
+                                          <div class="feature-main-text">{%if appliance.finish %}{{ appliance.finish.enumDescription }}{% endif %} {{ appliance.appliance_type.enumDescription }}</div>
                                       </div>
                                     </div>
                                 </div>
