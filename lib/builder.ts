@@ -4,7 +4,7 @@ import { AssetManager } from './asset-manager.js';
 import fs from 'fs-extra';
 import path from 'path';
 import { Logger } from './logger.js';
-import { BuilderOptions } from '../types/property.js';
+import { BuilderOptions, TemplateData } from '../types/property.js';
 
 export class Builder {
   private options: BuilderOptions;
@@ -36,7 +36,7 @@ export class Builder {
     try {
       // Step 1: Load all property data
       this.logger.info('Loading property data...');
-      const properties: Record<string, any> = await this.dataLoader.loadPropertyData(this.options.input);
+      const properties: Record<string, TemplateData> = await this.dataLoader.loadPropertyData(this.options.input);
       const propertyIds = Object.keys(properties);
       
       if (propertyIds.length === 0) {
