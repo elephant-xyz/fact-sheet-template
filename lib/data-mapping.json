@@ -1011,6 +1011,13 @@
     {
       "lexiconClass": "layout",
       "lexiconProperty": "space_type",
+      "iconName": "deck",
+      "enumValue": "Deck",
+      "enumDescription": "Deck"
+    },
+    {
+      "lexiconClass": "layout",
+      "lexiconProperty": "space_type",
       "iconName": "garage",
       "enumValue": "Attached Garage",
       "enumDescription": "Attached Garage"
