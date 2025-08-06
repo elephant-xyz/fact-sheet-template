@@ -23,7 +23,6 @@ program
   .option('-d, --domain <url>', 'Domain for static assets')
   .option('--inline-css', 'Inline all CSS into HTML')
   .option('--inline-js', 'Inline all JavaScript into HTML')
-  .option('--minify', 'Minify HTML, CSS, and JavaScript')
   .option('-v, --verbose', 'Verbose output')
   .option('-q, --quiet', 'Suppress output except errors')
   .option('--ci', 'CI mode (non-interactive, structured output)')
@@ -71,7 +70,7 @@ program
         domain: options.domain,
         inlineCss: options.inlineCss || false,
         inlineJs: options.inlineJs || false,
-        minify: options.minify || true
+        minify: true
       });
 
       const builder = new Builder(options);
