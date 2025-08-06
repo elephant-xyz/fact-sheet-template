@@ -69,7 +69,8 @@ program
         output: options.output,
         domain: options.domain,
         inlineCss: options.inlineCss || false,
-        inlineJs: options.inlineJs || false
+        inlineJs: options.inlineJs || false,
+        minify: true
       });
 
       const builder = new Builder(options);
@@ -122,14 +123,14 @@ program
       // Dynamically import DevServer to avoid loading dev dependencies for generate command
       const { DevServer } = await import('../dist/lib/dev-server.js');
       const devServer = new DevServer(options);
-      
+
       // Handle graceful shutdown
       process.on('SIGINT', async () => {
         console.log('\nShutting down development server...');
         await devServer.stop();
         process.exit(0);
       });
-      
+
       process.on('SIGTERM', async () => {
         await devServer.stop();
         process.exit(0);
@@ -154,16 +155,16 @@ program
     try {
       const configLoader = new ConfigLoader();
       const existingConfig = await configLoader.loadConfig();
-      
+
       if (existingConfig) {
         console.log('Config file already exists.');
         return;
       }
-      
+
       await configLoader.createDefaultConfig();
       console.log('Created .factsheetrc.json with default configuration.');
       console.log('Edit this file to customize your project settings.');
-      
+
     } catch (error) {
       console.error('Failed to create config file:', error.message);
       process.exit(1);
