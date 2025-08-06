@@ -3,10 +3,15 @@ import fs from "fs-extra";
 import { Logger } from "./logger.js";
 import { BuilderOptions, PropertyData } from "../types/property.js";
 import { IPLDDataLoader } from "./ipld-data-loader.js";
+import { JsonSchema } from "../types/schema.js";
+import { CID } from 'multiformats/cid'
+import { existsSync, PathLike } from "fs";
 
 export class DataLoader {
   private logger: Logger;
   private ipldLoader: IPLDDataLoader;
+  private dataDir: string
+  private fsReadCache: Record<string, any>
 
   constructor(options: BuilderOptions) {
     this.logger = new Logger({
@@ -15,7 +20,9 @@ export class DataLoader {
       ci: options.ci,
       logFile: options.logFile,
     });
+    this.dataDir = options.input;
     this.ipldLoader = new IPLDDataLoader(options.input);
+    this.fsReadCache = {};
   }
 
   async loadPropertyData(
@@ -34,6 +41,7 @@ export class DataLoader {
         try {
           const propertyData = await this.ipldLoader.loadPropertyData(dir);
           homes[dir] = this.transformIPLDData(propertyData);
+          homes[dir].flattenedData = await this.flattenData(dir);
         } catch (error) {
           this.logger.warn(
             `Failed to load IPLD data for ${dir}: ${(error as Error).stack}`,
@@ -43,6 +51,85 @@ export class DataLoader {
     }
 
     return homes as Record<string, PropertyData>;
+  }
+
+  private async flattenData(rootCID: string): Promise<Record<string, any>> {
+    const rootDir = path.join(this.dataDir, rootCID);
+    if (!existsSync(rootDir)) {
+      throw new Error(`Root directory not found: ${rootDir}`);
+    }
+    const files = await fs.readdir(rootDir);
+    const jsonFiles = files.filter((f) => f.endsWith(".json"));
+    const result: Record<string, any> = {};
+    const validFiles = jsonFiles.filter(file => {
+      const cid = path.basename(file, ".json");
+      try {
+        CID.parse(cid);
+        return true;
+      } catch {
+        return false;
+      }
+    });
+
+    await Promise.all(validFiles.map(async (file) => {
+      const cid = path.basename(file, ".json");
+      const parsedCid = CID.parse(cid);
+      const label = await this.getGroupTitle(parsedCid);
+      const content = await fs.readFile(path.join(rootDir.toString(), file.toString()), "utf-8");
+      const data = JSON.parse(content);
+      result[label] = await this.traverseLinkedData(data, rootDir);
+    }))
+
+    // for (const file of jsonFiles) {
+    //   const cid = path.basename(file, ".json");
+    //   let parsedCid;
+    //   try {
+    //     parsedCid = CID.parse(cid);
+    //   }
+    //   catch {
+    //     continue;
+    //   }
+    //   const label = await this.getGroupTitle(parsedCid);
+    //   const content = await fs.readFile(path.join(rootDir.toString(), file.toString()), "utf-8");
+    //   const data = JSON.parse(content);
+    //   result[label] = await this.traverseLinkedData(data, rootDir);
+    // }
+    return result
+  }
+
+  private async traverseLinkedData(data: any, baseDir: PathLike): Promise<any> {
+    if ((data !== null) && (typeof data === "object") && (Object.hasOwn(data, "/"))) {
+      const contentData = await this.readJSONWithCache(path.join(baseDir.toString(), data["/"].toString()));
+      return this.traverseLinkedData(contentData, baseDir);
+    }
+    else if ((data !== null) && (typeof data === "object")) {
+      for (const key in data) {
+        data[key] = await this.traverseLinkedData(data[key], baseDir);
+      }
+    }
+    else if (Array.isArray(data)) {
+      return data.map((i: any) => { this.traverseLinkedData(i, baseDir) })
+    }
+    return data;
+  }
+
+  private async readJSONWithCache(path: PathLike): Promise<any> {
+    if (Object.hasOwn(this.fsReadCache, path.toString())) {
+      return this.fsReadCache[path.toString()]
+    }
+    const content = await fs.readFile(path, "utf-8");
+    const data = JSON.parse(content);
+    this.fsReadCache[path.toString()] = data;
+    return data
+  }
+
+  private async getGroupTitle(groupCID: CID): Promise<string> {
+    const content = JSON.parse(await this.fetchIPFSContent(groupCID)) as JsonSchema;
+    return content.title;
+  }
+
+  private async fetchIPFSContent(cid: CID): Promise<any> {
+    return await (await fetch(`https://ipfs.io/ipfs/${cid.toString()}`)).text();
   }
 
   private transformIPLDData(ipldData: any): PropertyData {
@@ -102,10 +189,10 @@ export class DataLoader {
         },
         associatedEntity: sale.owner
           ? {
-              type: "person" as const,
-              name: sale.owner,
-              data: { person_name: sale.owner },
-            }
+            type: "person" as const,
+            name: sale.owner,
+            data: { person_name: sale.owner },
+          }
           : null,
       })),
       all_taxes: taxes.map((tax: any) => ({

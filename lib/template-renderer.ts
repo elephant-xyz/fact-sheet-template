@@ -46,7 +46,7 @@ export class TemplateRenderer {
       );
     });
 
-    this.env.addFilter("toFixed1", function (value: any): string | any {
+    this.env.addFilter("toFixed1", function(value: any): string | any {
       const num = typeof value === "number" ? value : parseFloat(value);
       return isNaN(num) ? value : num.toFixed(1);
     });
@@ -497,6 +497,7 @@ export class TemplateRenderer {
         dev: this.options.dev || false,
       },
       buildTime: new Date().toISOString(),
+      flattenedData: propertyData.flattenedData,
     };
 
     console.log("propertyData", propertyData);
@@ -580,12 +581,12 @@ export class TemplateRenderer {
 
     // Render the template
     let html = this.env.render("property.njk", templateData);
-    
+
     // Minify HTML if enabled
     if (this.options.minify) {
       html = await this.minifier.minifyHTML(html);
     }
-    
+
     return html;
   }
 }
