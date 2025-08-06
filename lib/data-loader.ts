@@ -66,6 +66,7 @@ export class DataLoader {
         street_number: property.address?.split(" ")[0] || "",
         street_name: property.address?.split(" ").slice(1, -1).join(" ") || "",
         street_suffix_type: property.address?.split(" ").slice(-1)[0] || "",
+        route_number: ipldData.address?.route_number || "",
         city_name: property.city || "",
         state_code: property.state || "",
         county_name: property.county || "",
