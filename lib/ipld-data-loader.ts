@@ -571,7 +571,7 @@ export class IPLDDataLoader {
       fullAddress = parts.join(" ");
 
       if (addressData.unit_identifier) {
-        fullAddress += `, ${addressData.unit_identifier}`;
+        fullAddress += ` ${addressData.unit_identifier}`;
       }
     } else if (unnormalizedAddress?.data) {
       fullAddress = unnormalizedAddress.data.full_address || "";
