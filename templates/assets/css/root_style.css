@@ -1544,34 +1544,34 @@ h1 .data-footnote:hover {
     width: 100%;
     max-width: 400px;
   }
-  
+
   .condensed-title {
     font-size: 12px;
   }
-  
+
   .condensed-avatar {
     width: 32px;
     height: 32px;
   }
-  
+
   .condensed-icon {
     width: 14px;
     height: 14px;
   }
-  
+
   .condensed-name {
     font-size: 11px;
   }
-  
+
   .condensed-phone {
     font-size: 10px;
   }
-  
+
   .view-all-providers-btn-desktop,
   .view-all-providers-btn-mobile {
     font-size: 10px;
   }
-  
+
   /* Responsive Overlay */
   .providers-overlay-content {
     width: 90vw !important;
@@ -1692,6 +1692,40 @@ h1 .data-footnote:hover {
 
 .chart-content.active {
   display: block;
+}
+
+/* Time Range Selector Styles */
+.chart-time-range-selector {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  justify-content: flex-end;
+}
+
+.time-range-btn {
+  background: none;
+  border: 1px solid #d9d8d8;
+  border-radius: 8px;
+  padding: 6px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #8e8b8b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--font-family);
+}
+
+.time-range-btn:hover {
+  color: #423e3e;
+  border-color: #423e3e;
+  background-color: rgba(66, 62, 62, 0.05);
+}
+
+.time-range-btn.active {
+  color: #423e3e;
+  border-color: #423e3e;
+  background-color: rgba(66, 62, 62, 0.1);
+  font-weight: 600;
 }
 
 .sales-chart-container {
@@ -2101,7 +2135,6 @@ h1 .data-footnote:hover {
   color: #423e3e;
   cursor: pointer;
   transition: all 0.2s ease;
-  
 }
 
 .view-less-providers-btn:hover {
@@ -2120,22 +2153,22 @@ h1 .data-footnote:hover {
   .view-all-providers-btn-mobile {
     display: flex;
   }
-  
+
   /* Hide additional providers by default on mobile */
   .providers-list .provider-item:not(:first-child) {
     display: none;
   }
-  
+
   /* Show all providers when expanded */
   .providers-list.mobile-expanded .provider-item {
     display: flex;
   }
-  
+
   /* Show view less button when expanded */
   .providers-list.mobile-expanded .view-less-providers-btn {
     display: flex;
   }
-  
+
   /* Hide view all button when expanded */
   .providers-list.mobile-expanded .view-all-providers-btn-mobile {
     display: none;
@@ -2237,7 +2270,9 @@ h1 .data-footnote:hover {
 }
 
 /* Remove gap when second column has no building-spec-item elements */
-.building-details-grid:has(.building-details-column:nth-child(2):not(:has(.building-spec-item))) {
+.building-details-grid:has(
+  .building-details-column:nth-child(2):not(:has(.building-spec-item))
+) {
   gap: 0 !important;
 }
 
@@ -2367,7 +2402,6 @@ h1 .data-footnote:hover {
 /* Property Type Info */
 .property-type-info,
 .property-type-value {
-  
   margin-top: 4px;
   margin-bottom: 8px;
   font-size: 13px;
@@ -2469,8 +2503,6 @@ h1 .data-footnote:hover {
   color: #6a6a6a;
   margin-top: 8px;
   margin-bottom: 16px;
-  
-  
 }
 .room-properties li {
   display: flex;
@@ -2535,7 +2567,9 @@ h1 .data-footnote:hover {
   }
 
   /* Remove gap on mobile when second column has no building-spec-item elements */
-  .building-details-grid:has(.building-details-column:nth-child(2):not(:has(.building-spec-item))) {
+  .building-details-grid:has(
+    .building-details-column:nth-child(2):not(:has(.building-spec-item))
+  ) {
     gap: 0 !important;
   }
 
@@ -2565,7 +2599,7 @@ h1 .data-footnote:hover {
 .floor-header .floor-header-icon {
   width: 20px;
   height: 20px;
-  
+
   object-fit: contain;
   display: none; /* Hidden - floor header icons */
   vertical-align: middle;
@@ -2711,8 +2745,6 @@ h1 .data-footnote:hover {
   user-select: none;
 }
 
-
-
 .room-header {
   cursor: pointer;
   display: flex;
@@ -2739,13 +2771,10 @@ h1 .data-footnote:hover {
   color: #423e3e;
 }
 
-
-
 .room-name {
   font-weight: 600;
   color: #423e3e;
 }
-
 
 .room-properties.collapsible-content {
   max-height: 0;
