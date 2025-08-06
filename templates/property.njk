@@ -229,7 +229,7 @@ function updateSectionVisibility(label) {
                         {% if homes[property_id].address.county_name or homes[property_id].address.latitude or homes[property_id].address.longitude or (homes[property_id].address.street_address and 'palm beach' in (homes[property_id].address.street_address | lower)) %}
                         <div class="location-details">
                             {% if homes[property_id].address.county_name %}
-                            <span class="county-info">{{ homes[property_id].address.county_name }} County</span>
+                            <span class="county-info">{{ homes[property_id].address.county_name }}{% if 'County' not in homes[property_id].address.county_name %} County{% endif %}</span>
                             {% elif homes[property_id].address.street_address and 'palm beach' in (homes[property_id].address.street_address | lower) %}
                             <span class="county-info">Palm Beach County</span>
                             {% endif %}

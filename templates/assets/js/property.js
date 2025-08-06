@@ -12,6 +12,33 @@
  * looping back to the beginning if the last image is currently displayed.
  */
 // eslint-disable-next-line no-unused-vars
+
+function applySpacingToSalesData(rawSalesData) {
+  return rawSalesData.map((entry, index, arr) => {
+    const date = new Date(entry.date);
+    const spacedDate = new Date(date);
+
+    // Add spacing ONLY if two last points are too close
+    if (arr.length >= 2) {
+      const prev = new Date(arr[arr.length - 2].date);
+      const last = new Date(arr[arr.length - 1].date);
+      const diffInDays = (last - prev) / (1000 * 60 * 60 * 24);
+
+      // Apply spacing only if < 90 days apart
+      if (diffInDays < 90) {
+        if (index === arr.length - 2) spacedDate.setDate(spacedDate.getDate() - 10);
+        if (index === arr.length - 1) spacedDate.setDate(spacedDate.getDate() + 10);
+      }
+    }
+
+    return {
+      x: spacedDate,
+      y: entry.amount,
+      originalDate: entry.date,
+      owner: entry.owner,
+    };
+  });
+}
 function nextImage() {
   // Get all radio buttons
   const radios = document.querySelectorAll('input[name="carousel-radio"]');
@@ -204,6 +231,321 @@ function setupChartTabs() {
 }
 
 /**
+ * Helper function to get CSS custom property with fallback
+ */
+function getCSSVar(property, fallback) {
+  const value = getComputedStyle(document.documentElement).getPropertyValue(
+    property,
+  );
+  return value ? value.trim() : fallback;
+}
+
+/**
+ * Creates a Chart.js plugin for positioning price labels with intelligent placement
+ * to avoid overlaps and stay within chart bounds
+ */
+function createPriceLabelsPlugin(pluginId) {
+  return {
+    id: pluginId,
+    afterDatasetsDraw(chart, _args, _pluginOptions) {
+      const { ctx, chartArea } = chart;
+      const dataset = chart.data.datasets[0];
+      const meta = chart.getDatasetMeta(0);
+      ctx.save();
+      ctx.font = `${getCSSVar("--chart-price-label-size", "12")}px ${getCSSVar("--chart-font-family", "neue-haas-grotesk-display, system-ui, sans-serif")}`;
+      ctx.fillStyle = getCSSVar("--chart-price-label-color", "#423e3e");
+
+      const yStackMap = new Map(); // Track how many labels are stacked per x pixel
+
+      // Store label positions to check for overlaps
+      const labelPositions = [];
+
+      meta.data.forEach((point, i) => {
+        const dataPoint = dataset.data[i];
+        const value = dataPoint?.y ?? dataPoint;
+        if (value == null || isNaN(value) || value === null) return;
+
+        const x = point.x;
+        const y = point.y;
+        // Format label as $XXX.Xk
+        const label = `$${(value / 1000).toFixed(1)}k`;
+
+        // Measure text dimensions
+        const textMetrics = ctx.measureText(label);
+        const textWidth = textMetrics.width;
+        const textHeight = parseInt(
+          getCSSVar("--chart-price-label-size", "12"),
+        );
+
+        // Determine intelligent position priority based on data point location
+        let positions = [];
+
+        // Check if this point is near the top of the chart (good for below positioning)
+        const isNearTop = y < chartArea.top + 50;
+        // Check if this point is near the bottom of the chart (good for above positioning)
+        const isNearBottom = y > chartArea.bottom - 50;
+        // Check if this point is near the left edge (good for right positioning)
+        const isNearLeft = x < chartArea.left + 80;
+        // Check if this point is near the right edge (good for left positioning)
+        const isNearRight = x > chartArea.right - 80;
+
+        // Build position array based on chart location
+        let stackCount = 0;
+        let stackKey = null;
+
+        // Find if an existing stack exists nearby (within ±10px)
+        for (const [key, count] of yStackMap.entries()) {
+          if (Math.abs(key - x) < 10) {
+            stackKey = key;
+            stackCount = count;
+            break;
+          }
+        }
+
+        // If no nearby x found, use this x as new stackKey
+        if (stackKey === null) {
+          stackKey = x;
+          stackCount = 0;
+        }
+
+        const offsetY = -stackCount * 24;
+        yStackMap.set(stackKey, stackCount + 1);
+
+        if (isNearTop) {
+          positions = [
+            { x, y: y + 16 + offsetY, align: "center", baseline: "top" },
+            { x: x + 16, y: y + offsetY, align: "left", baseline: "middle" },
+            { x: x - 16, y: y + offsetY, align: "right", baseline: "middle" },
+            { x, y: y - 16 + offsetY, align: "center", baseline: "bottom" },
+          ];
+        } else if (isNearBottom) {
+          positions = [
+            { x, y: y - 16 + offsetY, align: "center", baseline: "bottom" },
+            { x: x + 16, y: y + offsetY, align: "left", baseline: "middle" },
+            { x: x - 16, y: y + offsetY, align: "right", baseline: "middle" },
+            { x, y: y + 16 + offsetY, align: "center", baseline: "top" },
+          ];
+        } else if (isNearLeft) {
+          positions = [
+            { x: x + 16, y: y + offsetY, align: "left", baseline: "middle" },
+            { x, y: y - 16 + offsetY, align: "center", baseline: "bottom" },
+            { x, y: y + 16 + offsetY, align: "center", baseline: "top" },
+            { x: x - 16, y: y + offsetY, align: "right", baseline: "middle" },
+          ];
+        } else if (isNearRight) {
+          positions = [
+            { x: x - 16, y: y + offsetY, align: "right", baseline: "middle" },
+            { x, y: y - 16 + offsetY, align: "center", baseline: "bottom" },
+            { x, y: y + 16 + offsetY, align: "center", baseline: "top" },
+            { x: x + 16, y: y + offsetY, align: "left", baseline: "middle" },
+          ];
+        } else {
+          positions = [
+            { x, y: y - 16 + offsetY, align: "center", baseline: "bottom" },
+            { x, y: y + 16 + offsetY, align: "center", baseline: "top" },
+            { x: x + 16, y: y + offsetY, align: "left", baseline: "middle" },
+            { x: x - 16, y: y + offsetY, align: "right", baseline: "middle" },
+          ];
+        }
+
+        // Check for overlap with existing labels and chart line
+        let bestPosition = positions[0];
+        let minOverlap = Infinity;
+
+        positions.forEach((pos) => {
+          const labelBounds = {
+            left:
+              pos.x -
+              (pos.align === "center"
+                ? textWidth / 2
+                : pos.align === "right"
+                  ? textWidth
+                  : 0),
+            right:
+              pos.x +
+              (pos.align === "center"
+                ? textWidth / 2
+                : pos.align === "left"
+                  ? textWidth
+                  : 0),
+            top:
+              pos.y -
+              (pos.baseline === "middle"
+                ? textHeight / 2
+                : pos.baseline === "bottom"
+                  ? textHeight
+                  : 0),
+            bottom:
+              pos.y +
+              (pos.baseline === "middle"
+                ? textHeight / 2
+                : pos.baseline === "top"
+                  ? textHeight
+                  : 0),
+          };
+
+          // Check overlap with existing labels
+          let totalOverlap = 0;
+          let hasOverlap = false;
+          labelPositions.forEach((existingLabel) => {
+            const overlap =
+              Math.max(
+                0,
+                Math.min(labelBounds.right, existingLabel.right) -
+                  Math.max(labelBounds.left, existingLabel.left),
+              ) *
+              Math.max(
+                0,
+                Math.min(labelBounds.bottom, existingLabel.bottom) -
+                  Math.max(labelBounds.top, existingLabel.top),
+              );
+            totalOverlap += overlap;
+            if (overlap > 0) hasOverlap = true;
+          });
+
+          // Check if position is within chart area with padding
+          const padding = 5;
+          const withinBounds =
+            labelBounds.left >= chartArea.left + padding &&
+            labelBounds.right <= chartArea.right - padding &&
+            labelBounds.top >= chartArea.top + padding &&
+            labelBounds.bottom <= chartArea.bottom - padding;
+
+          // Prefer positions with no overlap and within bounds
+          if (withinBounds && !hasOverlap) {
+            bestPosition = pos;
+            minOverlap = 0;
+            return; // Found a perfect position, use it
+          } else if (withinBounds && totalOverlap < minOverlap) {
+            minOverlap = totalOverlap;
+            bestPosition = pos;
+          }
+        });
+
+        // If all standard positions have overlaps, try diagonal positions within 16px
+        if (minOverlap > 0) {
+          const fallbackPositions = [
+            { x: x + 12, y: y + 12, align: "left", baseline: "top" }, // Diagonal bottom-right
+            { x: x - 12, y: y + 12, align: "right", baseline: "top" }, // Diagonal bottom-left
+            { x: x + 12, y: y - 12, align: "left", baseline: "bottom" }, // Diagonal top-right
+            { x: x - 12, y: y - 12, align: "right", baseline: "bottom" }, // Diagonal top-left
+          ];
+
+          fallbackPositions.forEach((pos) => {
+            const labelBounds = {
+              left:
+                pos.x -
+                (pos.align === "center"
+                  ? textWidth / 2
+                  : pos.align === "right"
+                    ? textWidth
+                    : 0),
+              right:
+                pos.x +
+                (pos.align === "center"
+                  ? textWidth / 2
+                  : pos.align === "left"
+                    ? textWidth
+                    : 0),
+              top:
+                pos.y -
+                (pos.baseline === "middle"
+                  ? textHeight / 2
+                  : pos.baseline === "bottom"
+                    ? textHeight
+                    : 0),
+              bottom:
+                pos.y +
+                (pos.baseline === "middle"
+                  ? textHeight / 2
+                  : pos.baseline === "top"
+                    ? textHeight
+                    : 0),
+            };
+
+            let totalOverlap = 0;
+            let hasOverlap = false;
+            labelPositions.forEach((existingLabel) => {
+              const overlap =
+                Math.max(
+                  0,
+                  Math.min(labelBounds.right, existingLabel.right) -
+                    Math.max(labelBounds.left, existingLabel.left),
+                ) *
+                Math.max(
+                  0,
+                  Math.min(labelBounds.bottom, existingLabel.bottom) -
+                    Math.max(labelBounds.top, existingLabel.top),
+                );
+              totalOverlap += overlap;
+              if (overlap > 0) hasOverlap = true;
+            });
+
+            const padding = 5;
+            const withinBounds =
+              labelBounds.left >= chartArea.left + padding &&
+              labelBounds.right <= chartArea.right - padding &&
+              labelBounds.top >= chartArea.top + padding &&
+              labelBounds.bottom <= chartArea.bottom - padding;
+
+            if (withinBounds && !hasOverlap) {
+              bestPosition = pos;
+              minOverlap = 0;
+              return;
+            } else if (withinBounds && totalOverlap < minOverlap) {
+              minOverlap = totalOverlap;
+              bestPosition = pos;
+            }
+          });
+        }
+
+        // Set text alignment and baseline
+        ctx.textAlign = bestPosition.align;
+        ctx.textBaseline = bestPosition.baseline;
+
+        // Draw the label
+        ctx.fillText(label, bestPosition.x, bestPosition.y);
+
+        // Store this label's position for future overlap checks
+        const textMetrics2 = ctx.measureText(label);
+        labelPositions.push({
+          left:
+            bestPosition.x -
+            (bestPosition.align === "center"
+              ? textMetrics2.width / 2
+              : bestPosition.align === "right"
+                ? textMetrics2.width
+                : 0),
+          right:
+            bestPosition.x +
+            (bestPosition.align === "center"
+              ? textMetrics2.width / 2
+              : bestPosition.align === "left"
+                ? textMetrics2.width
+                : 0),
+          top:
+            bestPosition.y -
+            (bestPosition.baseline === "middle"
+              ? textHeight / 2
+              : bestPosition.baseline === "bottom"
+                ? textHeight
+                : 0),
+          bottom:
+            bestPosition.y +
+            (bestPosition.baseline === "middle"
+              ? textHeight / 2
+              : bestPosition.baseline === "top"
+                ? textHeight
+                : 0),
+        });
+      });
+
+      ctx.restore();
+    },
+  };
+}
+
+/**
  * Sets up the sales price chart using Chart.js
  */
 function renderSalesPriceChart() {
@@ -260,6 +602,9 @@ function renderSalesPriceChart() {
     return dateA - dateB;
   });
 
+  const spacedSalesData = applySpacingToSalesData(salesData);
+
+
   // Extract only the year from the date string for x-axis labels
   const labels = salesData.map((entry) => {
     // Try to extract a 4-digit year from the string
@@ -282,14 +627,6 @@ function renderSalesPriceChart() {
     return;
   }
 
-  // Helper function to get CSS custom property with fallback
-  function getCSSVar(property, fallback) {
-    const value = getComputedStyle(document.documentElement).getPropertyValue(
-      property,
-    );
-    return value ? value.trim() : fallback;
-  }
-
   // eslint-disable-next-line no-undef
   window.salesChart = new Chart(context, {
     type: "line",
@@ -298,7 +635,8 @@ function renderSalesPriceChart() {
       datasets: [
         {
           label: "Sale Price",
-          data: prices,
+          data: spacedSalesData,
+
           // Add metadata for tooltips
           saleData: salesData,
           fill: false,
@@ -417,7 +755,10 @@ function renderSalesPriceChart() {
       },
       scales: {
         x: {
-          type: "category",
+          type: "time",
+          time: {
+            unit: "year", // Or 'month' for more granularity
+          },
           grid: {
             display: getCSSVar("--chart-grid-line-display", "false") === "true",
             color: getCSSVar("--chart-grid-line-color", "#f0f0f0"),
@@ -429,6 +770,10 @@ function renderSalesPriceChart() {
             width: parseInt(getCSSVar("--chart-axis-line-width", "1")),
           },
           ticks: {
+            stepSize: 5,           // 👈 shows ticks every 5 years
+            source: "auto",        // lets Chart.js choose tick placement based on data
+            autoSkip: true,        // skips overlapping labels
+            maxTicksLimit: 10,      // optional: prevents over-crowding
             color: getCSSVar("--chart-axis-color", "#8e8b8b"),
             font: {
               family: getCSSVar(
@@ -456,287 +801,7 @@ function renderSalesPriceChart() {
         },
       },
     },
-    plugins: [
-      {
-        id: "priceLabelsBelow",
-        afterDatasetsDraw(chart, _args, _pluginOptions) {
-          const { ctx, chartArea } = chart;
-          const dataset = chart.data.datasets[0];
-          const meta = chart.getDatasetMeta(0);
-          ctx.save();
-          ctx.font = `${getCSSVar("--chart-price-label-size", "12")}px ${getCSSVar("--chart-font-family", "neue-haas-grotesk-display, system-ui, sans-serif")}`;
-          ctx.fillStyle = getCSSVar("--chart-price-label-color", "#423e3e");
-
-          // Store label positions to check for overlaps
-          const labelPositions = [];
-
-          meta.data.forEach((point, i) => {
-            const price = dataset.data[i];
-            if (price == null || isNaN(price) || price === null) return;
-
-            const x = point.x;
-            const y = point.y;
-            // Format label as $XXX.Xk
-            const label = `$${(price / 1000).toFixed(1)}k`;
-
-            // Measure text dimensions
-            const textMetrics = ctx.measureText(label);
-            const textWidth = textMetrics.width;
-            const textHeight = parseInt(
-              getCSSVar("--chart-price-label-size", "12"),
-            );
-
-            // Determine intelligent position priority based on data point location
-            let positions = [];
-
-            // Check if this point is near the top of the chart (good for below positioning)
-            const isNearTop = y < chartArea.top + 50;
-            // Check if this point is near the bottom of the chart (good for above positioning)
-            const isNearBottom = y > chartArea.bottom - 50;
-            // Check if this point is near the left edge (good for right positioning)
-            const isNearLeft = x < chartArea.left + 80;
-            // Check if this point is near the right edge (good for left positioning)
-            const isNearRight = x > chartArea.right - 80;
-
-            // Build position array based on chart location
-            if (isNearTop) {
-              // Near top - prefer below, then right/left, then above
-              positions = [
-                { x: x, y: y + 16, align: "center", baseline: "top" }, // Below
-                { x: x + 16, y: y, align: "left", baseline: "middle" }, // Right
-                { x: x - 16, y: y, align: "right", baseline: "middle" }, // Left
-                { x: x, y: y - 16, align: "center", baseline: "bottom" }, // Above
-              ];
-            } else if (isNearBottom) {
-              // Near bottom - prefer above, then right/left, then below
-              positions = [
-                { x: x, y: y - 16, align: "center", baseline: "bottom" }, // Above
-                { x: x + 16, y: y, align: "left", baseline: "middle" }, // Right
-                { x: x - 16, y: y, align: "right", baseline: "middle" }, // Left
-                { x: x, y: y + 16, align: "center", baseline: "top" }, // Below
-              ];
-            } else if (isNearLeft) {
-              // Near left - prefer right, then above/below, then left
-              positions = [
-                { x: x + 16, y: y, align: "left", baseline: "middle" }, // Right
-                { x: x, y: y - 16, align: "center", baseline: "bottom" }, // Above
-                { x: x, y: y + 16, align: "center", baseline: "top" }, // Below
-                { x: x - 16, y: y, align: "right", baseline: "middle" }, // Left
-              ];
-            } else if (isNearRight) {
-              // Near right - prefer left, then above/below, then right
-              positions = [
-                { x: x - 16, y: y, align: "right", baseline: "middle" }, // Left
-                { x: x, y: y - 16, align: "center", baseline: "bottom" }, // Above
-                { x: x, y: y + 16, align: "center", baseline: "top" }, // Below
-                { x: x + 16, y: y, align: "left", baseline: "middle" }, // Right
-              ];
-            } else {
-              // Middle of chart - prefer above/below, then left/right
-              positions = [
-                { x: x, y: y - 16, align: "center", baseline: "bottom" }, // Above
-                { x: x, y: y + 16, align: "center", baseline: "top" }, // Below
-                { x: x + 16, y: y, align: "left", baseline: "middle" }, // Right
-                { x: x - 16, y: y, align: "right", baseline: "middle" }, // Left
-              ];
-            }
-
-            // Check for overlap with existing labels and chart line
-            let bestPosition = positions[0];
-            let minOverlap = Infinity;
-
-            positions.forEach((pos) => {
-              const labelBounds = {
-                left:
-                  pos.x -
-                  (pos.align === "center"
-                    ? textWidth / 2
-                    : pos.align === "right"
-                      ? textWidth
-                      : 0),
-                right:
-                  pos.x +
-                  (pos.align === "center"
-                    ? textWidth / 2
-                    : pos.align === "left"
-                      ? textWidth
-                      : 0),
-                top:
-                  pos.y -
-                  (pos.baseline === "middle"
-                    ? textHeight / 2
-                    : pos.baseline === "bottom"
-                      ? textHeight
-                      : 0),
-                bottom:
-                  pos.y +
-                  (pos.baseline === "middle"
-                    ? textHeight / 2
-                    : pos.baseline === "top"
-                      ? textHeight
-                      : 0),
-              };
-
-              // Check overlap with existing labels
-              let totalOverlap = 0;
-              let hasOverlap = false;
-              labelPositions.forEach((existingLabel) => {
-                const overlap =
-                  Math.max(
-                    0,
-                    Math.min(labelBounds.right, existingLabel.right) -
-                      Math.max(labelBounds.left, existingLabel.left),
-                  ) *
-                  Math.max(
-                    0,
-                    Math.min(labelBounds.bottom, existingLabel.bottom) -
-                      Math.max(labelBounds.top, existingLabel.top),
-                  );
-                totalOverlap += overlap;
-                if (overlap > 0) hasOverlap = true;
-              });
-
-              // Check if position is within chart area with padding
-              const padding = 5;
-              const withinBounds =
-                labelBounds.left >= chartArea.left + padding &&
-                labelBounds.right <= chartArea.right - padding &&
-                labelBounds.top >= chartArea.top + padding &&
-                labelBounds.bottom <= chartArea.bottom - padding;
-
-              // Prefer positions with no overlap and within bounds
-              if (withinBounds && !hasOverlap) {
-                bestPosition = pos;
-                minOverlap = 0;
-                return; // Found a perfect position, use it
-              } else if (withinBounds && totalOverlap < minOverlap) {
-                minOverlap = totalOverlap;
-                bestPosition = pos;
-              }
-            });
-
-            // If all standard positions have overlaps, try diagonal positions within 16px
-            if (minOverlap > 0) {
-              const fallbackPositions = [
-                { x: x + 12, y: y + 12, align: "left", baseline: "top" }, // Diagonal bottom-right
-                { x: x - 12, y: y + 12, align: "right", baseline: "top" }, // Diagonal bottom-left
-                { x: x + 12, y: y - 12, align: "left", baseline: "bottom" }, // Diagonal top-right
-                { x: x - 12, y: y - 12, align: "right", baseline: "bottom" }, // Diagonal top-left
-              ];
-
-              fallbackPositions.forEach((pos) => {
-                const labelBounds = {
-                  left:
-                    pos.x -
-                    (pos.align === "center"
-                      ? textWidth / 2
-                      : pos.align === "right"
-                        ? textWidth
-                        : 0),
-                  right:
-                    pos.x +
-                    (pos.align === "center"
-                      ? textWidth / 2
-                      : pos.align === "left"
-                        ? textWidth
-                        : 0),
-                  top:
-                    pos.y -
-                    (pos.baseline === "middle"
-                      ? textHeight / 2
-                      : pos.baseline === "bottom"
-                        ? textHeight
-                        : 0),
-                  bottom:
-                    pos.y +
-                    (pos.baseline === "middle"
-                      ? textHeight / 2
-                      : pos.baseline === "top"
-                        ? textHeight
-                        : 0),
-                };
-
-                let totalOverlap = 0;
-                let hasOverlap = false;
-                labelPositions.forEach((existingLabel) => {
-                  const overlap =
-                    Math.max(
-                      0,
-                      Math.min(labelBounds.right, existingLabel.right) -
-                        Math.max(labelBounds.left, existingLabel.left),
-                    ) *
-                    Math.max(
-                      0,
-                      Math.min(labelBounds.bottom, existingLabel.bottom) -
-                        Math.max(labelBounds.top, existingLabel.top),
-                    );
-                  totalOverlap += overlap;
-                  if (overlap > 0) hasOverlap = true;
-                });
-
-                const padding = 5;
-                const withinBounds =
-                  labelBounds.left >= chartArea.left + padding &&
-                  labelBounds.right <= chartArea.right - padding &&
-                  labelBounds.top >= chartArea.top + padding &&
-                  labelBounds.bottom <= chartArea.bottom - padding;
-
-                if (withinBounds && !hasOverlap) {
-                  bestPosition = pos;
-                  minOverlap = 0;
-                  return;
-                } else if (withinBounds && totalOverlap < minOverlap) {
-                  minOverlap = totalOverlap;
-                  bestPosition = pos;
-                }
-              });
-            }
-
-            // Set text alignment and baseline
-            ctx.textAlign = bestPosition.align;
-            ctx.textBaseline = bestPosition.baseline;
-
-            // Draw the label
-            ctx.fillText(label, bestPosition.x, bestPosition.y);
-
-            // Store this label's position for future overlap checks
-            const textMetrics2 = ctx.measureText(label);
-            labelPositions.push({
-              left:
-                bestPosition.x -
-                (bestPosition.align === "center"
-                  ? textMetrics2.width / 2
-                  : bestPosition.align === "right"
-                    ? textMetrics2.width
-                    : 0),
-              right:
-                bestPosition.x +
-                (bestPosition.align === "center"
-                  ? textMetrics2.width / 2
-                  : bestPosition.align === "left"
-                    ? textMetrics2.width
-                    : 0),
-              top:
-                bestPosition.y -
-                (bestPosition.baseline === "middle"
-                  ? textHeight / 2
-                  : bestPosition.baseline === "bottom"
-                    ? textHeight
-                    : 0),
-              bottom:
-                bestPosition.y +
-                (bestPosition.baseline === "middle"
-                  ? textHeight / 2
-                  : bestPosition.baseline === "top"
-                    ? textHeight
-                    : 0),
-            });
-          });
-
-          ctx.restore();
-        },
-      },
-    ],
+    plugins: [createPriceLabelsPlugin("priceLabelsBelow")],
   });
 }
 
@@ -808,14 +873,6 @@ function renderTaxAssessmentChart() {
     // eslint-disable-next-line no-console
     console.warn("Chart.js is not loaded. Tax chart will not be rendered.");
     return;
-  }
-
-  // Helper function to get CSS custom property with fallback
-  function getCSSVar(property, fallback) {
-    const value = getComputedStyle(document.documentElement).getPropertyValue(
-      property,
-    );
-    return value ? value.trim() : fallback;
   }
 
   // eslint-disable-next-line no-undef
@@ -1013,287 +1070,7 @@ function renderTaxAssessmentChart() {
         },
       },
     },
-    plugins: [
-      {
-        id: "taxPriceLabelsBelow",
-        afterDatasetsDraw(chart, _args, _pluginOptions) {
-          const { ctx, chartArea } = chart;
-          const dataset = chart.data.datasets[0];
-          const meta = chart.getDatasetMeta(0);
-          ctx.save();
-          ctx.font = `${getCSSVar("--chart-price-label-size", "12")}px ${getCSSVar("--chart-font-family", "neue-haas-grotesk-display, system-ui, sans-serif")}`;
-          ctx.fillStyle = getCSSVar("--chart-price-label-color", "#423e3e");
-
-          // Store label positions to check for overlaps
-          const labelPositions = [];
-
-          meta.data.forEach((point, i) => {
-            const value = dataset.data[i];
-            if (value == null || isNaN(value) || value === null) return;
-
-            const x = point.x;
-            const y = point.y;
-            // Format label as $XXX.Xk
-            const label = `$${(value / 1000).toFixed(1)}k`;
-
-            // Measure text dimensions
-            const textMetrics = ctx.measureText(label);
-            const textWidth = textMetrics.width;
-            const textHeight = parseInt(
-              getCSSVar("--chart-price-label-size", "12"),
-            );
-
-            // Determine intelligent position priority based on data point location
-            let positions = [];
-
-            // Check if this point is near the top of the chart (good for below positioning)
-            const isNearTop = y < chartArea.top + 50;
-            // Check if this point is near the bottom of the chart (good for above positioning)
-            const isNearBottom = y > chartArea.bottom - 50;
-            // Check if this point is near the left edge (good for right positioning)
-            const isNearLeft = x < chartArea.left + 80;
-            // Check if this point is near the right edge (good for left positioning)
-            const isNearRight = x > chartArea.right - 80;
-
-            // Build position array based on chart location
-            if (isNearTop) {
-              // Near top - prefer below, then right/left, then above
-              positions = [
-                { x: x, y: y + 16, align: "center", baseline: "top" }, // Below
-                { x: x + 16, y: y, align: "left", baseline: "middle" }, // Right
-                { x: x - 16, y: y, align: "right", baseline: "middle" }, // Left
-                { x: x, y: y - 16, align: "center", baseline: "bottom" }, // Above
-              ];
-            } else if (isNearBottom) {
-              // Near bottom - prefer above, then right/left, then below
-              positions = [
-                { x: x, y: y - 16, align: "center", baseline: "bottom" }, // Above
-                { x: x + 16, y: y, align: "left", baseline: "middle" }, // Right
-                { x: x - 16, y: y, align: "right", baseline: "middle" }, // Left
-                { x: x, y: y + 16, align: "center", baseline: "top" }, // Below
-              ];
-            } else if (isNearLeft) {
-              // Near left - prefer right, then above/below, then left
-              positions = [
-                { x: x + 16, y: y, align: "left", baseline: "middle" }, // Right
-                { x: x, y: y - 16, align: "center", baseline: "bottom" }, // Above
-                { x: x, y: y + 16, align: "center", baseline: "top" }, // Below
-                { x: x - 16, y: y, align: "right", baseline: "middle" }, // Left
-              ];
-            } else if (isNearRight) {
-              // Near right - prefer left, then above/below, then right
-              positions = [
-                { x: x - 16, y: y, align: "right", baseline: "middle" }, // Left
-                { x: x, y: y - 16, align: "center", baseline: "bottom" }, // Above
-                { x: x, y: y + 16, align: "center", baseline: "top" }, // Below
-                { x: x + 16, y: y, align: "left", baseline: "middle" }, // Right
-              ];
-            } else {
-              // Middle of chart - prefer above/below, then left/right
-              positions = [
-                { x: x, y: y - 16, align: "center", baseline: "bottom" }, // Above
-                { x: x, y: y + 16, align: "center", baseline: "top" }, // Below
-                { x: x + 16, y: y, align: "left", baseline: "middle" }, // Right
-                { x: x - 16, y: y, align: "right", baseline: "middle" }, // Left
-              ];
-            }
-
-            // Check for overlap with existing labels and chart line
-            let bestPosition = positions[0];
-            let minOverlap = Infinity;
-
-            positions.forEach((pos) => {
-              const labelBounds = {
-                left:
-                  pos.x -
-                  (pos.align === "center"
-                    ? textWidth / 2
-                    : pos.align === "right"
-                      ? textWidth
-                      : 0),
-                right:
-                  pos.x +
-                  (pos.align === "center"
-                    ? textWidth / 2
-                    : pos.align === "left"
-                      ? textWidth
-                      : 0),
-                top:
-                  pos.y -
-                  (pos.baseline === "middle"
-                    ? textHeight / 2
-                    : pos.baseline === "bottom"
-                      ? textHeight
-                      : 0),
-                bottom:
-                  pos.y +
-                  (pos.baseline === "middle"
-                    ? textHeight / 2
-                    : pos.baseline === "top"
-                      ? textHeight
-                      : 0),
-              };
-
-              // Check overlap with existing labels
-              let totalOverlap = 0;
-              let hasOverlap = false;
-              labelPositions.forEach((existingLabel) => {
-                const overlap =
-                  Math.max(
-                    0,
-                    Math.min(labelBounds.right, existingLabel.right) -
-                      Math.max(labelBounds.left, existingLabel.left),
-                  ) *
-                  Math.max(
-                    0,
-                    Math.min(labelBounds.bottom, existingLabel.bottom) -
-                      Math.max(labelBounds.top, existingLabel.top),
-                  );
-                totalOverlap += overlap;
-                if (overlap > 0) hasOverlap = true;
-              });
-
-              // Check if position is within chart area with padding
-              const padding = 5;
-              const withinBounds =
-                labelBounds.left >= chartArea.left + padding &&
-                labelBounds.right <= chartArea.right - padding &&
-                labelBounds.top >= chartArea.top + padding &&
-                labelBounds.bottom <= chartArea.bottom - padding;
-
-              // Prefer positions with no overlap and within bounds
-              if (withinBounds && !hasOverlap) {
-                bestPosition = pos;
-                minOverlap = 0;
-                return; // Found a perfect position, use it
-              } else if (withinBounds && totalOverlap < minOverlap) {
-                minOverlap = totalOverlap;
-                bestPosition = pos;
-              }
-            });
-
-            // If all standard positions have overlaps, try diagonal positions within 16px
-            if (minOverlap > 0) {
-              const fallbackPositions = [
-                { x: x + 12, y: y + 12, align: "left", baseline: "top" }, // Diagonal bottom-right
-                { x: x - 12, y: y + 12, align: "right", baseline: "top" }, // Diagonal bottom-left
-                { x: x + 12, y: y - 12, align: "left", baseline: "bottom" }, // Diagonal top-right
-                { x: x - 12, y: y - 12, align: "right", baseline: "bottom" }, // Diagonal top-left
-              ];
-
-              fallbackPositions.forEach((pos) => {
-                const labelBounds = {
-                  left:
-                    pos.x -
-                    (pos.align === "center"
-                      ? textWidth / 2
-                      : pos.align === "right"
-                        ? textWidth
-                        : 0),
-                  right:
-                    pos.x +
-                    (pos.align === "center"
-                      ? textWidth / 2
-                      : pos.align === "left"
-                        ? textWidth
-                        : 0),
-                  top:
-                    pos.y -
-                    (pos.baseline === "middle"
-                      ? textHeight / 2
-                      : pos.baseline === "bottom"
-                        ? textHeight
-                        : 0),
-                  bottom:
-                    pos.y +
-                    (pos.baseline === "middle"
-                      ? textHeight / 2
-                      : pos.baseline === "top"
-                        ? textHeight
-                        : 0),
-                };
-
-                let totalOverlap = 0;
-                let hasOverlap = false;
-                labelPositions.forEach((existingLabel) => {
-                  const overlap =
-                    Math.max(
-                      0,
-                      Math.min(labelBounds.right, existingLabel.right) -
-                        Math.max(labelBounds.left, existingLabel.left),
-                    ) *
-                    Math.max(
-                      0,
-                      Math.min(labelBounds.bottom, existingLabel.bottom) -
-                        Math.max(labelBounds.top, existingLabel.top),
-                    );
-                  totalOverlap += overlap;
-                  if (overlap > 0) hasOverlap = true;
-                });
-
-                const padding = 5;
-                const withinBounds =
-                  labelBounds.left >= chartArea.left + padding &&
-                  labelBounds.right <= chartArea.right - padding &&
-                  labelBounds.top >= chartArea.top + padding &&
-                  labelBounds.bottom <= chartArea.bottom - padding;
-
-                if (withinBounds && !hasOverlap) {
-                  bestPosition = pos;
-                  minOverlap = 0;
-                  return;
-                } else if (withinBounds && totalOverlap < minOverlap) {
-                  minOverlap = totalOverlap;
-                  bestPosition = pos;
-                }
-              });
-            }
-
-            // Set text alignment and baseline
-            ctx.textAlign = bestPosition.align;
-            ctx.textBaseline = bestPosition.baseline;
-
-            // Draw the label
-            ctx.fillText(label, bestPosition.x, bestPosition.y);
-
-            // Store this label's position for future overlap checks
-            const textMetrics2 = ctx.measureText(label);
-            labelPositions.push({
-              left:
-                bestPosition.x -
-                (bestPosition.align === "center"
-                  ? textMetrics2.width / 2
-                  : bestPosition.align === "right"
-                    ? textMetrics2.width
-                    : 0),
-              right:
-                bestPosition.x +
-                (bestPosition.align === "center"
-                  ? textMetrics2.width / 2
-                  : bestPosition.align === "left"
-                    ? textMetrics2.width
-                    : 0),
-              top:
-                bestPosition.y -
-                (bestPosition.baseline === "middle"
-                  ? textHeight / 2
-                  : bestPosition.baseline === "bottom"
-                    ? textHeight
-                    : 0),
-              bottom:
-                bestPosition.y +
-                (bestPosition.baseline === "middle"
-                  ? textHeight / 2
-                  : bestPosition.baseline === "top"
-                    ? textHeight
-                    : 0),
-            });
-          });
-
-          ctx.restore();
-        },
-      },
-    ],
+    plugins: [createPriceLabelsPlugin("taxPriceLabelsBelow")],
   });
 }
 
