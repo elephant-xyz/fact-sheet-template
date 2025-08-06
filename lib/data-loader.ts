@@ -80,20 +80,6 @@ export class DataLoader {
       result[label] = await this.traverseLinkedData(data, rootDir);
     }))
 
-    // for (const file of jsonFiles) {
-    //   const cid = path.basename(file, ".json");
-    //   let parsedCid;
-    //   try {
-    //     parsedCid = CID.parse(cid);
-    //   }
-    //   catch {
-    //     continue;
-    //   }
-    //   const label = await this.getGroupTitle(parsedCid);
-    //   const content = await fs.readFile(path.join(rootDir.toString(), file.toString()), "utf-8");
-    //   const data = JSON.parse(content);
-    //   result[label] = await this.traverseLinkedData(data, rootDir);
-    // }
     return result
   }
 
@@ -108,7 +94,7 @@ export class DataLoader {
       }
     }
     else if (Array.isArray(data)) {
-      return data.map((i: any) => { this.traverseLinkedData(i, baseDir) })
+      return Promise.all(data.map((i: any) => { this.traverseLinkedData(i, baseDir) }))
     }
     return data;
   }
