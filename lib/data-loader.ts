@@ -1,8 +1,8 @@
 import path from "path";
 import fs from "fs-extra";
 import { Logger } from "./logger.js";
-import { BuilderOptions, PropertyData } from "../types/property.js";
-import { IPLDDataLoader } from "./ipld-data-loader.js";
+import { BuilderOptions, TemplateData } from "../types/property.js";
+import { IPLDDataLoader, PropertyData } from "./ipld-data-loader.js";
 import { JsonSchema } from "../types/schema.js";
 import { CID } from 'multiformats/cid'
 import { existsSync, PathLike } from "fs";
@@ -27,7 +27,7 @@ export class DataLoader {
 
   async loadPropertyData(
     inputDir: string,
-  ): Promise<Record<string, PropertyData>> {
+  ): Promise<Record<string, TemplateData>> {
     const homes: Record<string, any> = {};
 
     const directories = await fs.readdir(inputDir);
@@ -50,7 +50,7 @@ export class DataLoader {
       }
     }
 
-    return homes as Record<string, PropertyData>;
+    return homes as Record<string, TemplateData>;
   }
 
   private async flattenData(rootCID: string): Promise<Record<string, any>> {
@@ -118,14 +118,14 @@ export class DataLoader {
     return await (await fetch(`https://ipfs.io/ipfs/${cid.toString()}`)).text();
   }
 
-  private transformIPLDData(ipldData: any): PropertyData {
+  private transformIPLDData(ipldData: PropertyData): TemplateData {
     // Transform IPLD data structure to match existing PropertyData format
     const property = ipldData.property || {};
     const sales = ipldData.sales || [];
     const taxes = ipldData.taxes || [];
 
     // Create the expected structure
-    const transformed: any = {
+    const transformed: TemplateData = {
       property: {
         livable_floor_area: property.sqft?.toString() || "",
         property_type: property.type || "",
@@ -193,16 +193,17 @@ export class DataLoader {
       features: ipldData.features || { interior: [], exterior: [] },
       structure: ipldData.structure || null,
       utility: ipldData.utility || null,
+      appliances: ipldData.appliances,
 
       carousel_images: ipldData.carousel_images || [],
       layouts: ipldData.layouts ? {
         ...ipldData.layouts,
         source_http_request: ipldData.layouts.source_http_request || null,
       } : [],
-      sectionVisibility: ipldData.sectionVisibility || null,
-      dataLabel: ipldData.dataLabel || null,
+      sectionVisibility: ipldData.sectionVisibility,
+      dataLabel: ipldData.dataLabel
     };
 
-    return transformed as PropertyData;
+    return transformed as TemplateData;
   }
 }

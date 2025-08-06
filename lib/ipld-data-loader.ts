@@ -117,6 +117,7 @@ export interface PropertyData {
   layouts?: LayoutSummary;
   sectionVisibility?: SectionVisibility;
   dataLabel?: string;
+  appliances: RenderItem[] | null;
 }
 
 type EnumMappingRaw = {
@@ -343,6 +344,7 @@ export class IPLDDataLoader {
       graph,
       "full_address",
     );
+    const applianceNodes = this.findNodesByContent(graph, "appliance_type");
 
     const layouts = this.loadLayoutData(graph);
 
@@ -368,6 +370,15 @@ export class IPLDDataLoader {
     let utility = null;
     if (utilityNode) {
       utility = this.convertNodeToRenderItem(utilityNode, "utility");
+    }
+
+    let appliances = null;
+    if (applianceNodes) {
+      appliances = applianceNodes
+        .filter((appliance) => appliance.data.appliance_type !== null && appliance.data.appliance_type !== undefined)
+        .map((appliance) =>
+          this.convertNodeToRenderItem(appliance, "appliance"),
+        );
     }
 
     // Determine the data label based on available data
@@ -402,10 +413,12 @@ export class IPLDDataLoader {
     }));
 
     // Create layout data with source information
-    const layoutData = layouts ? {
-      ...layouts,
-      source_http_request: propertyNode?.data?.source_http_request || null,
-    } : undefined;
+    const layoutData = layouts
+      ? {
+          ...layouts,
+          source_http_request: propertyNode?.data?.source_http_request || null,
+        }
+      : undefined;
 
     return {
       property,
@@ -419,6 +432,7 @@ export class IPLDDataLoader {
       layouts: layoutData,
       sectionVisibility: this.sectionVisibility,
       dataLabel,
+      appliances,
     };
   }
 
@@ -447,11 +461,13 @@ export class IPLDDataLoader {
     return nodes;
   }
 
-  private findStructureNode(graph: Map<string, DataNode>): DataNode | undefined {
+  private findStructureNode(
+    graph: Map<string, DataNode>,
+  ): DataNode | undefined {
     // Find all nodes that contain structure-related fields
     const structureFields = [
       "flooring_material_primary",
-      "flooring_material_secondary", 
+      "flooring_material_secondary",
       "exterior_wall_material_primary",
       "exterior_wall_material_secondary",
       "roof_covering_material",
@@ -460,48 +476,58 @@ export class IPLDDataLoader {
       "interior_wall_finish_primary",
       "foundation_type",
       "foundation_material",
-      "architectural_style_type"
+      "architectural_style_type",
     ];
-    
+
     const structureNodes: DataNode[] = [];
-    
+
     for (const node of graph.values()) {
       if (!node.data) continue;
-      
+
       let matchCount = 0;
       for (const field of structureFields) {
         if (field in node.data) {
           matchCount++;
         }
       }
-      
+
       // Consider it a structure node if it has at least 2 structure fields
       if (matchCount >= 2) {
         structureNodes.push(node);
-        console.log('Found structure node:', node.cid, 'with', matchCount, 'structure fields');
+        console.log(
+          "Found structure node:",
+          node.cid,
+          "with",
+          matchCount,
+          "structure fields",
+        );
       }
     }
-    
+
     if (structureNodes.length === 0) {
-      console.log('No structure nodes found');
+      console.log("No structure nodes found");
       return undefined;
     }
-    
+
     // If we found multiple structure nodes, merge them into one
     if (structureNodes.length > 1) {
-      console.log('Found', structureNodes.length, 'structure nodes, merging data...');
+      console.log(
+        "Found",
+        structureNodes.length,
+        "structure nodes, merging data...",
+      );
       return this.mergeStructureNodes(structureNodes);
     }
-    
+
     // If only one structure node, return it
-    console.log('Selected single structure node:', structureNodes[0].cid);
+    console.log("Selected single structure node:", structureNodes[0].cid);
     return structureNodes[0];
   }
 
   private mergeStructureNodes(nodes: DataNode[]): DataNode {
     // Create a merged data object
     const mergedData: any = {};
-    
+
     // Merge all data from all structure nodes
     for (const node of nodes) {
       if (node.data) {
@@ -515,16 +541,20 @@ export class IPLDDataLoader {
         }
       }
     }
-    
+
     // Create a new merged node using the first node's metadata
     const mergedNode: DataNode = {
       cid: nodes[0].cid,
       filePath: nodes[0].filePath,
       data: mergedData,
-      relationships: new Map()
+      relationships: new Map(),
     };
-    
-    console.log('Merged structure data with', Object.keys(mergedData).length, 'fields');
+
+    console.log(
+      "Merged structure data with",
+      Object.keys(mergedData).length,
+      "fields",
+    );
     return mergedNode;
   }
 
@@ -559,7 +589,7 @@ export class IPLDDataLoader {
       }
       if (addressData.street_name) {
         // Capitalize street name properly
-        parts.push((addressData.street_name));
+        parts.push(addressData.street_name);
       }
       if (addressData.street_suffix_type) {
         parts.push(addressData.street_suffix_type);
@@ -588,7 +618,7 @@ export class IPLDDataLoader {
           const spaceType = node.space_type;
           if (spaceType) {
             const lowerSpaceType = spaceType.enumDescription.toLowerCase();
-            console.log('Processing space_type:', spaceType.enumDescription);
+            console.log("Processing space_type:", spaceType.enumDescription);
 
             // Count bedrooms
             if (
@@ -600,17 +630,25 @@ export class IPLDDataLoader {
 
             // Count bathrooms
             if (lowerSpaceType.includes("full bathroom")) {
-              console.log('Found full bathroom:', spaceType.enumDescription);
+              console.log("Found full bathroom:", spaceType.enumDescription);
               baths += 1;
             } else if (
               lowerSpaceType.includes("half bathroom") ||
               lowerSpaceType.includes("half bath") ||
               lowerSpaceType.includes("powder room")
             ) {
-              console.log('Found half bathroom/powder room:', spaceType.enumDescription);
+              console.log(
+                "Found half bathroom/powder room:",
+                spaceType.enumDescription,
+              );
               baths += 0.5;
             } else {
-              console.log('Checking bathroom - space_type:', spaceType.enumDescription, 'lowerSpaceType:', lowerSpaceType);
+              console.log(
+                "Checking bathroom - space_type:",
+                spaceType.enumDescription,
+                "lowerSpaceType:",
+                lowerSpaceType,
+              );
             }
           }
         });
@@ -646,13 +684,20 @@ export class IPLDDataLoader {
     }
     // Use enum mapping for address data
     const addressRenderItem = this.buildRenderItem(addressData, "address");
-    const unnormalizedAddressRenderItem = unnormalizedAddress?.data ? this.buildRenderItem(unnormalizedAddress.data, "address") : null;
-    
+    const unnormalizedAddressRenderItem = unnormalizedAddress?.data
+      ? this.buildRenderItem(unnormalizedAddress.data, "address")
+      : null;
+
     return {
       address: fullAddress || addressData.street_address || "",
       city: addressData.city_name || "",
       state: addressData.state_code || "",
-      county: addressRenderItem.county_name?.enumDescription || addressData.county_name || unnormalizedAddressRenderItem?.county_jurisdiction?.enumDescription || unnormalizedAddress?.data?.county_jurisdiction || "",
+      county:
+        addressRenderItem.county_name?.enumDescription ||
+        addressData.county_name ||
+        unnormalizedAddressRenderItem?.county_jurisdiction?.enumDescription ||
+        unnormalizedAddress?.data?.county_jurisdiction ||
+        "",
       postalCode: addressData.postal_code || "",
       coordinates,
       parcelId: propertyData.parcel_identifier,
@@ -728,11 +773,13 @@ export class IPLDDataLoader {
               if (ownerNode) {
                 // Extract owner name from data - try various field names
                 let ownerName = "";
-                
+
                 // Try common person name fields
                 if (ownerNode.data.person_name) {
                   // If we have a full name, split it and format as "Last, First"
-                  const nameParts = ownerNode.data.person_name.trim().split(" ");
+                  const nameParts = ownerNode.data.person_name
+                    .trim()
+                    .split(" ");
                   if (nameParts.length >= 2) {
                     const lastName = nameParts[0];
                     const firstName = nameParts.slice(1).join(" ");
@@ -771,14 +818,14 @@ export class IPLDDataLoader {
                       typeof value === "string" &&
                       value.length > 0 &&
                       (key.toLowerCase().includes("name") ||
-                       key.toLowerCase().includes("title"))
+                        key.toLowerCase().includes("title"))
                     ) {
                       ownerName = value;
                       break;
                     }
                   }
                 }
-                
+
                 // Add to owners list if not already present
                 if (ownerName && !ownerNames.includes(ownerName)) {
                   ownerNames.push(ownerName);
@@ -977,11 +1024,11 @@ export class IPLDDataLoader {
           if (node.data?.from && node.data?.to) {
             // Check if this relationship is from a property node
             const toLink = node.data.to;
-            
+
             // For photo data, the from link might point to a CID rather than a local file
             // We'll accept any link file that points to an image, regardless of the from field
             // since the property relationship might be established through other means
-            
+
             // Resolve the file metadata node
             const fileNode = this.resolveNodeFromLink(toLink, graph);
 
@@ -1026,8 +1073,11 @@ export class IPLDDataLoader {
         // This node contains property_has_layout relationships
         const propertyHasLayoutLinks =
           node.data.relationships.property_has_layout;
-        
-        console.log('Found property_has_layout relationships:', propertyHasLayoutLinks.length);
+
+        console.log(
+          "Found property_has_layout relationships:",
+          propertyHasLayoutLinks.length,
+        );
 
         // Process each relationship link
         for (const relationshipLink of propertyHasLayoutLinks) {
@@ -1039,7 +1089,10 @@ export class IPLDDataLoader {
             );
 
             if (!relationshipNode) {
-              console.log('Could not resolve relationship node for:', relationshipLink);
+              console.log(
+                "Could not resolve relationship node for:",
+                relationshipLink,
+              );
               continue;
             }
 
@@ -1051,13 +1104,16 @@ export class IPLDDataLoader {
               );
 
               if (!layoutNode) {
-                console.log('Could not resolve layout node for:', relationshipNode.data.to);
+                console.log(
+                  "Could not resolve layout node for:",
+                  relationshipNode.data.to,
+                );
                 continue;
               }
 
               // Extract layout data
               if (layoutNode?.data?.space_type) {
-                console.log('Loaded layout:', layoutNode.data.space_type);
+                console.log("Loaded layout:", layoutNode.data.space_type);
                 (layoutsByDataGroup[node.data.label] ??= []).push(
                   layoutNode.data as LayoutInfo,
                 );
@@ -1069,30 +1125,41 @@ export class IPLDDataLoader {
     }
 
     let layouts: LayoutInfo[] = [];
-    console.log('Available data groups:', Object.keys(layoutsByDataGroup));
-    console.log('Data groups with layout counts:', Object.entries(layoutsByDataGroup).map(([group, layouts]) => `${group}: ${layouts.length} layouts`));
-    
+    console.log("Available data groups:", Object.keys(layoutsByDataGroup));
+    console.log(
+      "Data groups with layout counts:",
+      Object.entries(layoutsByDataGroup).map(
+        ([group, layouts]) => `${group}: ${layouts.length} layouts`,
+      ),
+    );
+
     if (Object.keys(layoutsByDataGroup).length === 1) {
       layouts = layoutsByDataGroup[Object.keys(layoutsByDataGroup)[0]];
-      console.log('Selected single data group:', Object.keys(layoutsByDataGroup)[0]);
+      console.log(
+        "Selected single data group:",
+        Object.keys(layoutsByDataGroup)[0],
+      );
     } else if (Object.hasOwn(layoutsByDataGroup, "Photo Metadata")) {
       layouts = layoutsByDataGroup["Photo Metadata"];
-      console.log('Selected Photo Metadata data group');
+      console.log("Selected Photo Metadata data group");
     } else {
       if (Object.keys(layoutsByDataGroup).length === 0) {
         layouts = [];
-        console.log('No data groups found');
+        console.log("No data groups found");
       } else {
         const [_, value] = Object.entries(layoutsByDataGroup).reduce(
           (max, current) => (current[1].length > max[1].length ? current : max),
         );
         layouts = value;
-        console.log('Selected largest data group');
+        console.log("Selected largest data group");
       }
     }
-    
-    console.log('Final layouts count:', layouts.length);
-    console.log('Final layouts:', layouts.map(l => l.space_type));
+
+    console.log("Final layouts count:", layouts.length);
+    console.log(
+      "Final layouts:",
+      layouts.map((l) => l.space_type),
+    );
 
     const firstFloorLayouts = layouts
       .filter((layout) => layout["floor_level"] === "1st Floor")
@@ -1137,8 +1204,6 @@ export class IPLDDataLoader {
     return renderItem;
   }
 
-
-
   private resolveNodeFromLink(
     link: any,
     graph: Map<string, DataNode>,
@@ -1158,82 +1223,103 @@ export class IPLDDataLoader {
     }
   }
 
-  private determineDataLabel(graph: Map<string, DataNode>, carousel_images: CarouselImage[]): string {
+  private determineDataLabel(
+    graph: Map<string, DataNode>,
+    carousel_images: CarouselImage[],
+  ): string {
     // First, collect all labels found in the graph
     const labels: string[] = [];
     for (const node of graph.values()) {
       if (node.data && node.data.label) {
-        console.log('Found explicit label:', node.data.label, 'in node:', node.cid);
+        console.log(
+          "Found explicit label:",
+          node.data.label,
+          "in node:",
+          node.cid,
+        );
         labels.push(node.data.label);
       }
     }
-    
+
     // Also check for label in any field of any node (case-insensitive)
     for (const node of graph.values()) {
       if (node.data) {
         for (const [key, value] of Object.entries(node.data)) {
-          if (key.toLowerCase() === 'label' && typeof value === 'string') {
-            console.log('Found label in field:', key, 'value:', value, 'in node:', node.cid);
+          if (key.toLowerCase() === "label" && typeof value === "string") {
+            console.log(
+              "Found label in field:",
+              key,
+              "value:",
+              value,
+              "in node:",
+              node.cid,
+            );
             labels.push(value);
           }
         }
       }
     }
-    
+
     // Prioritize labels: Photo Metadata > Photo > County > Seed
-    if (labels.includes('Photo Metadata')) {
-      console.log('Found Photo Metadata label, returning Photo Metadata');
-      return 'Photo Metadata';
-    }
-    if (labels.includes('Photo')) {
-      console.log('Found Photo label, returning Photo');
-      return 'Photo';
-    }
-    if (labels.includes('County')) {
-      console.log('Found County label, returning County');
-      return 'County';
-    }
-    if (labels.includes('Seed')) {
-      console.log('Found Seed label, returning Seed');
-      return 'Seed';
-    }
-    
-    // Check for photo metadata (most comprehensive data)
-    if (carousel_images.length > 0) {
-      console.log('No explicit label found, but has carousel images, returning Photo Metadata');
+    if (labels.includes("Photo Metadata")) {
+      console.log("Found Photo Metadata label, returning Photo Metadata");
       return "Photo Metadata";
     }
-    
-    // Check for photo data
-    const hasPhotoData = Array.from(graph.values()).some(node => 
-      node.data && (
-        node.data.document_type === "photo" ||
-        node.data.file_format === "jpg" ||
-        node.data.file_format === "jpeg" ||
-        node.data.file_format === "png"
-      )
-    );
-    if (hasPhotoData) {
-      console.log('No explicit label found, but has photo data, returning Photo');
+    if (labels.includes("Photo")) {
+      console.log("Found Photo label, returning Photo");
       return "Photo";
     }
-    
-    // Check for county data (sales, taxes, structure details)
-    const hasCountyData = Array.from(graph.values()).some(node => 
-      node.data && (
-        node.data.purchase_price_amount ||
-        node.data.tax_year ||
-        node.data.flooring_material_primary ||
-        node.data.exterior_wall_material_primary
-      )
-    );
-    if (hasCountyData) {
-      console.log('No explicit label found, but has county data, returning County');
+    if (labels.includes("County")) {
+      console.log("Found County label, returning County");
       return "County";
     }
-    
+    if (labels.includes("Seed")) {
+      console.log("Found Seed label, returning Seed");
+      return "Seed";
+    }
+
+    // Check for photo metadata (most comprehensive data)
+    if (carousel_images.length > 0) {
+      console.log(
+        "No explicit label found, but has carousel images, returning Photo Metadata",
+      );
+      return "Photo Metadata";
+    }
+
+    // Check for photo data
+    const hasPhotoData = Array.from(graph.values()).some(
+      (node) =>
+        node.data &&
+        (node.data.document_type === "photo" ||
+          node.data.file_format === "jpg" ||
+          node.data.file_format === "jpeg" ||
+          node.data.file_format === "png"),
+    );
+    if (hasPhotoData) {
+      console.log(
+        "No explicit label found, but has photo data, returning Photo",
+      );
+      return "Photo";
+    }
+
+    // Check for county data (sales, taxes, structure details)
+    const hasCountyData = Array.from(graph.values()).some(
+      (node) =>
+        node.data &&
+        (node.data.purchase_price_amount ||
+          node.data.tax_year ||
+          node.data.flooring_material_primary ||
+          node.data.exterior_wall_material_primary),
+    );
+    if (hasCountyData) {
+      console.log(
+        "No explicit label found, but has county data, returning County",
+      );
+      return "County";
+    }
+
     // Default to Seed for basic property data
-    console.log('No explicit label found, defaulting to Seed');
+    console.log("No explicit label found, defaulting to Seed");
     return "Seed";
   }
 }

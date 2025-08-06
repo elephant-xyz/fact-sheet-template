@@ -4,7 +4,7 @@ import path from "path";
 import fs from "fs-extra";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
-import { BuilderOptions, PropertyData } from "../types/property.js";
+import { BuilderOptions, TemplateData } from "../types/property.js";
 import { Minifier } from "./minifier.js";
 import { Logger } from "./logger.js";
 
@@ -416,7 +416,7 @@ export class TemplateRenderer {
 
   async renderProperty(
     propertyId: string,
-    propertyData: PropertyData,
+    propertyData: TemplateData,
   ): Promise<string> {
     // Check for property-specific images
     const propertyDataPath = path.join(this.options.input, propertyId);

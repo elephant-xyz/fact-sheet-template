@@ -1,14 +1,17 @@
 export interface Address {
+  street_address?: string;
   street_number?: string;
   route_number?: string;
   street_name?: string;
-  street_suffix?: string;
-  city?: string;
-  state?: string;
-  zip?: string;
-  county?: string;
+  street_suffix_type?: string;
+  city_name?: string;
+  state_code?: string;
+  postal_code?: string;
+  county_name?: string;
   formatted_address?: string;
   source_http_request?: string;
+  latitude?: string;
+  longitude?: string;
 }
 
 export interface Person {
@@ -29,16 +32,6 @@ export interface Company {
   email?: string;
 }
 
-export interface SalesData {
-  ownership_transfer_date?: string;
-  sales_date?: string;
-  purchase_price_amount?: string | number;
-  sales_transaction_amount?: string | number;
-  seller_name?: string;
-  buyer_name?: string;
-  source_http_request?: string;
-}
-
 export interface TaxData {
   tax_year?: string | number;
   assessed_value?: string | number;
@@ -56,8 +49,9 @@ export interface SalesHistoryEntry {
 export interface AssociatedEntity {
   type: 'person' | 'company';
   name: string;
-  data: Person | Company;
+  data: any;
 }
+
 
 export interface SalesEntry {
   key: string;
@@ -89,7 +83,7 @@ export interface SectionVisibility {
   label_to_div_mapping: Record<string, string[]>;
 }
 
-export interface PropertyData {
+export interface TemplateData {
   address?: Address;
   property?: {
     bedrooms?: number;
@@ -103,7 +97,7 @@ export interface PropertyData {
   sales_history: SalesHistoryEntry[];
   all_sales: SalesEntry[];
   all_taxes: TaxEntry[];
-  data_sources: DataSource[];
+  data_sources?: DataSource[];
   carousel_images?: CarouselImage[];
   sectionVisibility?: SectionVisibility;
   dataLabel?: string;
@@ -117,7 +111,7 @@ export interface PropertyData {
 }
 
 export interface PropertyCollection {
-  [propertyId: string]: PropertyData;
+  [propertyId: string]: TemplateData;
 }
 
 export interface BuilderOptions {
