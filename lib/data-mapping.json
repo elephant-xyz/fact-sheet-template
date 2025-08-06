@@ -1221,7 +1221,7 @@
       "lexiconClass": "address",
       "lexiconProperty": "county_name",
       "enumValue": "PALM BEACH",
-      "enumDescription": "palm beach County"
+      "enumDescription": "Palm Beach County"
     },
     {
       "lexiconClass": "address",
@@ -1580,14 +1580,14 @@
     {
       "lexiconClass": "structure",
       "lexiconProperty": "ceiling_structure_material",
-      "iconName": "Ceiling",
+      "iconName": "ceiling",
       "enumValue": "Exposed Beams",
       "enumDescription": "Exposed Beams"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "ceiling_structure_material",
-      "iconName": "Ceiling",
+      "iconName": "ceiling",
       "enumValue": "Wood Joists",
       "enumDescription": "Wood Joist Ceiling"
     },
@@ -1804,21 +1804,21 @@
     {
       "lexiconClass": "structure",
       "lexiconProperty": "window_frame_material",
-      "iconName": "window",
+      "iconName": "windows",
       "enumValue": "Vinyl",
       "enumDescription": "Vinyl Framed Window"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "window_frame_material",
-      "iconName": "window",
+      "iconName": "windows",
       "enumValue": "Wood",
       "enumDescription": "Wood Framed Window"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "window_glazing_type",
-      "iconName": "window",
+      "iconName": "windows",
       "enumValue": "Double Pane",
       "enumDescription": "Double Pane Windows"
     },
@@ -1839,7 +1839,7 @@
     {
       "lexiconClass": "structure",
       "lexiconProperty": "window_screen_material",
-      "iconName": "window",
+      "iconName": "windows",
       "enumValue": "Fiberglass",
       "enumDescription": "Fiberglass Window Screen"
     },
