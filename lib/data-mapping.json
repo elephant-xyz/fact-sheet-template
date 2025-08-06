@@ -1918,6 +1918,13 @@
     },
     {
       "lexiconClass": "appliance",
+      "lexiconProperty": "appliance_type",
+      "iconName": "dishwasher",
+      "enumValue": "Dishwasher",
+      "enumDescription": "Dishwasher"
+    },
+    {
+      "lexiconClass": "appliance",
       "lexiconProperty": "finish",
       "enumValue": "White",
       "enumDescription": "White"
