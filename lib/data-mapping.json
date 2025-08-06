@@ -4,21 +4,21 @@
     "lexiconProperty": "cooling_system_type",
     "iconName": "cooling",
     "enumValue": "CeilingFan",
-    "enumDescription": "Cieling Fan"
+    "enumDescription": "Ceiling Fan"
   },
   {
     "lexiconClass": "utility",
     "lexiconProperty": "cooling_system_type",
     "iconName": "cooling",
     "enumValue": "CeilingFan",
-    "enumDescription": "Cieling Fan"
+    "enumDescription": "Ceiling Fan"
   },
   {
     "lexiconClass": "utility",
     "lexiconProperty": "cooling_system_type",
     "iconName": "cooling",
     "enumValue": "CeilingFans",
-    "enumDescription": "Cieling Fans"
+    "enumDescription": "Ceiling Fans"
   },
   {
     "lexiconClass": "utility",
@@ -290,7 +290,7 @@
     "lexiconProperty": "electrical_wiring_type",
     "iconName": "electricity",
     "enumValue": "Aluminum",
-    "enumDescription": "Aluminim Wiring"
+    "enumDescription": "Aluminum Wiring"
   },
   {
     "lexiconClass": "utility",
@@ -1545,14 +1545,14 @@
     {
       "lexiconClass": "structure",
       "lexiconProperty": "architectural_style_type",
-      "iconName": "arcitecture",
+      "iconName": "architecture",
       "enumValue": "Contemporary",
       "enumDescription": "Contemporary Architecture"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "architectural_style_type",
-      "iconName": "arcitecture",
+      "iconName": "architecture",
       "enumValue": "Modern",
       "enumDescription": "Modern Architecture"
     },
