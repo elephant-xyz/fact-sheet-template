@@ -1218,6 +1218,18 @@
       "enumDescription": "Palm Beach County"
     },
     {
+      "lexiconClass": "address",
+      "lexiconProperty": "county_name",
+      "enumValue": "PALM BEACH",
+      "enumDescription": "palm beach County"
+    },
+    {
+      "lexiconClass": "address",
+      "lexiconProperty": "county_jurisdiction",
+      "enumValue": "palm beach",
+      "enumDescription": "Palm Beach County"
+    }, 
+    {
       "lexiconClass": "layout",
       "lexiconProperty": "condition_issues",
       "iconName": "warning",

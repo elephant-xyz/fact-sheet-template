@@ -645,12 +645,13 @@ export class IPLDDataLoader {
     }
     // Use enum mapping for address data
     const addressRenderItem = this.buildRenderItem(addressData, "address");
+    const unnormalizedAddressRenderItem = unnormalizedAddress?.data ? this.buildRenderItem(unnormalizedAddress.data, "address") : null;
     
     return {
       address: fullAddress || addressData.street_address || "",
       city: addressData.city_name || "",
       state: addressData.state_code || "",
-      county: addressRenderItem.county_name?.enumDescription || addressData.county_name || unnormalizedAddress?.data?.county_jurisdiction || "",
+      county: addressRenderItem.county_name?.enumDescription || addressData.county_name || unnormalizedAddressRenderItem?.county_jurisdiction?.enumDescription || unnormalizedAddress?.data?.county_jurisdiction || "",
       postalCode: addressData.postal_code || "",
       coordinates,
       parcelId: propertyData.parcel_identifier,

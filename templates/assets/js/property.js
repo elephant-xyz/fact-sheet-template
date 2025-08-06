@@ -298,7 +298,10 @@ function renderSalesPriceChart() {
       datasets: [
         {
           label: "Sale Price",
-          data: prices,
+          data: salesData.map(entry => ({
+            x: new Date(entry.date), // x = time
+            y: entry.amount          // y = sale price
+          })),
           // Add metadata for tooltips
           saleData: salesData,
           fill: false,
@@ -417,7 +420,10 @@ function renderSalesPriceChart() {
       },
       scales: {
         x: {
-          type: "category",
+          type: "time",
+          time: {
+            unit: "year", // Or 'month' for more granularity
+          },
           grid: {
             display: getCSSVar("--chart-grid-line-display", "false") === "true",
             color: getCSSVar("--chart-grid-line-color", "#f0f0f0"),
@@ -429,6 +435,10 @@ function renderSalesPriceChart() {
             width: parseInt(getCSSVar("--chart-axis-line-width", "1")),
           },
           ticks: {
+            stepSize: 5,           // 👈 shows ticks every 5 years
+            source: "auto",        // lets Chart.js choose tick placement based on data
+            autoSkip: true,        // skips overlapping labels
+            maxTicksLimit: 10,      // optional: prevents over-crowding
             color: getCSSVar("--chart-axis-color", "#8e8b8b"),
             font: {
               family: getCSSVar(
@@ -471,8 +481,9 @@ function renderSalesPriceChart() {
           const labelPositions = [];
 
           meta.data.forEach((point, i) => {
-            const price = dataset.data[i];
-            if (price == null || isNaN(price) || price === null) return;
+            const dataPoint = dataset.data[i];
+            const price = dataPoint?.y;
+            if (price == null || isNaN(price)) return;
 
             const x = point.x;
             const y = point.y;
@@ -499,13 +510,22 @@ function renderSalesPriceChart() {
             const isNearRight = x > chartArea.right - 80;
 
             // Build position array based on chart location
+            let offsetY = 0;
+            if (i > 0) {
+              const prevY = meta.data[i - 1].y;
+              if (Math.abs(prevY - y) < 20) {
+                offsetY = -12; // Push this label slightly higher
+              }
+            }
+
             if (isNearTop) {
               // Near top - prefer below, then right/left, then above
               positions = [
                 { x: x, y: y + 16, align: "center", baseline: "top" }, // Below
                 { x: x + 16, y: y, align: "left", baseline: "middle" }, // Right
                 { x: x - 16, y: y, align: "right", baseline: "middle" }, // Left
-                { x: x, y: y - 16, align: "center", baseline: "bottom" }, // Above
+                { x: x, y: y - 16 + offsetY, align: "center", baseline: "bottom" },
+
               ];
             } else if (isNearBottom) {
               // Near bottom - prefer above, then right/left, then below
