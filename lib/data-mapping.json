@@ -1228,7 +1228,19 @@
       "lexiconProperty": "county_jurisdiction",
       "enumValue": "palm beach",
       "enumDescription": "Palm Beach County"
-    }, 
+    },
+  {
+      "lexiconClass": "address",
+      "lexiconProperty": "county_name",
+      "enumValue": "LEE COUNTY",
+      "enumDescription": "Lee County"
+    },
+    {
+      "lexiconClass": "address",
+      "lexiconProperty": "county_jurisdiction",
+      "enumValue": "LEE COUNTY",
+      "enumDescription": "Lee County"
+    },
     {
       "lexiconClass": "layout",
       "lexiconProperty": "condition_issues",
