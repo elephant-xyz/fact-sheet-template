@@ -335,6 +335,14 @@ function updateSectionVisibility(label) {
                 
                 <!-- Chart Content -->
                 <div class="chart-content-container">
+                  <!-- Time Range Selector -->
+                  <div class="chart-time-range-selector">
+                    <button class="time-range-btn" data-years="3">3 Years</button>
+                    <button class="time-range-btn" data-years="5">5 Years</button>
+                    <button class="time-range-btn" data-years="10">10 Years</button>
+                    <button class="time-range-btn active" data-years="all">All</button>
+                  </div>
+                  
                   {% if homes[property_id].all_sales | length > 1 %}
                   <div id="sales-chart-content" class="chart-content active">
                     <div class="sales-chart-container">

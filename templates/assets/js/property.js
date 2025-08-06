@@ -6,12 +6,93 @@
 
 /* global getComputedStyle */
 
+// Global variables for chart data and time range
+let originalSalesData = [];
+let originalTaxData = [];
+let selectedTimeRange = "all"; // Default to show all data
+
 /**
  * Handles the logic for displaying the next image in the carousel.
  * It finds the currently selected radio button and checks the next one in the sequence,
  * looping back to the beginning if the last image is currently displayed.
  */
 // eslint-disable-next-line no-unused-vars
+
+/**
+ * Filters data by time range (years from current date)
+ * @param {Array} data - Array of data objects with date property
+ * @param {number|string} years - Number of years to include or 'all' for all data
+ * @returns {Array} Filtered data
+ */
+function filterDataByTimeRange(data, years) {
+  if (years === "all") {
+    return data;
+  }
+
+  const currentDate = new Date();
+  const cutoffDate = new Date();
+  cutoffDate.setFullYear(currentDate.getFullYear() - years);
+
+  return data.filter((item) => {
+    const itemDate = new Date(item.date || item.year);
+    return itemDate >= cutoffDate;
+  });
+}
+
+/**
+ * Displays a no-data message on the canvas
+ * @param {HTMLCanvasElement} canvasElement - The canvas element
+ * @param {string} message - The message to display
+ */
+function displayNoDataMessage(canvasElement, message) {
+  const canvas = canvasElement.canvas || canvasElement;
+  const ctx = canvas.getContext("2d");
+  const width = canvas.width;
+  const height = canvas.height;
+
+  // Clear the canvas
+  ctx.clearRect(0, 0, width, height);
+
+  // Set up text styling
+  ctx.font = "16px neue-haas-grotesk-display, system-ui, sans-serif";
+  ctx.fillStyle = "#8e8b8b";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+
+  // Draw the message
+  const lines = message.split("\n");
+  const lineHeight = 24;
+  const startY = height / 2 - ((lines.length - 1) * lineHeight) / 2;
+
+  lines.forEach((line, index) => {
+    ctx.fillText(line, width / 2, startY + index * lineHeight);
+  });
+}
+
+/**
+ * Sets up time range selector functionality
+ */
+function setupTimeRangeSelector() {
+  const timeRangeButtons = document.querySelectorAll(".time-range-btn");
+
+  timeRangeButtons.forEach((button) => {
+    button.addEventListener("click", function () {
+      // Remove active class from all buttons
+      timeRangeButtons.forEach((btn) => btn.classList.remove("active"));
+
+      // Add active class to clicked button
+      this.classList.add("active");
+
+      // Update selected time range
+      const yearsValue = this.getAttribute("data-years");
+      selectedTimeRange = yearsValue === "all" ? "all" : parseInt(yearsValue);
+
+      // Refresh both charts with new time range
+      renderSalesPriceChart();
+      renderTaxAssessmentChart();
+    });
+  });
+}
 
 function applySpacingToSalesData(rawSalesData) {
   return rawSalesData.map((entry, index, arr) => {
@@ -26,8 +107,10 @@ function applySpacingToSalesData(rawSalesData) {
 
       // Apply spacing only if < 90 days apart
       if (diffInDays < 90) {
-        if (index === arr.length - 2) spacedDate.setDate(spacedDate.getDate() - 10);
-        if (index === arr.length - 1) spacedDate.setDate(spacedDate.getDate() + 10);
+        if (index === arr.length - 2)
+          spacedDate.setDate(spacedDate.getDate() - 10);
+        if (index === arr.length - 1)
+          spacedDate.setDate(spacedDate.getDate() + 10);
       }
     }
 
@@ -592,6 +675,11 @@ function renderSalesPriceChart() {
     }
   });
 
+  // Store original data if not already stored
+  if (originalSalesData.length === 0) {
+    originalSalesData = [...salesData];
+  }
+
   // eslint-disable-next-line no-console
   console.log("Final sales data:", salesData);
 
@@ -602,16 +690,26 @@ function renderSalesPriceChart() {
     return dateA - dateB;
   });
 
-  const spacedSalesData = applySpacingToSalesData(salesData);
+  // Filter data by selected time range
+  const filteredSalesData = filterDataByTimeRange(salesData, selectedTimeRange);
 
+  // Check if we have data after filtering
+  if (filteredSalesData.length === 0) {
+    displayNoDataMessage(
+      ctx,
+      "No sales data available for the selected time period.\nPlease select a different time range.",
+    );
+    return;
+  }
 
+  const spacedSalesData = applySpacingToSalesData(filteredSalesData);
   // Extract only the year from the date string for x-axis labels
-  const labels = salesData.map((entry) => {
+  const labels = filteredSalesData.map((entry) => {
     // Try to extract a 4-digit year from the string
     const match = entry.date.match(/\d{4}/);
     return match ? match[0] : entry.date;
   });
-  const prices = salesData.map((entry) => entry.amount);
+  const prices = filteredSalesData.map((entry) => entry.amount);
 
   // Add current year to the timeline if it's not already present
   const currentYear = new Date().getFullYear().toString();
@@ -638,7 +736,7 @@ function renderSalesPriceChart() {
           data: spacedSalesData,
 
           // Add metadata for tooltips
-          saleData: salesData,
+          saleData: filteredSalesData,
           fill: false,
           borderColor: getCSSVar("--chart-line-color", "#4b82d4"),
           backgroundColor: getCSSVar(
@@ -734,11 +832,11 @@ function renderSalesPriceChart() {
 
                 if (saleData && saleData.owner) {
                   const ownerString = saleData.owner.trim();
-                  
+
                   // Check if there are multiple owners (contains semicolon)
-                  const hasMultipleOwners = ownerString.includes(';');
-                  const label = hasMultipleOwners ? 'Owners: ' : 'Owner: ';
-                  
+                  const hasMultipleOwners = ownerString.includes(";");
+                  const label = hasMultipleOwners ? "Owners: " : "Owner: ";
+
                   lines.push(label + ownerString);
                 }
 
@@ -770,10 +868,10 @@ function renderSalesPriceChart() {
             width: parseInt(getCSSVar("--chart-axis-line-width", "1")),
           },
           ticks: {
-            stepSize: 5,           // 👈 shows ticks every 5 years
-            source: "auto",        // lets Chart.js choose tick placement based on data
-            autoSkip: true,        // skips overlapping labels
-            maxTicksLimit: 10,      // optional: prevents over-crowding
+            stepSize: 5, // 👈 shows ticks every 5 years
+            source: "auto", // lets Chart.js choose tick placement based on data
+            autoSkip: true, // skips overlapping labels
+            maxTicksLimit: 10, // optional: prevents over-crowding
             color: getCSSVar("--chart-axis-color", "#8e8b8b"),
             font: {
               family: getCSSVar(
@@ -851,15 +949,32 @@ function renderTaxAssessmentChart() {
     }
   });
 
+  // Store original data if not already stored
+  if (originalTaxData.length === 0) {
+    originalTaxData = [...taxData];
+  }
+
   // eslint-disable-next-line no-console
   console.log("Final tax data:", taxData);
 
   // Sort by year (oldest first)
   taxData.sort((a, b) => parseInt(a.year) - parseInt(b.year));
 
+  // Filter data by selected time range
+  const filteredTaxData = filterDataByTimeRange(taxData, selectedTimeRange);
+
+  // Check if we have data after filtering
+  if (filteredTaxData.length === 0) {
+    displayNoDataMessage(
+      ctx,
+      "No tax data available for the selected time period.\nPlease select a different time range.",
+    );
+    return;
+  }
+
   // Extract years and assessed values
-  const labels = taxData.map((entry) => entry.year);
-  const assessedValues = taxData.map((entry) => entry.assessedValue);
+  const labels = filteredTaxData.map((entry) => entry.year);
+  const assessedValues = filteredTaxData.map((entry) => entry.assessedValue);
 
   // Add current year to the timeline if it's not already present
   const currentYear = new Date().getFullYear().toString();
@@ -885,7 +1000,7 @@ function renderTaxAssessmentChart() {
           label: "Assessed Value",
           data: assessedValues,
           // Add metadata for tooltips
-          taxData: taxData,
+          taxData: filteredTaxData,
           fill: false,
           borderColor: getCSSVar("--chart-line-color", "#4b82d4"),
           backgroundColor: getCSSVar(
@@ -1157,12 +1272,17 @@ function toggleFloorSection(header) {
  * Handles sticky providers card behavior and condensed navigation version
  */
 function setupStickyProviders() {
-  const providersCard = document.querySelector('.providers-card');
-  const sidebar = document.querySelector('.sidebar');
-  const condensedProviders = document.getElementById('nav-providers-condensed');
-  const propertyHistorySection = document.getElementById('property-history');
-  
-  if (!providersCard || !sidebar || !condensedProviders || !propertyHistorySection) {
+  const providersCard = document.querySelector(".providers-card");
+  const sidebar = document.querySelector(".sidebar");
+  const condensedProviders = document.getElementById("nav-providers-condensed");
+  const propertyHistorySection = document.getElementById("property-history");
+
+  if (
+    !providersCard ||
+    !sidebar ||
+    !condensedProviders ||
+    !propertyHistorySection
+  ) {
     return;
   }
 
@@ -1184,49 +1304,60 @@ function setupStickyProviders() {
     const originalTop = getSidebarOriginalTop();
     const navHeight = 104;
     const targetStickyTop = navHeight; // Where we want sidebar top to be when sticky
-    
+
     if (isSticky) {
       // Calculate sticky transform
-      const stickyTransform = Math.max(0, scrollY + targetStickyTop - originalTop);
+      const stickyTransform = Math.max(
+        0,
+        scrollY + targetStickyTop - originalTop,
+      );
       sidebar.style.transform = `translateY(${stickyTransform}px)`;
-      
+
       // Check if providers card would hit property history bottom
       const providersCardRect = providersCard.getBoundingClientRect();
-      const propertyHistoryRect = propertyHistorySection.getBoundingClientRect();
+      const propertyHistoryRect =
+        propertyHistorySection.getBoundingClientRect();
       const providersBottom = providersCardRect.bottom;
       const historyBottom = propertyHistoryRect.bottom;
       const buffer = 10;
-      
-      if ((providersBottom + buffer) >= historyBottom && historyBottom < window.innerHeight) {
+
+      if (
+        providersBottom + buffer >= historyBottom &&
+        historyBottom < window.innerHeight
+      ) {
         // Record where we transition and switch to scrolling mode
         transitionPoint = stickyTransform;
         isSticky = false;
-        condensedProviders.classList.add('show');
+        condensedProviders.classList.add("show");
       }
     } else {
       // In scrolling mode - gradually return to natural position
       const scrollDelta = scrollY + targetStickyTop - originalTop;
-      const targetTransform = Math.max(0, Math.min(transitionPoint, scrollDelta));
+      const targetTransform = Math.max(
+        0,
+        Math.min(transitionPoint, scrollDelta),
+      );
       sidebar.style.transform = `translateY(${targetTransform}px)`;
-      
+
       // Check if we should go back to sticky
-      const propertyHistoryRect = propertyHistorySection.getBoundingClientRect();
+      const propertyHistoryRect =
+        propertyHistorySection.getBoundingClientRect();
       const historyTop = propertyHistoryRect.top;
       const windowHeight = window.innerHeight;
-      
+
       if (historyTop > windowHeight * 0.3) {
         // Transition back to sticky mode
         isSticky = true;
-        condensedProviders.classList.remove('show');
+        condensedProviders.classList.remove("show");
       }
     }
   }
 
   // Add scroll event listener with throttling for performance
   let ticking = false;
-  window.addEventListener('scroll', function() {
+  window.addEventListener("scroll", function () {
     if (!ticking) {
-      requestAnimationFrame(function() {
+      requestAnimationFrame(function () {
         handleScroll();
         ticking = false;
       });
@@ -1235,33 +1366,39 @@ function setupStickyProviders() {
   });
 
   // Add click handler to "view all providers" button
-  const viewAllProvidersBtn = document.getElementById('view-all-providers-btn');
-  const providersOverlay = document.getElementById('providers-overlay');
-  const closeOverlayBtn = document.getElementById('close-overlay-btn');
-  const providersOverlayList = document.querySelector('.providers-overlay-list');
-  
+  const viewAllProvidersBtn = document.getElementById("view-all-providers-btn");
+  const providersOverlay = document.getElementById("providers-overlay");
+  const closeOverlayBtn = document.getElementById("close-overlay-btn");
+  const providersOverlayList = document.querySelector(
+    ".providers-overlay-list",
+  );
+
   if (viewAllProvidersBtn && providersOverlay) {
-    viewAllProvidersBtn.addEventListener('click', function(e) {
+    viewAllProvidersBtn.addEventListener("click", function (e) {
       e.stopPropagation();
-      
+
       // Copy providers content to overlay
       if (providersOverlayList && providersCard) {
-        const providersListClone = providersCard.querySelector('.providers-list').cloneNode(true);
-        providersOverlayList.innerHTML = '';
+        const providersListClone = providersCard
+          .querySelector(".providers-list")
+          .cloneNode(true);
+        providersOverlayList.innerHTML = "";
         providersOverlayList.appendChild(providersListClone);
       }
-      
+
       // Position overlay relative to condensed card
       const condensedRect = condensedProviders.getBoundingClientRect();
-      const overlayContent = providersOverlay.querySelector('.providers-overlay-content');
+      const overlayContent = providersOverlay.querySelector(
+        ".providers-overlay-content",
+      );
       const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
-      
+
       // Calculate position ensuring overlay stays in viewport
       let top = condensedRect.top;
       let left = condensedRect.left;
       const overlayWidth = 274; // Fixed width to match original providers card
-      
+
       // Adjust position if overlay would go off screen
       if (left + overlayWidth > viewportWidth - 20) {
         left = viewportWidth - overlayWidth - 20;
@@ -1269,37 +1406,37 @@ function setupStickyProviders() {
       if (left < 20) {
         left = 20;
       }
-      
+
       // Ensure overlay doesn't go below viewport
       if (top + 500 > viewportHeight) {
         top = Math.max(20, viewportHeight - 500);
       }
-      
-      overlayContent.style.top = top + 'px';
-      overlayContent.style.left = left + 'px';
-      
+
+      overlayContent.style.top = top + "px";
+      overlayContent.style.left = left + "px";
+
       // Show overlay
-      providersOverlay.classList.add('show');
+      providersOverlay.classList.add("show");
     });
   }
-  
+
   // Close overlay handlers
   if (closeOverlayBtn && providersOverlay) {
-    closeOverlayBtn.addEventListener('click', function() {
-      providersOverlay.classList.remove('show');
+    closeOverlayBtn.addEventListener("click", function () {
+      providersOverlay.classList.remove("show");
     });
-    
+
     // Close on background click
-    providersOverlay.addEventListener('click', function(e) {
+    providersOverlay.addEventListener("click", function (e) {
       if (e.target === providersOverlay) {
-        providersOverlay.classList.remove('show');
+        providersOverlay.classList.remove("show");
       }
     });
-    
+
     // Close on escape key
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape' && providersOverlay.classList.contains('show')) {
-        providersOverlay.classList.remove('show');
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && providersOverlay.classList.contains("show")) {
+        providersOverlay.classList.remove("show");
       }
     });
   }
@@ -1314,6 +1451,7 @@ function setupStickyProviders() {
 document.addEventListener("DOMContentLoaded", function () {
   setupNavigation();
   setupChartTabs();
+  setupTimeRangeSelector();
   toggleNavigationOnShortPage();
   setupStickyProviders();
 
