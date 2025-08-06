@@ -49,7 +49,20 @@ To adapt new data use IPLD relationships resolution approach simillart to loadCa
 
 Make sure to use Playwright MCP serveer to assess results of your work.
 
-Make sure to use use Contex7 MCP to get latest docuemntation whenever you are using any programming language runtime or/and library.
+Make sure to use use Contex7 MCP to get latest documentation whenever you are using any programming language runtime or/and library.
+
+NEVER change any code in the /lib directory unless specifically asked by a user.
+
+To put new data into a template make sure to use the full path of traversed data, starting from it's root. 
+<example>
+<h1>{{ homes[property_id].flattenedData["Photo Metadata"].relationships.property_has_layout[0].to.clutter_level }} </h1>
+</example>
+
+Ask user for a full and correct path to the data before making any changes.
+Be concise.
+Do not take shortcuts.
+Make no mistakes.
+
 
 Act as a senior software engineer.
 

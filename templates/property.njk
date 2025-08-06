@@ -209,7 +209,7 @@ function updateSectionVisibility(label) {
                 <!-- Property Header -->
                 <header class="property-header" data-section="property-header">
                 <div class="property-address" data-section="property-address">
-                  <h1>{{ homes[property_id].flattenedData["Photo Metadata"].relationships.property_has_layout[0].to.clutter_level }} </h1> 
+                  {# <h1>{{ homes[property_id].flattenedData["Photo Metadata"].relationships.property_has_layout[0].to.clutter_level }} </h1> #}
                     <h1 class="property-address-title">
                         {% if homes[property_id].address %}
                             {% if homes[property_id].address.street_number %}{{ homes[property_id].address.street_number }}{% endif %}
