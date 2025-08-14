@@ -92,15 +92,25 @@ function setupNavigation() {
 
       // Get target section
       const targetId = this.getAttribute("href");
-      const targetSection = document.querySelector(targetId);
 
-      if (targetSection) {
-        // Smooth scroll to section
-        targetSection.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
+      // Handle overview section - scroll to top of page
+      if (targetId === "#property-header") {
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth"
         });
         trackEvent("navigation_click", { target: targetId });
+      } else {
+        const targetSection = document.querySelector(targetId);
+
+        if (targetSection) {
+          // Smooth scroll to section
+          targetSection.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+          trackEvent("navigation_click", { target: targetId });
+        }
       }
     });
   });
@@ -1126,15 +1136,10 @@ function refreshTaxChart() {
   renderTaxAssessmentChart();
 }
 
-// Hide navigation if page content does not exceed viewport height
+// Navigation always shows - auto-hide functionality disabled
 function toggleNavigationOnShortPage() {
-  const nav = document.getElementById("main-navigation");
-  if (!nav) return;
-  if (document.body.scrollHeight <= window.innerHeight) {
-    nav.style.display = "none";
-  } else {
-    nav.style.display = "";
-  }
+  // Function disabled - navigation always shows
+  return;
 }
 
 /**

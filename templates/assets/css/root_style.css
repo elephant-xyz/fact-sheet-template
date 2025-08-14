@@ -1,4 +1,6 @@
-/* Global Styles */
+/* ==========================================================================
+   GLOBAL STYLES
+   ========================================================================== */
 html {
   scroll-behavior: smooth;
 }
@@ -20,6 +22,161 @@ body {
   overflow-x: visible !important;
 }
 
+/* ==========================================================================
+   TYPOGRAPHY STYLES
+   ========================================================================== */
+.h1-style {
+  font-family: neue-haas-grotesk-display, system-ui, sans-serif;
+  font-size: 2.5rem;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 100%;
+}
+
+.h5-style {
+  font-family: neue-haas-grotesk-display, system-ui, sans-serif;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 120%;
+  letter-spacing: 0.02625rem;
+}
+
+.body-large-style {
+  font-family: neue-haas-grotesk-display, system-ui, sans-serif;
+  font-size: 1.25rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 100%;
+  letter-spacing: 0.0375rem;
+}
+
+.body-small-style {
+  font-family: neue-haas-grotesk-display, system-ui, sans-serif;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 120%;
+  letter-spacing: 0.02625rem;
+}
+
+.fine-print-style {
+  font-family: neue-haas-grotesk-display, system-ui, sans-serif;
+  font-size: 0.625rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 100%;
+  letter-spacing: 0.025rem;
+}
+
+/* Source Link Styles */
+.source-link {
+  display: flex;
+  padding-top: 32px;
+  justify-content: flex-end;
+  align-items: center;
+  align-self: stretch;
+  font-family: neue-haas-grotesk-display, system-ui, sans-serif;
+  font-size: 0.625rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 100%;
+  letter-spacing: 0.025rem;
+  color: #8e8b8b;
+}
+
+.source-link-text {
+  color: #8e8b8b;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.source-link-text:hover {
+  color: #423e3e;
+}
+
+/* Section Styling - Same as Property Header */
+
+.building-details-section.show {
+  border-radius: 16px;
+  border: 1px solid #f0f0f0;
+  display: flex !important;
+  padding: 48px 16px 16px 16px;
+  flex-direction: column;
+  align-items: center;
+  align-self: stretch;
+  gap: 24px;
+}
+
+.tax-information-section {
+  display: none;
+}
+
+/* Property History Section - Custom Layout */
+.property-history-section.show {
+  border-radius: 16px;
+  border: 1px solid #f0f0f0;
+  display: flex !important;
+  padding: 48px 16px 16px 16px;
+  flex-direction: column;
+  align-items: center;
+  align-self: stretch;
+}
+
+/* Sales Table (for 1-2 sales) */
+.sales-table-container {
+  width: 100%;
+  margin: 24px 0;
+  border: 1px solid #f0f0f0;
+  border-radius: 16px;
+  overflow: hidden;
+  background-color: #ffffff;
+}
+
+.sales-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: neue-haas-grotesk-display, system-ui, sans-serif;
+  background-color: transparent;
+  border: none;
+}
+
+.sales-history-table th {
+  background-color: #FAFAFA;
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid #d9d8d8;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+}
+
+.sales-history-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+}
+
+.sales-history-table tr:last-child td {
+  border-bottom: none;
+}
+
+
+/* Features Section - Same styling as other sections */
+.section#features.show {
+  border-radius: 16px;
+  border: 1px solid #f0f0f0;
+  display: flex !important;
+  padding: 32px 16px 16px 16px !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+}
+
+
 /* Ensure Neue Haas Grotesk is used everywhere */
 button,
 input,
@@ -36,66 +193,88 @@ option {
 }
 
 .container {
-  max-width: 1536px;
-  width: 100%;
+  display: flex;
+  flex-direction: column;
+  max-width: 900px;
   margin: 0 auto;
-  padding: 104px 160px;
-  overflow-x: visible !important;
-  transition: padding-top 0.3s ease;
+  margin-top: 104px;
+  align-items: center;
+  gap: 8px;
 }
 
-/* Reduce top padding when navigation is hidden */
-.navigation.auto-hide ~ .container {
-  padding-top: 40px;
-}
+
 
 /* Main Layout */
 .main-layout {
   display: flex;
-  gap: 20px;
-  flex-wrap: nowrap;
+  max-width: 900px;
+  padding: 32px 0 48px 0;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  align-self: stretch;
 }
 
 .main-content {
-  flex: 1 1 0;
-  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 32px;
-  margin-bottom: 80px;
-  width: 100%;
+  max-width: 900px;
+  padding: 32px 0 48px 0;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  align-self: stretch;
 }
 
-@media (max-width: 768px) {
-  .main-content {
-    margin-bottom: 16px;
-  }
-}
 
-/* Navigation */
+
+/* ==========================================================================
+   NAVIGATION STYLES
+   ========================================================================== */
 .navigation {
   width: 100%;
   background-color: #ffffff;
-  border-bottom: 2px solid #d9d8d8;
-  box-shadow: 0px 2px 10px 2px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid #d9d8d8;
   position: fixed;
+  top: 0;
+  left: 0;
   z-index: 10;
   transition: transform 0.3s ease;
+  align-items: center;
 }
 
-/* Hide navigation when content doesn't exceed viewport */
-.navigation.auto-hide {
-  transform: translateY(-100%);
-}
+
 
 .nav-content {
   display: flex;
-  justify-content: space-between;
-  align-items: end;
+  justify-content: center;
+  align-items: center;
   height: 80px;
   padding: 0 160px;
-  max-width: 1536px;
+  max-width: 900px;
   margin: 0 auto;
+  margin-top: 4px !important;
+  position: relative;
+}
+
+.chart-tabs-container {
+  padding: 0 16px;
+
+}
+
+/* Navigation Logo */
+.nav-logo {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  position: absolute;
+  left: 160px;
+  top: 0;
+}
+
+.logo-image {
+  height: 24px;
+  width: auto;
 }
 
 .nav-tabs {
@@ -212,23 +391,7 @@ option {
   opacity: 0.7;
 }
 
-/* Desktop Version (in navigation) */
-.view-all-providers-btn-desktop {
-  /* Inherits base styles - add desktop-specific overrides here */
-}
-
-.view-all-providers-btn-desktop:hover {
-  /* Desktop-specific hover styles */
-}
-
-/* Mobile Version (in main content) */
-.view-all-providers-btn-mobile {
-  /* Inherits base styles - add mobile-specific overrides here */
-}
-
-.view-all-providers-btn-mobile:hover {
-  /* Mobile-specific hover styles */
-}
+/* Desktop and mobile versions inherit base styles and override in media queries */
 
 .dropdown-icon {
   flex-shrink: 0;
@@ -316,26 +479,36 @@ option {
 
 .nav-tab {
   padding: 0px 4px;
-  font-size: 11px;
-  font-weight: 600;
+  font-family: neue-haas-grotesk-display, system-ui, sans-serif;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 120%;
+  letter-spacing: 0.02625rem;
   color: #8e8b8b;
   text-decoration: none;
   border-bottom: 2px solid transparent;
-  height: 108%;
+  height: 100%;
   display: flex;
   align-items: center;
+  position: relative;
 }
 
 .nav-tab.active {
   color: #423e3e;
-  border-bottom-color: #8e8b8b;
 }
 
-.header-section {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+.nav-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -19px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #8e8b8b;
 }
+
+
 
 /* Image Carousel */
 .carousel-container {
@@ -711,19 +884,21 @@ option {
 }
 
 /* Section Styles */
-.section {
-  padding: 0 4px;
-}
 
 .section-subtitle {
-  font-size: 14px;
+  font-family: neue-haas-grotesk-display, system-ui, sans-serif;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 120%;
+  letter-spacing: 0.02625rem;
   color: #423e3e;
-
-  line-height: 100%;
+  padding-left: 2px;
 }
 
 /* Sidebar */
 .sidebar {
+  display: none !important;
   width: 274px;
   flex-shrink: 0;
   position: relative;
@@ -1043,11 +1218,15 @@ option {
 }
 
 /* Property Header Styles */
-.property-header {
-  display: flex;
+.property-header.show {
+  display: flex !important;
   flex-direction: column;
-  gap: 12px;
-  padding: 0 4px;
+  align-items: center;
+  gap: 24px;
+  align-self: stretch;
+  border-radius: 16px;
+  border: 1px solid #f0f0f0;
+  padding: 48px 16px 16px 16px;
 }
 
 .status-badges {
@@ -1230,9 +1409,10 @@ option {
 
 .location-details {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 8px;
-  font-size: 14px;
+  justify-content: center;
+  gap: 4px;
   color: #8e8b8b;
 }
 
@@ -1244,8 +1424,30 @@ option {
   margin: 0 0px;
 }
 
+/* Property Specs (Beds/Baths/Sqft) */
+.property-specs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #8e8b8b;
+}
+
+.property-specs-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.property-specs span {
+  font-size: 2.5rem;
+  font-weight: 600;
+  line-height: 100%;
+  color: #423e3e;
+}
+
 .parcel-id-info {
   color: #423e3e;
+  opacity: 0.6;
   font-size: 13px;
   margin-bottom: 8px;
 }
@@ -1258,55 +1460,21 @@ h1 {
   line-height: 110%;
 }
 
-h1 .data-footnote {
-  font-size: 13px;
-  color: #8e8b8b;
-  font-weight: 400 !important;
-  vertical-align: super;
-  margin-left: 2px;
-  text-decoration: none;
-  cursor: pointer;
-  transition: color 0.2s ease;
-  line-height: 1;
-  position: relative;
-  top: -0.3em;
-}
 
-h1 .data-footnote:hover {
-  color: #423e3e;
-}
 
 .property-address-title {
-  font-size: 32px;
-  font-weight: 600;
-  letter-spacing: 0em;
+  font-size: 1.25rem;
+  font-weight: 500;
+  letter-spacing: 0.0375rem;
   color: #423e3e;
-  line-height: 110%;
-  margin-bottom: 4px;
-  margin-top: 0;
+  line-height: 100%;
+  text-align: center;
 }
 
-/* Styling for the data footnote within the address title */
-.property-address-title .data-footnote {
-  font-size: 13px;
-  color: #8e8b8b;
-  font-weight: 400 !important;
-  vertical-align: super;
-  margin-left: 2px;
-  text-decoration: none;
-  cursor: pointer;
-  transition: color 0.2s ease;
-  line-height: 1;
-  position: relative;
-  top: -0.3em;
-}
 
-.property-address-title .data-footnote:hover {
-  color: #423e3e;
-}
 
 .breadcrumb {
-  display: flex;
+  display: none !important;
   list-style: none;
   padding: 0;
   margin: 0px 2px;
@@ -1347,9 +1515,15 @@ h1 .data-footnote:hover {
   margin: 24px 0;
 }
 
-/* Responsive Styles */
+/* ==========================================================================
+   RESPONSIVE BREAKPOINTS
+   Organized by screen size (largest to smallest)
+   ========================================================================== */
+
+/* Extra Large screens (up to 1535px) */
 @media (max-width: 1535px) {
   .sidebar {
+    display: none !important;
     width: 274px;
   }
   .nav-providers-condensed {
@@ -1357,37 +1531,45 @@ h1 .data-footnote:hover {
   }
 }
 
+/* Large screens (up to 1280px) */
 @media (max-width: 1280px) {
   .sidebar {
+    display: none !important;
     width: 274px;
   }
   .nav-providers-condensed {
     width: 274px;
   }
   .container {
-    padding: 104px 104px;
+    padding: 32px;
   }
   .nav-content {
     padding: 0 104px;
     max-width: 1536px;
     margin: 0 auto;
   }
+  .nav-logo {
+    left: 104px;
+  }
 }
 
+/* Medium screens (up to 1024px) */
 @media (max-width: 1024px) {
   .sidebar {
+    display: none !important;
     width: 220px;
   }
   .nav-providers-condensed {
     width: 220px;
   }
-  .container {
-    padding: 104px 52px;
-  }
+
   .nav-content {
     padding: 0 52px;
     max-width: 1536px;
     margin: 0 auto;
+  }
+  .nav-logo {
+    left: 52px;
   }
   .providers-card {
     padding: 8px;
@@ -1417,11 +1599,43 @@ h1 .data-footnote:hover {
   }
 }
 
+/* Small screens (up to 768px) - Tablets and mobile */
 @media (max-width: 768px) {
-  .navigation {
+  .nav-tabs-container {
     display: none;
   }
+  .property-specs span {
+    font-size: 2rem;
+  }
+  .features-grid {
+    display: flex;
+    flex-direction: column !important;
+    align-items: flex-start;
+    gap: 12px;
+    align-self: stretch;
+  }
+  .section#features.show {
+    border-radius: 16px;
+    border: 1px solid #f0f0f0;
+    display: flex !important;
+    padding: 48px 48px 16px 48px !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    align-self: stretch;
+  }
+  
+  /* Typography adjustments for mobile */
+  h1 {
+    font-size: 2rem;
+  }
+  
+  .body-large {
+    font-size: 1.1rem;
+  }
+  
   .sidebar {
+    display: none !important;
     width: 220px;
   }
   .nav-providers-condensed {
@@ -1436,12 +1650,13 @@ h1 .data-footnote:hover {
     max-width: 1536px;
     margin: 0 auto;
   }
-
-  .main-layout {
-    flex-direction: column;
-    position: relative;
+  .nav-logo {
+    left: 24px;
   }
+
+
   .sidebar {
+    display: none !important;
     position: fixed !important;
     bottom: 0 !important;
     left: 0 !important;
@@ -1451,7 +1666,6 @@ h1 .data-footnote:hover {
     transform: none !important;
     top: auto !important;
     margin: 0 !important;
-    display: flex !important;
     flex-wrap: wrap !important;
     justify-content: center !important;
   }
@@ -1482,8 +1696,66 @@ h1 .data-footnote:hover {
   .address-item {
     padding: 16px;
   }
+  
+  /* Layout adjustments */
+  .main-content {
+    margin-bottom: 16px;
+  }
+  
+  /* Provider mobile behavior */
+  .view-all-providers-btn-mobile {
+    display: flex;
+  }
+  
+  /* Hide additional providers by default on mobile */
+  .providers-list .provider-item:not(:first-child) {
+    display: none;
+  }
+  
+  /* Show all providers when expanded */
+  .providers-list.mobile-expanded .provider-item {
+    display: flex;
+  }
+  
+  /* Show view less button when expanded */
+  .providers-list.mobile-expanded .view-less-providers-btn {
+    display: flex;
+  }
+  
+  /* Hide view all button when expanded */
+  .providers-list.mobile-expanded .view-all-providers-btn-mobile {
+    display: none;
+  }
+  
+  /* Floorplan mobile layout */
+  .floorplan-floors {
+    flex-direction: column;
+    gap: 20px;
+  }
+  .floor-section {
+    padding: 16px 8px;
+    gap: 16px;
+  }
+  .features-grid {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    align-self: stretch;
+  }
+  
+  /* Scroll offset for mobile navigation */
+  .scroll-offset-section {
+    scroll-margin-top: 64px;
+  }
+  
+  /* Sales table mobile styling */
+  .sales-history-table th,
+  .sales-history-table td {
+    padding: 8px 12px;
+  }
 }
 
+/* Extra small screens (up to 480px) - Mobile phones */
 @media (max-width: 480px) {
   html,
   body {
@@ -1492,17 +1764,37 @@ h1 .data-footnote:hover {
   .container {
     padding: 48px 16px 120px 16px;
   }
-  .navigation {
+  
+  /* Hide nav tabs but keep navigation bar */
+  .nav-tabs {
     display: none;
   }
+  
+  /* Center the logo */
+  .nav-logo {
+    position: static;
+    justify-content: center;
+    width: 100%;
+  }
+  
+  .nav-content {
+    justify-content: center;
+    padding: 0 16px;
+  }
+  
   .breadcrumb {
     font-size: 12px;
   }
-  .main-layout {
+  .property-specs span {
+    font-size: 1.75rem;
+  }
+  .property-overview-row {
+    display: flex;
     flex-direction: column;
-    position: relative;
+    gap: 32px !important;
   }
   .sidebar {
+    display: none !important;
     position: fixed !important;
     bottom: 0 !important;
     left: 0 !important;
@@ -1512,7 +1804,6 @@ h1 .data-footnote:hover {
     transform: none !important;
     top: auto !important;
     margin: 0 !important;
-    display: flex !important;
     flex-wrap: wrap !important;
     justify-content: center !important;
   }
@@ -1580,6 +1871,14 @@ h1 .data-footnote:hover {
   }
 }
 
+@media (max-width: 390px) {
+ 
+  .property-specs {
+    flex-direction: column;
+  }
+}
+
+/* Very small screens (up to 320px) - Small mobile phones */
 @media (max-width: 320px) {
   .container {
     padding: 48px 16px 120px 16px;
@@ -1587,10 +1886,10 @@ h1 .data-footnote:hover {
   .navigation {
     display: none;
   }
-  .main-layout {
+  .property-specs {
     flex-direction: column;
-    position: relative;
   }
+
   .sidebar {
     position: fixed !important;
     bottom: 0 !important;
@@ -1650,13 +1949,21 @@ h1 .data-footnote:hover {
 /* Chart Tabs */
 .chart-tabs-container {
   margin-top: 0px;
+  width: 100%;
+  padding: 0 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  align-self: stretch;
 }
 
 .chart-tabs {
-  display: flex;
-  gap: 0;
-
-  margin-bottom: 16px;
+display: flex;
+justify-content: center;
+align-items: flex-start;
+gap: 20px;
+flex: 1 0 0;
 }
 
 .chart-tab {
@@ -1664,9 +1971,12 @@ h1 .data-footnote:hover {
   border: none;
   padding: 4px 2px;
   margin-right: 8px;
-  font-size: 14px;
-  letter-spacing: 0.04em;
+  font-family: neue-haas-grotesk-display, system-ui, sans-serif;
+  font-size: 0.875rem;
+  font-style: normal;
   font-weight: 600;
+  line-height: 120%;
+  letter-spacing: 0.02625rem;
   color: #8e8b8b;
   cursor: pointer;
   border-bottom: 2px solid transparent;
@@ -1684,6 +1994,7 @@ h1 .data-footnote:hover {
 
 .chart-content-container {
   position: relative;
+  width: 100%;
 }
 
 .chart-content {
@@ -1698,6 +2009,7 @@ h1 .data-footnote:hover {
   margin-top: 0;
   border-radius: 12px;
   height: 300px;
+  
 }
 
 /* Chart Customization Variables */
@@ -1717,13 +2029,13 @@ h1 .data-footnote:hover {
 
   /* Price Labels */
   --chart-price-label-color: #423e3e;
-  --chart-price-label-size: 10;
+  --chart-price-label-size: 14;
   --chart-price-label-offset: 10;
 
   /* Axis Styling */
   --chart-axis-color: #423e3e;
-  --chart-axis-font-size: 12;
-  --chart-axis-font-weight: 400;
+  --chart-axis-font-size: 14;
+  --chart-axis-font-weight: 500;
   --chart-axis-line-color: #d9d8d8;
   --chart-axis-line-width: 1;
   --chart-axis-line-display: true;
@@ -1752,97 +2064,9 @@ h1 .data-footnote:hover {
   --chart-font-family: neue-haas-grotesk-display, system-ui, sans-serif;
 }
 
-.data-footnote {
-  font-size: 10px;
-  color: #8e8b8b;
-  font-weight: 600 !important;
-  vertical-align: super;
-  margin-left: 2px;
-  text-decoration: none;
-  cursor: pointer;
-  transition: color 0.2s ease;
-}
 
-.data-footnote:hover {
-  color: #2be786;
-}
 
-/* EXPANDING FOOTNOTE STYLES - COMMENTED OUT FOR FUTURE USE */
-/*
-:root {
-  --footnote-font-size: 10px;
-  --footnote-color: #8E8B8B;
-  --footnote-font-weight: 400;
-  --footnote-margin-left: 2px;
-  --footnote-bg: transparent;
-  --footnote-border-radius: 4px;
-  --footnote-padding: 4px 4px;
-  --footnote-max-width: 20px;
-  --footnote-hover-bg: #AAF5CF;
-  --footnote-color: #423E3E;
-  --footnote-hover-max-width: 300px;
-  --footnote-hover-padding: 4px 4px;
-  --footnote-label-font-size: 13px;
-  --footnote-label-color: #423E3E;
-  --footnote-label-font-weight: 500;
-  --footnote-label-margin-left: 6px;
-  --footnote-label-arrow: "";
-  --footnote-mobile-max-width: 200px;
-  --footnote-mobile-label-font-size: 9px;
-}
 
-.data-footnote {
-  position: relative;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  background: var(--footnote-bg);
-  border: var(--footnote-border);
-  border-radius: var(--footnote-border-radius);
-  padding: var(--footnote-padding);
-  margin-left: var(--footnote-margin-left);
-  transition: all var(--footnote-transition-duration) var(--footnote-transition-timing);
-  white-space: nowrap;
-  overflow: hidden;
-  max-width: var(--footnote-max-width);
-  font-size: var(--footnote-font-size);
-  color: var(--footnote-color);
-  font-weight: var(--footnote-font-weight);
-}
-
-.data-footnote:hover {
-  background: var(--footnote-hover-bg);
-  border: var(--footnote-hover-border);
-  max-width: var(--footnote-hover-max-width);
-  padding: var(--footnote-hover-padding);
-  box-shadow: var(--footnote-hover-shadow);
-}
-
-.data-footnote::after {
-  content: "View Data Source" var(--footnote-label-arrow);
-  margin-left: var(--footnote-label-margin-left);
-  font-size: var(--footnote-label-font-size);
-  color: var(--footnote-label-color);
-  opacity: 0;
-  transition: opacity var(--footnote-transition-duration) var(--footnote-transition-timing);
-  white-space: nowrap;
-  font-weight: var(--footnote-label-font-weight);
-}
-
-.data-footnote:hover::after {
-  opacity: 1;
-}
-
-@media (max-width: 768px) {
-  .data-footnote:hover {
-    max-width: var(--footnote-mobile-max-width);
-  }
-  
-  .data-footnote::after {
-    font-size: var(--footnote-mobile-label-font-size);
-  }
-}
-*/
 
 .data-source-btn {
   display: inline-block;
@@ -1887,30 +2111,7 @@ h1 .data-footnote:hover {
   margin-bottom: 8px;
 }
 
-/* Footnote styling for all subheadings */
-.property-history-subheading .data-footnote,
-.tax-subsection-title .data-footnote,
-.section-subtitle .data-footnote,
-.providers-title .data-footnote {
-  font-size: 10px;
-  color: #423e3e;
-  font-weight: 400 !important;
-  vertical-align: super;
-  margin-left: 2px;
-  line-height: 1;
-  position: relative;
-  top: -0.5em;
-  text-decoration: none;
-  cursor: pointer;
-  transition: color 0.2s ease;
-}
 
-.property-history-subheading .data-footnote:hover,
-.tax-subsection-title .data-footnote:hover,
-.section-subtitle .data-footnote:hover,
-.providers-title .data-footnote:hover {
-  color: #423e3e;
-}
 
 /* Tax Year Subtitle Styling */
 .tax-year-subtitle {
@@ -2115,32 +2316,7 @@ h1 .data-footnote:hover {
   transform: rotate(180deg);
 }
 
-/* Mobile breakpoint styles */
-@media (max-width: 768px) {
-  .view-all-providers-btn-mobile {
-    display: flex;
-  }
-  
-  /* Hide additional providers by default on mobile */
-  .providers-list .provider-item:not(:first-child) {
-    display: none;
-  }
-  
-  /* Show all providers when expanded */
-  .providers-list.mobile-expanded .provider-item {
-    display: flex;
-  }
-  
-  /* Show view less button when expanded */
-  .providers-list.mobile-expanded .view-less-providers-btn {
-    display: flex;
-  }
-  
-  /* Hide view all button when expanded */
-  .providers-list.mobile-expanded .view-all-providers-btn-mobile {
-    display: none;
-  }
-}
+
 
 .email-icon {
   width: 16px;
@@ -2156,10 +2332,7 @@ h1 .data-footnote:hover {
   text-decoration: none;
 }
 
-.tax-information-section {
-  padding: 16px 4px;
-  display: none;
-}
+
 
 .tax-data-points {
   display: flex;
@@ -2229,6 +2402,7 @@ h1 .data-footnote:hover {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  align-self: stretch;
 }
 
 .building-details-grid {
@@ -2306,7 +2480,7 @@ h1 .data-footnote:hover {
 
 .building-spec-item {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 4px;
 }
 
@@ -2316,6 +2490,18 @@ h1 .data-footnote:hover {
   color: #423e3e;
 }
 
+/* H5 Style Labels for Parcel ID and Legal Description */
+.building-spec-label-h5 {
+  font-family: neue-haas-grotesk-display, system-ui, sans-serif;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 120%;
+  letter-spacing: 0.02625rem;
+  color: #423e3e;
+  opacity: 0.6;
+}
+
 .building-spec-value {
   display: flex;
   align-items: end;
@@ -2323,18 +2509,82 @@ h1 .data-footnote:hover {
 }
 
 .building-spec-text {
-  font-size: 13px;
+  font-family: neue-haas-grotesk-display, system-ui, sans-serif;
+  font-size: 1.25rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 100%;
+  letter-spacing: 0.0375rem;
   color: #423e3e;
   flex: 1;
 }
 
+/* Body Small Style Text for Parcel ID and Legal Description Data */
+.building-spec-text-small {
+  font-family: neue-haas-grotesk-display, system-ui, sans-serif;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 120%;
+  letter-spacing: 0.02625rem;
+  color: #423e3e;
+  flex: 1;
+  opacity: 0.6;
+}
+
+/* Property Overview Row */
+.property-overview-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 104px;
+  margin-bottom: 16px;
+ 
+}
+
+.property-overview-item {
+  display: flex;
+  padding: 4px 0;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.property-overview-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.property-overview-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.property-overview-text {
+  font-family: neue-haas-grotesk-display, system-ui, sans-serif;
+  font-size: 1.25rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 100%;
+  letter-spacing: 0.0375rem;
+  color: #423e3e;
+}
+
+/* Legal and Parcel Information Group */
+.legal-parcel-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+}
+
 /* === Floorplan Section Styling === */
-.floorplan-header {
-  /* Add your styles here */
-}
-.floorplan-info {
-  /* Add your styles here */
-}
+
+
 .floorplan-specs {
   margin-bottom: 4px;
   display: flex;
@@ -2367,10 +2617,14 @@ h1 .data-footnote:hover {
 /* Property Type Info */
 .property-type-info,
 .property-type-value {
-  
   margin-top: 4px;
   margin-bottom: 8px;
-  font-size: 13px;
+  font-family: neue-haas-grotesk-display, system-ui, sans-serif;
+  font-size: 1.25rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 100%;
+  letter-spacing: 0.0375rem;
   color: #423e3e;
 }
 
@@ -2383,27 +2637,40 @@ h1 .data-footnote:hover {
 
 .features-grid {
   display: flex;
-  gap: 24px;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 12px;
+  align-self: stretch;
 }
 
 /* Features Sections */
 .features-section {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
+  align-self: stretch;
+  flex: 1;
   gap: 16px;
-  padding: 0 4px;
-  width: 320px;
 }
 
 .features-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  align-self: stretch;
 }
 
 .feature-item-detailed {
   display: flex;
+  padding: 6px 8px;
   flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  align-self: stretch;
+  border-radius: 6px;
+background: #FAFAFA;
+align-self: stretch;
+  
 }
 
 .feature-row {
@@ -2426,7 +2693,12 @@ h1 .data-footnote:hover {
 }
 
 .feature-main-text {
-  font-size: 13px;
+  font-family: neue-haas-grotesk-display, system-ui, sans-serif;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 120%;
+  letter-spacing: 0.02625rem;
   color: #423e3e;
 }
 
@@ -2510,22 +2782,8 @@ h1 .data-footnote:hover {
   min-width: 200px;
   margin: 8px 0px;
 }
-@media (max-width: 768px) {
-  .floorplan-floors {
-    flex-direction: column;
-    gap: 20px;
-  }
-  .floor-section {
-    padding: 16px 8px;
-    gap: 16px;
-  }
 
-  .features-grid {
-    flex-direction: column;
-    gap: 32px;
-  }
-
-  .features-section {
+.features-section {
     width: 100%;
   }
 
@@ -2550,9 +2808,11 @@ h1 .data-footnote:hover {
 
   .chart-tab {
     padding: 2px 8px;
-    font-size: 13px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 120%;
+    letter-spacing: 0.02625rem;
   }
-}
 
 .floor-header img:not(.floor-header-icon) {
   width: 24px;
@@ -2576,11 +2836,7 @@ h1 .data-footnote:hover {
   padding: 0 4px;
 }
 
-@media (max-width: 768px) {
-  .scroll-offset-section {
-    scroll-margin-top: 64px;
-  }
-}
+
 
 .key-features {
   display: flex;
@@ -2767,7 +3023,7 @@ h1 .data-footnote:hover {
 }
 
 [data-section].show {
-  display: block !important;
+  display: flex !important;
   visibility: visible !important;
   opacity: 1 !important;
   height: auto !important;
