@@ -661,7 +661,7 @@
     {
       "lexiconClass": "structure",
       "lexiconProperty": "flooring_material_primary",
-      "iconName": "flooring",
+      "iconName": "carpet",
       "enumValue": "Carpet",
       "enumDescription": "Carpet Flooring"
     },
