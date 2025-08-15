@@ -150,33 +150,6 @@ export class AssetManager {
     }
   }
 
-  async createManifest(outputDir: string, propertyId: string, propertyData: TemplateData): Promise<void> {
-    const propertyDir = path.join(outputDir, propertyId);
-    const manifestPath = path.join(propertyDir, 'manifest.json');
-
-    const manifest = {
-      propertyId,
-      generatedAt: new Date().toISOString(),
-      generator: '@elephant/fact-sheet',
-      version: '1.0.0',
-      domain: this.options.domain || 'https://elephant.xyz/homes/public',
-      options: {
-        inlineCss: this.options.inlineCss || false,
-        inlineJs: this.options.inlineJs || false
-      },
-      property: {
-        address: propertyData.address,
-        details: propertyData.property,
-        salesCount: propertyData.all_sales?.length || 0,
-        taxCount: propertyData.all_taxes?.length || 0,
-        dataSourcesCount: propertyData.data_sources?.length || 0
-      }
-    };
-
-    await fs.writeFile(manifestPath, JSON.stringify(manifest, null, 2), 'utf8');
-    
-    this.logger.debug(`Created manifest.json for ${propertyId}`);
-  }
 
   async optimizeAssets(_outputDir: string, _propertyId: string): Promise<void> {
     // Future: Add asset optimization (minification, compression, etc.)

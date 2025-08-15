@@ -107,9 +107,6 @@ export class Builder {
     const propertyDataPath = path.join(this.options.input, propertyId);
     await this.assetManager.copyAssets(this.options.output, propertyId, propertyDataPath, propertyData);
 
-    // Create manifest file
-    await this.assetManager.createManifest(this.options.output, propertyId, propertyData);
-
     this.logger.debug(`Completed ${propertyId}`);
   }
 
