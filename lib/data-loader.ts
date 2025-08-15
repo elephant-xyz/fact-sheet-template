@@ -133,6 +133,7 @@ export class DataLoader {
         parcel_identifier: property.parcelId || "",
         property_legal_description_text: property.legalDescription || "",
         sourceUrl: property.sourceUrl || "",
+        source_http_request: property.source_http_request || null,
       },
       address: {
         street_address: property.address || "",

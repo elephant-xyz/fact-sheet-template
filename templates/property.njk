@@ -284,7 +284,11 @@ function updateSectionVisibility(label) {
                     </div>
                     {% endif %}
                     
-                    {{ sourceLink(homes[property_id].address, "Palm Beach County Property Appraiser") }}
+                    {% if homes[property_id].address and homes[property_id].address.source_http_request %}
+                      {{ sourceLink(homes[property_id].address, "Palm Beach County Property Appraiser") }}
+                    {% elif homes[property_id].property and homes[property_id].property.source_http_request %}
+                      {{ sourceLink(homes[property_id].property, "Palm Beach County Property Appraiser") }}
+                    {% endif %}
             </header>
 
             <!-- Property History Section -->
@@ -320,6 +324,7 @@ function updateSectionVisibility(label) {
               {% if has_substantial_building_data %}
               {% endif %}
                         <!-- Property Overview Row -->
+                        {% if homes[property_id].property.property_type or homes[property_id].property.property_structure_built_year or homes[property_id].property.builder_name or (homes[property_id].lot and homes[property_id].lot.lot_area_sqft) %}
                         <div class="property-overview-row">
                             <!-- Property Type -->
                             {% if homes[property_id].property.property_type %}
@@ -359,8 +364,10 @@ function updateSectionVisibility(label) {
                             </div>
                             {% endif %}
                         </div>
+                        {% endif %}
                         
                         <!-- Legal and Parcel Information -->
+                        {% if (homes[property_id].property.parcel_identifier or property_id) or (homes[property_id].property.property_legal_description_text and homes[property_id].property.property_legal_description_text != 'null') %}
                         <div class="legal-parcel-group">
                             <!-- Parcel ID -->
                             {% if homes[property_id].property.parcel_identifier or property_id %}
@@ -382,6 +389,7 @@ function updateSectionVisibility(label) {
                             </div>
                             {% endif %}
                         </div>
+                        {% endif %}
                             
                             <!-- Lot Type -->
                             {% if homes[property_id].lot and homes[property_id].lot.lot_type and homes[property_id].lot.lot_type != 'null' %}
@@ -417,7 +425,11 @@ function updateSectionVisibility(label) {
                         </div>
                     </div>
                     {% endif %}
-                {{ sourceLink(homes[property_id].structure, "Palm Beach County Property Appraiser") }}
+                                 {% if homes[property_id].structure and homes[property_id].structure.source_http_request %}
+                   {{ sourceLink(homes[property_id].structure, "Palm Beach County Property Appraiser") }}
+                 {% elif homes[property_id].property and homes[property_id].property.source_http_request %}
+                   {{ sourceLink(homes[property_id].property, "Palm Beach County Property Appraiser") }}
+                 {% endif %}
             </section>
 
             {% if has_sales_data or (homes[property_id].all_taxes | length > 0) %}
@@ -536,7 +548,11 @@ function updateSectionVisibility(label) {
                 </div>
               </div>
               {% endif %}
-                  {{ sourceLink(homes[property_id].all_sales[0].data if homes[property_id].all_sales and homes[property_id].all_sales|length > 0, "Palm Beach County Property Appraiser") }}
+                  {% if homes[property_id].all_sales and homes[property_id].all_sales|length > 0 and homes[property_id].all_sales[0].data.source_http_request %}
+                    {{ sourceLink(homes[property_id].all_sales[0].data, "Palm Beach County Property Appraiser") }}
+                  {% elif homes[property_id].property and homes[property_id].property.source_http_request %}
+                    {{ sourceLink(homes[property_id].property, "Palm Beach County Property Appraiser") }}
+                  {% endif %}
                 </section>
 
                 <!-- Tax Information Section -->
@@ -845,7 +861,11 @@ function updateSectionVisibility(label) {
                     </div>
                 </div>
                     {% endif %}
-                    {{ sourceLink(homes[property_id].all_taxes[0].data if homes[property_id].all_taxes and homes[property_id].all_taxes|length > 0, "Palm Beach County Property Appraiser") }}
+                    {% if homes[property_id].all_taxes and homes[property_id].all_taxes|length > 0 and homes[property_id].all_taxes[0].data.source_http_request %}
+                      {{ sourceLink(homes[property_id].all_taxes[0].data, "Palm Beach County Property Appraiser") }}
+                    {% elif homes[property_id].property and homes[property_id].property.source_http_request %}
+                      {{ sourceLink(homes[property_id].property, "Palm Beach County Property Appraiser") }}
+                    {% endif %}
                 </section>
             {% endif %}
 
@@ -1050,7 +1070,11 @@ function updateSectionVisibility(label) {
                         </div>
                         {% endif %}
                 </div>
-                {{ sourceLink(homes[property_id].structure, "Palm Beach County Property Appraiser") }}
+                                 {% if homes[property_id].structure and homes[property_id].structure.source_http_request %}
+                   {{ sourceLink(homes[property_id].structure, "Palm Beach County Property Appraiser") }}
+                 {% elif homes[property_id].property and homes[property_id].property.source_http_request %}
+                   {{ sourceLink(homes[property_id].property, "Palm Beach County Property Appraiser") }}
+                 {% endif %}
             </section>
             {% endif %}
 
