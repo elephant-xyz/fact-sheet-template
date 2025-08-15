@@ -108,36 +108,38 @@ function updateSectionVisibility(label) {
             <img src="{{ 'elephant_logo-horizontal.svg' | assetUrl }}" alt="Elephant" class="logo-image">
         </div>
         
+        {% set has_sales_data_nav = false %}
+        {% for sale in homes[property_id].all_sales %}
+          {% if sale.data.purchase_price_amount %}
+            {% set has_sales_data_nav = true %}
+          {% endif %}
+        {% endfor %}
+        
+        {% set has_features_nav = false %}
+        {% if homes[property_id].structure %}
+          {% if homes[property_id].structure.flooring_material_primary or homes[property_id].structure.flooring_material_secondary or homes[property_id].structure.exterior_wall_material_primary or homes[property_id].structure.roof_covering_material %}
+            {% set has_features_nav = true %}
+          {% endif %}
+        {% endif %}
+        {% if homes[property_id].utility %}
+          {% if homes[property_id].utility.cooling_system_type or homes[property_id].utility.heating_system_type %}
+            {% set has_features_nav = true %}
+          {% endif %}
+        {% endif %}
+        
+        {% if has_sales_data_nav or (homes[property_id].all_taxes | length > 0) or has_features_nav %}
         <div class="nav-tabs">
                 <a href="#property-header" class="nav-tab">Overview</a>
                 
-                {% set has_sales_data_nav = false %}
-                {% for sale in homes[property_id].all_sales %}
-                  {% if sale.data.purchase_price_amount %}
-                    {% set has_sales_data_nav = true %}
-                  {% endif %}
-                {% endfor %}
-                
                 {% if has_sales_data_nav or (homes[property_id].all_taxes | length > 0) %}
                 <a href="#property-history" class="nav-tab">History</a>
-                {% endif %}
-                
-                {% set has_features_nav = false %}
-                {% if homes[property_id].structure %}
-                  {% if homes[property_id].structure.flooring_material_primary or homes[property_id].structure.flooring_material_secondary or homes[property_id].structure.exterior_wall_material_primary or homes[property_id].structure.roof_covering_material %}
-                    {% set has_features_nav = true %}
-                  {% endif %}
-                {% endif %}
-                {% if homes[property_id].utility %}
-                  {% if homes[property_id].utility.cooling_system_type or homes[property_id].utility.heating_system_type %}
-                    {% set has_features_nav = true %}
-                  {% endif %}
                 {% endif %}
                 
                 {% if has_features_nav %}
                 <a href="#features" class="nav-tab">Features</a>
                 {% endif %}
             </div>
+        {% endif %}
             
             <!-- Condensed Providers (hidden by default) -->
             <div class="nav-providers-condensed" id="nav-providers-condensed">
@@ -474,31 +476,33 @@ function updateSectionVisibility(label) {
                 {% endif %}
                   </div>
               
-              <!-- Chart Tabs -->
+              <!-- Chart Tabs and Time Range Selector -->
               {% if (homes[property_id].all_sales | length >= 1) or (homes[property_id].all_taxes | length >= 1) %}
               <div class="chart-tabs-container">
-                <div class="chart-tabs">
-                  {% if homes[property_id].all_sales | length >= 1 %}
-                  <button class="chart-tab active" data-tab="sales">
-                    <span>Sale History</span>
-                  </button>
-                  {% endif %}
-                  {% if homes[property_id].all_taxes | length >= 1 %}
-                  <button class="chart-tab {% if homes[property_id].all_sales | length < 3 %}active{% endif %}" data-tab="tax">
-                    <span>Tax Information</span>
-                  </button>
-                  {% endif %}
+                <div class="chart-controls">
+                  <div class="chart-tabs">
+                    {% if homes[property_id].all_sales | length >= 1 %}
+                    <button class="chart-tab active" data-tab="sales">
+                      <span>Sale History</span>
+                    </button>
+                    {% endif %}
+                    {% if homes[property_id].all_taxes | length >= 1 %}
+                    <button class="chart-tab {% if homes[property_id].all_sales | length < 3 %}active{% endif %}" data-tab="tax">
+                      <span>Tax Information</span>
+                    </button>
+                    {% endif %}
+                  </div>
+                  
+                  <!-- Time Range Selector -->
+                  <div class="chart-time-range-selector">
+                    <button class="time-range-btn" data-years="3">3yr</button>
+                    <button class="time-range-btn" data-years="5">5yr</button>
+                    <button class="time-range-btn active" data-years="all">All</button>
+                  </div>
                 </div>
                 
                 <!-- Chart Content -->
                 <div class="chart-content-container">
-                  <!-- Time Range Selector -->
-                  <div class="chart-time-range-selector">
-                    <button class="time-range-btn" data-years="3">3 Years</button>
-                    <button class="time-range-btn" data-years="5">5 Years</button>
-                    <button class="time-range-btn" data-years="10">10 Years</button>
-                    <button class="time-range-btn active" data-years="all">All</button>
-                  </div>
                   
                   {% if homes[property_id].all_sales | length > 1 %}
                   <div id="sales-chart-content" class="chart-content active">
