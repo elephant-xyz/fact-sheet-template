@@ -150,7 +150,6 @@ export class AssetManager {
     }
   }
 
-
   async optimizeAssets(_outputDir: string, _propertyId: string): Promise<void> {
     // Future: Add asset optimization (minification, compression, etc.)
     this.logger.debug(`Asset optimization not yet implemented`);
