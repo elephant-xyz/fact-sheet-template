@@ -87,16 +87,12 @@ export class DataLoader {
         path.join(baseDir.toString(), data['/'].toString()),
       );
       return this.traverseLinkedData(contentData, baseDir);
+    } else if (Array.isArray(data)) {
+      return Promise.all(data.map((i: any) => this.traverseLinkedData(i, baseDir)));
     } else if (data !== null && typeof data === 'object') {
       for (const key in data) {
         data[key] = await this.traverseLinkedData(data[key], baseDir);
       }
-    } else if (Array.isArray(data)) {
-      return Promise.all(
-        data.map((i: any) => {
-          this.traverseLinkedData(i, baseDir);
-        }),
-      );
     }
     return data;
   }
