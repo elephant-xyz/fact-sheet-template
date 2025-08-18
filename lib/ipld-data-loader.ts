@@ -992,6 +992,7 @@ export class IPLDDataLoader {
 
   private loadLayoutData(graph: Map<string, DataNode>): LayoutSummary {
     const layoutsByDataGroup: Record<string, LayoutInfo[]> = {};
+    
     // Method 1: Find nodes that have relationships.property_has_layout
     for (const node of graph.values()) {
       if (node.data?.relationships?.property_has_layout) {
@@ -1030,6 +1031,23 @@ export class IPLDDataLoader {
         }
       }
     }
+    
+    // Method 2: Look for layout nodes directly in the graph (for county level data)
+    if (Object.keys(layoutsByDataGroup).length === 0) {
+      console.log('No relationships found, looking for direct layout nodes...');
+      for (const node of graph.values()) {
+        // More flexible check - look for any node that looks like layout data
+        if (node.data?.space_type || 
+            (node.data && typeof node.data === 'object' && 
+             ('Bedroom' in node.data || 'Bathroom' in node.data || 'Kitchen' in node.data ||
+              'Living Room' in node.data || 'Dining Room' in node.data || 'Office' in node.data))) {
+          // This looks like a layout node
+          console.log('Found potential layout node:', node.data);
+          const dataGroup = node.data.label || 'County';
+          (layoutsByDataGroup[dataGroup] ??= []).push(node.data as LayoutInfo);
+        }
+      }
+    }
 
     let layouts: LayoutInfo[] = [];
     console.log('Available data groups:', Object.keys(layoutsByDataGroup));
@@ -1065,22 +1083,53 @@ export class IPLDDataLoader {
       layouts.map((l) => l.space_type),
     );
 
-    const firstFloorLayouts = layouts
-      .filter((layout) => layout['floor_level'] === '1st Floor')
-      .sort((a, b) => a.space_type.localeCompare(b.space_type))
-      .map((layout) => this.buildRenderItem(layout, 'layout'));
+    // Check if any layouts have floor level information
+    const hasFloorLevels = layouts.some((layout) => layout['floor_level'] && layout['floor_level'] !== null);
+    
+    console.log('Layout processing debug:');
+    console.log('  Total layouts found:', layouts.length);
+    console.log('  Has floor levels:', hasFloorLevels);
+    console.log('  Layout sample:', layouts.slice(0, 3));
+    
+    let firstFloorLayouts: any[] = [];
+    let secondFloorLayouts: any[] = [];
+    let otherLayouts: any[] = [];
+    
+    if (hasFloorLevels) {
+      // Use floor-based organization when floor level data is available
+      firstFloorLayouts = layouts
+        .filter((layout) => layout['floor_level'] === '1st Floor')
+        .sort((a, b) => a.space_type.localeCompare(b.space_type))
+        .map((layout) => this.buildRenderItem(layout, 'layout'));
 
-    const secondFloorLayouts = layouts
-      .filter((layout) => layout['floor_level'] === '2nd Floor')
-      .sort((a, b) => a.space_type.localeCompare(b.space_type))
-      .map((layout) => this.buildRenderItem(layout, 'layout'));
+      secondFloorLayouts = layouts
+        .filter((layout) => layout['floor_level'] === '2nd Floor')
+        .sort((a, b) => a.space_type.localeCompare(b.space_type))
+        .map((layout) => this.buildRenderItem(layout, 'layout'));
 
-    const otherLayouts = layouts
-      .filter(
-        (layout) => layout['floor_level'] !== '1st Floor' && layout['floor_level'] !== '2nd Floor',
-      )
-      .sort((a, b) => a.space_type.localeCompare(b.space_type))
-      .map((layout) => this.buildRenderItem(layout, 'layout'));
+      otherLayouts = layouts
+        .filter(
+          (layout) => layout['floor_level'] !== '1st Floor' && layout['floor_level'] !== '2nd Floor',
+        )
+        .sort((a, b) => a.space_type.localeCompare(b.space_type))
+        .map((layout) => this.buildRenderItem(layout, 'layout'));
+        
+      console.log('  Floor-based grouping:', {
+        firstFloor: firstFloorLayouts.length,
+        secondFloor: secondFloorLayouts.length,
+        other: otherLayouts.length
+      });
+    } else {
+      // When no floor level data, put all layouts in otherLayouts for single section display
+      console.log('No floor level data found, grouping all layouts together');
+      otherLayouts = layouts
+        .sort((a, b) => a.space_type.localeCompare(b.space_type))
+        .map((layout) => this.buildRenderItem(layout, 'layout'));
+        
+      console.log('  Single section grouping:', {
+        total: otherLayouts.length
+      });
+    }
 
     return {
       firstFloorLayouts,

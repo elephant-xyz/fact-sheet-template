@@ -128,7 +128,7 @@ body {
   width: 100%;
   margin: 24px 0;
   border: 1px solid #f0f0f0;
-  border-radius: 16px;
+  border-radius: 16px !important;
   overflow: hidden;
   background-color: #ffffff;
 }
@@ -139,13 +139,14 @@ body {
   font-family: neue-haas-grotesk-display, system-ui, sans-serif;
   background-color: transparent;
   border: none;
+
 }
 
 .sales-history-table th {
   background-color: #FAFAFA;
   padding: 12px 16px;
   text-align: left;
-  border-bottom: 1px solid #d9d8d8;
+  border-bottom: none;
   border-left: none;
   border-right: none;
   border-top: none;
@@ -153,14 +154,28 @@ body {
 
 .sales-history-table td {
   padding: 12px 16px;
-  border-bottom: 1px solid #f0f0f0;
-  border-left: none;
-  border-right: none;
-  border-top: none;
+  border: none;
 }
 
 .sales-history-table tr:last-child td {
   border-bottom: none;
+}
+
+/* Left divider lines for owner and sale date cells */
+.sales-history-table .sale-owner-cell,
+.sales-history-table .sale-date-cell {
+  position: relative;
+}
+
+.sales-history-table .sale-owner-cell::before,
+.sales-history-table .sale-date-cell::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 1px;
+  background-color: #f0f0f0;
 }
 
 
@@ -173,6 +188,19 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  align-self: stretch;
+  gap: 24px;
+}
+
+/* Floorplan Section - Same styling as other sections */
+.section#floorplan.show {
+  border-radius: 16px;
+  border: 1px solid #f0f0f0;
+  display: flex !important;
+  padding: 32px 16px 16px 16px !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
   align-self: stretch;
   gap: 24px;
 }
@@ -196,7 +224,7 @@ option {
 .container {
   display: flex;
   flex-direction: column;
-  max-width: 900px;
+  max-width: 1080px;
   margin: 0 auto;
   margin-top: 104px;
   align-items: center;
@@ -208,7 +236,7 @@ option {
 /* Main Layout */
 .main-layout {
   display: flex;
-  max-width: 900px;
+  max-width: 1080px;
   padding: 32px 0 48px 0;
   flex-direction: column;
   align-items: center;
@@ -219,7 +247,7 @@ option {
 .main-content {
   display: flex;
   flex-direction: column;
-  max-width: 900px;
+  max-width: 1080px;
   padding: 32px 0 48px 0;
   flex-direction: column;
   align-items: flex-start;
@@ -252,7 +280,7 @@ option {
   align-items: center;
   height: 80px;
   padding: 0 160px;
-  max-width: 900px;
+  max-width: 1080px;
   margin: 0 auto;
   margin-top: 4px !important;
   position: relative;
@@ -875,11 +903,7 @@ option {
   height: 16px;
 }
 
-.room-type span {
-  font-size: 12px;
-  font-weight: 600;
-  color: #423e3e;
-}
+
 
 /* Section Styles */
 
@@ -1609,6 +1633,15 @@ h1 {
     padding: 0 8px !important;
   }
 
+  .chart-content-container{
+    padding-top: 0px !important;
+  }
+
+  .sales-table-container{
+    margin-bottom: 24px !important;
+    margin-top: 0px !important;
+  }
+
   .features-grid {
     display: flex;
     flex-direction: column !important;
@@ -1625,6 +1658,12 @@ h1 {
     align-items: center;
     justify-content: center;
     align-self: stretch;
+  }
+  .floorplan-layout.show {
+    padding: 48px 48px 16px 48px !important;
+  }
+  .section#photos.show {
+    padding: 48px 48px 16px 48px !important;
   }
   
   /* Typography adjustments for mobile */
@@ -1752,7 +1791,7 @@ h1 {
   /* Floorplan mobile layout */
   .floorplan-floors {
     flex-direction: column;
-    gap: 20px;
+    gap: 12px;
   }
   .floor-section {
     padding: 16px 8px;
@@ -1901,6 +1940,12 @@ h1 {
   .section#features.show {
     padding: 16px 16px 16px 16px !important;
   }
+  .floorplan-layout.show {
+    padding: 16px 16px 16px 16px !important;
+  }
+  .section#photos.show {
+    padding: 16px 16px 16px 16px !important;
+  }
 }
 
 /* Very small screens (up to 320px) - Small mobile phones */
@@ -2032,6 +2077,8 @@ h1 {
   position: relative;
   width: 100%;
   padding-top: 16px;
+  overflow-x: auto;
+  max-width: 100%;
 }
 
 .chart-content {
@@ -2090,7 +2137,40 @@ h1 {
   margin-top: 0;
   border-radius: 12px;
   height: 300px;
-  
+  position: relative;
+}
+
+/* No Data Message Styling */
+.no-data-message {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fafafa;
+  border-radius: 12px;
+}
+
+.no-data-content {
+  text-align: center;
+  padding: 24px;
+}
+
+.no-data-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.6;
+}
+
+.no-data-text {
+  font-family: neue-haas-grotesk-display, system-ui, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #8e8b8b;
+  max-width: 300px;
 }
 
 /* Chart Customization Variables */
@@ -2813,7 +2893,15 @@ align-self: stretch;
   color: #8e8b8b;
 }
 
-.floorplan-layout {
+.floorplan-layout.show {
+  border-radius: 16px;
+  border: 1px solid #f0f0f0;
+  display: flex !important;
+  padding: 32px 16px 16px 16px !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
   gap: 16px;
 }
 
@@ -2822,19 +2910,23 @@ align-self: stretch;
   font-size: 13px;
   align-items: center;
   gap: 8px;
+  padding-left: 2px;
   /* Add your styles here */
 }
 .floor-rooms {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  align-self: stretch;
 }
 .room-item {
   font-size: 13px;
   font-weight: 600;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  align-items: flex-start;
+  gap: 16px;
+  align-self: stretch;
 }
 
 .room-properties {
@@ -2875,16 +2967,19 @@ align-self: stretch;
 .floorplan-floors {
   display: flex;
   flex-direction: row;
-  gap: 24px;
+  align-items: flex-start;
+  gap: 12px;
+  align-self: stretch;
   flex-wrap: nowrap;
 }
 .floor-section {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  align-items: flex-start;
+  align-self: stretch;
   flex: 1;
+  gap: 16px;
   min-width: 200px;
-  margin: 8px 0px;
 }
 
 .features-section {
@@ -3060,9 +3155,14 @@ align-self: stretch;
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-top: 8px;
-  margin-bottom: 8px;
+
   user-select: none;
+}
+
+.room-item {
+  border-radius: 6px;
+  padding: 6px 8px;
+  background-color: #fafafa;
 }
 
 .room-header {
@@ -3075,7 +3175,7 @@ align-self: stretch;
 }
 
 .room-icon-container {
-  width: 20px;
+  width: 24px;
   flex-shrink: 0;
 }
 
@@ -3085,11 +3185,7 @@ align-self: stretch;
   display: block;
 }
 
-.room-title {
-  /* Add your custom styling here */
-  font-weight: 600;
-  color: #423e3e;
-}
+
 
 .room-name {
   font-weight: 600;
@@ -3123,16 +3219,20 @@ align-self: stretch;
   overflow: visible !important;
 }
 
-/* Special case for carousel - show by default if it has images */
-.carousel-container[data-section="photo-gallery"] {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  height: auto !important;
-  overflow: visible !important;
+/* Photos Section - Same styling as other sections */
+.section#photos.show {
+  border-radius: 16px;
+  border: 1px solid #f0f0f0;
+  display: flex !important;
+  padding: 32px 16px 16px 16px !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  gap: 16px;
 }
 
-/* Override the general data-section hiding for carousel */
+/* Special case for carousel - show by default if it has images */
 .carousel-container[data-section="photo-gallery"] {
   display: block !important;
   visibility: visible !important;
