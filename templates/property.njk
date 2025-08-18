@@ -117,36 +117,38 @@ function updateSectionVisibility(label) {
             {{ renderSvg('elephant_logo-horizontal.svg', 'Elephant', 'logo-image') }}
         </div>
         
+        {% set has_sales_data_nav = false %}
+        {% for sale in homes[property_id].all_sales %}
+          {% if sale.data.purchase_price_amount %}
+            {% set has_sales_data_nav = true %}
+          {% endif %}
+        {% endfor %}
+        
+        {% set has_features_nav = false %}
+        {% if homes[property_id].structure %}
+          {% if homes[property_id].structure.flooring_material_primary or homes[property_id].structure.flooring_material_secondary or homes[property_id].structure.exterior_wall_material_primary or homes[property_id].structure.roof_covering_material %}
+            {% set has_features_nav = true %}
+          {% endif %}
+        {% endif %}
+        {% if homes[property_id].utility %}
+          {% if homes[property_id].utility.cooling_system_type or homes[property_id].utility.heating_system_type %}
+            {% set has_features_nav = true %}
+          {% endif %}
+        {% endif %}
+        
+        {% if has_sales_data_nav or (homes[property_id].all_taxes | length > 0) or has_features_nav %}
         <div class="nav-tabs">
                 <a href="#property-header" class="nav-tab">Overview</a>
                 
-                {% set has_sales_data_nav = false %}
-                {% for sale in homes[property_id].all_sales %}
-                  {% if sale.data.purchase_price_amount %}
-                    {% set has_sales_data_nav = true %}
-                  {% endif %}
-                {% endfor %}
-                
                 {% if has_sales_data_nav or (homes[property_id].all_taxes | length > 0) %}
                 <a href="#property-history" class="nav-tab">History</a>
-                {% endif %}
-                
-                {% set has_features_nav = false %}
-                {% if homes[property_id].structure %}
-                  {% if homes[property_id].structure.flooring_material_primary or homes[property_id].structure.flooring_material_secondary or homes[property_id].structure.exterior_wall_material_primary or homes[property_id].structure.roof_covering_material %}
-                    {% set has_features_nav = true %}
-                  {% endif %}
-                {% endif %}
-                {% if homes[property_id].utility %}
-                  {% if homes[property_id].utility.cooling_system_type or homes[property_id].utility.heating_system_type %}
-                    {% set has_features_nav = true %}
-                  {% endif %}
                 {% endif %}
                 
                 {% if has_features_nav %}
                 <a href="#features" class="nav-tab">Features</a>
                 {% endif %}
             </div>
+        {% endif %}
             
             <!-- Condensed Providers (hidden by default) -->
             <div class="nav-providers-condensed" id="nav-providers-condensed">
@@ -293,7 +295,11 @@ function updateSectionVisibility(label) {
                     </div>
                     {% endif %}
                     
-                    {{ sourceLink(homes[property_id].address, "Palm Beach County Property Appraiser") }}
+                    {% if homes[property_id].address and homes[property_id].address.source_http_request %}
+                      {{ sourceLink(homes[property_id].address, "Palm Beach County Property Appraiser") }}
+                    {% elif homes[property_id].property and homes[property_id].property.source_http_request %}
+                      {{ sourceLink(homes[property_id].property, "Palm Beach County Property Appraiser") }}
+                    {% endif %}
             </header>
 
             <!-- Property History Section -->
@@ -329,6 +335,7 @@ function updateSectionVisibility(label) {
               {% if has_substantial_building_data %}
               {% endif %}
                         <!-- Property Overview Row -->
+                        {% if homes[property_id].property.property_type or homes[property_id].property.property_structure_built_year or homes[property_id].property.builder_name or (homes[property_id].lot and homes[property_id].lot.lot_area_sqft) %}
                         <div class="property-overview-row">
                             <!-- Property Type -->
                             {% if homes[property_id].property.property_type %}
@@ -368,8 +375,10 @@ function updateSectionVisibility(label) {
                             </div>
                             {% endif %}
                         </div>
+                        {% endif %}
                         
                         <!-- Legal and Parcel Information -->
+                        {% if (homes[property_id].property.parcel_identifier or property_id) or (homes[property_id].property.property_legal_description_text and homes[property_id].property.property_legal_description_text != 'null') %}
                         <div class="legal-parcel-group">
                             <!-- Parcel ID -->
                             {% if homes[property_id].property.parcel_identifier or property_id %}
@@ -391,6 +400,7 @@ function updateSectionVisibility(label) {
                             </div>
                             {% endif %}
                         </div>
+                        {% endif %}
                             
                             <!-- Lot Type -->
                             {% if homes[property_id].lot and homes[property_id].lot.lot_type and homes[property_id].lot.lot_type != 'null' %}
@@ -426,7 +436,11 @@ function updateSectionVisibility(label) {
                         </div>
                     </div>
                     {% endif %}
-                {{ sourceLink(homes[property_id].structure, "Palm Beach County Property Appraiser") }}
+                                 {% if homes[property_id].structure and homes[property_id].structure.source_http_request %}
+                   {{ sourceLink(homes[property_id].structure, "Palm Beach County Property Appraiser") }}
+                 {% elif homes[property_id].property and homes[property_id].property.source_http_request %}
+                   {{ sourceLink(homes[property_id].property, "Palm Beach County Property Appraiser") }}
+                 {% endif %}
             </section>
 
             {% if has_sales_data or (homes[property_id].all_taxes | length > 0) %}
@@ -471,24 +485,34 @@ function updateSectionVisibility(label) {
                 {% endif %}
                   </div>
               
-              <!-- Chart Tabs -->
+              <!-- Chart Tabs and Time Range Selector -->
               {% if (homes[property_id].all_sales | length >= 1) or (homes[property_id].all_taxes | length >= 1) %}
               <div class="chart-tabs-container">
-                <div class="chart-tabs">
-                  {% if homes[property_id].all_sales | length >= 1 %}
-                  <button class="chart-tab active" data-tab="sales">
-                    <span>Sale History</span>
-                  </button>
-                  {% endif %}
-                  {% if homes[property_id].all_taxes | length >= 1 %}
-                  <button class="chart-tab {% if homes[property_id].all_sales | length < 3 %}active{% endif %}" data-tab="tax">
-                    <span>Tax Information</span>
-                  </button>
-                  {% endif %}
+                <div class="chart-controls">
+                  <div class="chart-tabs">
+                    {% if homes[property_id].all_sales | length >= 1 %}
+                    <button class="chart-tab active" data-tab="sales">
+                      <span>Sale History</span>
+                    </button>
+                    {% endif %}
+                    {% if homes[property_id].all_taxes | length >= 1 %}
+                    <button class="chart-tab {% if homes[property_id].all_sales | length < 3 %}active{% endif %}" data-tab="tax">
+                      <span>Tax Information</span>
+                    </button>
+                    {% endif %}
+                  </div>
+                  
+                  <!-- Time Range Selector -->
+                  <div class="chart-time-range-selector">
+                    <button class="time-range-btn" data-years="3">3yr</button>
+                    <button class="time-range-btn" data-years="5">5yr</button>
+                    <button class="time-range-btn active" data-years="all">All</button>
+                  </div>
                 </div>
                 
                 <!-- Chart Content -->
                 <div class="chart-content-container">
+                  
                   {% if homes[property_id].all_sales | length >= 1 %}
                   <div id="sales-chart-content" class="chart-content active">
                     {% if homes[property_id].all_sales | length < 3 %}
@@ -545,7 +569,11 @@ function updateSectionVisibility(label) {
                 </div>
               </div>
               {% endif %}
-                  {{ sourceLink(homes[property_id].all_sales[0].data if homes[property_id].all_sales and homes[property_id].all_sales|length > 0, "Palm Beach County Property Appraiser") }}
+                  {% if homes[property_id].all_sales and homes[property_id].all_sales|length > 0 and homes[property_id].all_sales[0].data.source_http_request %}
+                    {{ sourceLink(homes[property_id].all_sales[0].data, "Palm Beach County Property Appraiser") }}
+                  {% elif homes[property_id].property and homes[property_id].property.source_http_request %}
+                    {{ sourceLink(homes[property_id].property, "Palm Beach County Property Appraiser") }}
+                  {% endif %}
                 </section>
 
                 <!-- Tax Information Section -->
@@ -854,7 +882,11 @@ function updateSectionVisibility(label) {
                     </div>
                 </div>
                     {% endif %}
-                    {{ sourceLink(homes[property_id].all_taxes[0].data if homes[property_id].all_taxes and homes[property_id].all_taxes|length > 0, "Palm Beach County Property Appraiser") }}
+                    {% if homes[property_id].all_taxes and homes[property_id].all_taxes|length > 0 and homes[property_id].all_taxes[0].data.source_http_request %}
+                      {{ sourceLink(homes[property_id].all_taxes[0].data, "Palm Beach County Property Appraiser") }}
+                    {% elif homes[property_id].property and homes[property_id].property.source_http_request %}
+                      {{ sourceLink(homes[property_id].property, "Palm Beach County Property Appraiser") }}
+                    {% endif %}
                 </section>
             {% endif %}
 
@@ -1059,7 +1091,11 @@ function updateSectionVisibility(label) {
                         </div>
                         {% endif %}
                 </div>
-                {{ sourceLink(homes[property_id].structure, "Palm Beach County Property Appraiser") }}
+                                 {% if homes[property_id].structure and homes[property_id].structure.source_http_request %}
+                   {{ sourceLink(homes[property_id].structure, "Palm Beach County Property Appraiser") }}
+                 {% elif homes[property_id].property and homes[property_id].property.source_http_request %}
+                   {{ sourceLink(homes[property_id].property, "Palm Beach County Property Appraiser") }}
+                 {% endif %}
             </section>
             {% endif %}
 

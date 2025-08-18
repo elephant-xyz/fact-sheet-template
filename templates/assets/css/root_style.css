@@ -72,7 +72,7 @@ body {
 /* Source Link Styles */
 .source-link {
   display: flex;
-  padding-top: 32px;
+  padding-top: 8px;
   justify-content: flex-end;
   align-items: center;
   align-self: stretch;
@@ -174,6 +174,7 @@ body {
   align-items: center;
   justify-content: center;
   align-self: stretch;
+  gap: 24px;
 }
 
 
@@ -257,10 +258,7 @@ option {
   position: relative;
 }
 
-.chart-tabs-container {
-  padding: 0 16px;
 
-}
 
 /* Navigation Logo */
 .nav-logo {
@@ -1607,11 +1605,15 @@ h1 {
   .property-specs span {
     font-size: 2rem;
   }
+  .chart-tabs-container {
+    padding: 0 8px !important;
+  }
+
   .features-grid {
     display: flex;
     flex-direction: column !important;
     align-items: flex-start;
-    gap: 12px;
+    gap: 24px !important;
     align-self: stretch;
   }
   .section#features.show {
@@ -1646,7 +1648,7 @@ h1 {
   }
   .nav-content {
     padding: 0 24px;
-    height: 60px;
+    height: 80px;
     max-width: 1536px;
     margin: 0 auto;
   }
@@ -1695,6 +1697,26 @@ h1 {
   }
   .address-item {
     padding: 16px;
+  }
+  
+  /* Chart controls mobile layout */
+  .chart-controls {
+    flex-direction: column !important;
+    gap: 16px;
+    align-items: center;
+  }
+  
+  .chart-tabs {
+    justify-content: center;
+    position: static !important;
+    left: auto !important;
+    transform: none !important;
+  }
+  
+  .chart-time-range-selector {
+    justify-content: center;
+    position: static !important;
+    right: auto !important;
   }
   
   /* Layout adjustments */
@@ -1835,34 +1857,34 @@ h1 {
     width: 100%;
     max-width: 400px;
   }
-  
+
   .condensed-title {
     font-size: 12px;
   }
-  
+
   .condensed-avatar {
     width: 32px;
     height: 32px;
   }
-  
+
   .condensed-icon {
     width: 14px;
     height: 14px;
   }
-  
+
   .condensed-name {
     font-size: 11px;
   }
-  
+
   .condensed-phone {
     font-size: 10px;
   }
-  
+
   .view-all-providers-btn-desktop,
   .view-all-providers-btn-mobile {
     font-size: 10px;
   }
-  
+
   /* Responsive Overlay */
   .providers-overlay-content {
     width: 90vw !important;
@@ -1875,6 +1897,9 @@ h1 {
  
   .property-specs {
     flex-direction: column;
+  }
+  .section#features.show {
+    padding: 16px 16px 16px 16px !important;
   }
 }
 
@@ -1949,6 +1974,7 @@ h1 {
 /* Chart Tabs */
 .chart-tabs-container {
   margin-top: 0px;
+  margin-bottom: 24px;
   width: 100%;
   padding: 0 48px;
   display: flex;
@@ -1958,19 +1984,29 @@ h1 {
   align-self: stretch;
 }
 
+.chart-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 16px;
+  position: relative;
+}
+
 .chart-tabs {
-display: flex;
-justify-content: center;
-align-items: flex-start;
-gap: 20px;
-flex: 1 0 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .chart-tab {
   background: none;
   border: none;
   padding: 4px 2px;
-  margin-right: 8px;
   font-family: neue-haas-grotesk-display, system-ui, sans-serif;
   font-size: 0.875rem;
   font-style: normal;
@@ -1979,7 +2015,7 @@ flex: 1 0 0;
   letter-spacing: 0.02625rem;
   color: #8e8b8b;
   cursor: pointer;
-  border-bottom: 2px solid transparent;
+  border-bottom: 1px solid transparent;
   transition: all 0.2s ease;
 }
 
@@ -1995,6 +2031,7 @@ flex: 1 0 0;
 .chart-content-container {
   position: relative;
   width: 100%;
+  padding-top: 16px;
 }
 
 .chart-content {
@@ -2003,6 +2040,50 @@ flex: 1 0 0;
 
 .chart-content.active {
   display: block;
+}
+
+/* Time Range Selector Styles */
+.chart-time-range-selector {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+  align-items: center;
+  background-color: #f0f0f0;
+  padding: 4px;
+  border-radius: 6px;
+  position: absolute;
+  right: 0;
+}
+
+.time-range-btn {
+  display: flex;
+  padding: 2px 4px;
+  justify-content: center;
+  align-items: center;
+  background: none;
+  border-radius: 4px;
+  font-family: neue-haas-grotesk-display, system-ui, sans-serif;
+  font-size: 0.875rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 120%;
+  letter-spacing: 0.02625rem;
+  color: #8E8B8B;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.time-range-btn:hover {
+  color: #423e3e;
+  border-color: #423e3e;
+  background-color: rgba(66, 62, 62, 0.05);
+}
+
+.time-range-btn.active {
+  color: #423e3e;
+  background-color: rgba(43, 231, 134, 0.4);
+  
 }
 
 .sales-chart-container {
@@ -2302,7 +2383,6 @@ flex: 1 0 0;
   color: #423e3e;
   cursor: pointer;
   transition: all 0.2s ease;
-  
 }
 
 .view-less-providers-btn:hover {
@@ -2316,7 +2396,31 @@ flex: 1 0 0;
   transform: rotate(180deg);
 }
 
+/* Mobile breakpoint styles */
+@media (max-width: 768px) {
+  .view-all-providers-btn-mobile {
+    display: flex;
+  }
 
+  /* Hide additional providers by default on mobile */
+  .providers-list .provider-item:not(:first-child) {
+    display: none;
+  }
+
+  /* Show all providers when expanded */
+  .providers-list.mobile-expanded .provider-item {
+    display: flex;
+  }
+
+  /* Show view less button when expanded */
+  .providers-list.mobile-expanded .view-less-providers-btn {
+    display: flex;
+  }
+
+  /* Hide view all button when expanded */
+  .providers-list.mobile-expanded .view-all-providers-btn-mobile {
+  }
+}
 
 .email-icon {
   width: 16px;
@@ -2411,7 +2515,9 @@ flex: 1 0 0;
 }
 
 /* Remove gap when second column has no building-spec-item elements */
-.building-details-grid:has(.building-details-column:nth-child(2):not(:has(.building-spec-item))) {
+.building-details-grid:has(
+  .building-details-column:nth-child(2):not(:has(.building-spec-item))
+) {
   gap: 0 !important;
 }
 
@@ -2741,8 +2847,6 @@ align-self: stretch;
   color: #6a6a6a;
   margin-top: 8px;
   margin-bottom: 16px;
-  
-  
 }
 .room-properties li {
   display: flex;
@@ -2793,7 +2897,9 @@ align-self: stretch;
   }
 
   /* Remove gap on mobile when second column has no building-spec-item elements */
-  .building-details-grid:has(.building-details-column:nth-child(2):not(:has(.building-spec-item))) {
+  .building-details-grid:has(
+    .building-details-column:nth-child(2):not(:has(.building-spec-item))
+  ) {
     gap: 0 !important;
   }
 
@@ -2802,17 +2908,9 @@ align-self: stretch;
     gap: 0 !important;
   }
 
-  .chart-tabs {
-    gap: 0;
-  }
+ 
 
-  .chart-tab {
-    padding: 2px 8px;
-    font-size: 0.875rem;
-    font-weight: 600;
-    line-height: 120%;
-    letter-spacing: 0.02625rem;
-  }
+ 
 
 .floor-header img:not(.floor-header-icon) {
   width: 24px;
@@ -2825,7 +2923,7 @@ align-self: stretch;
 .floor-header .floor-header-icon {
   width: 20px;
   height: 20px;
-  
+
   object-fit: contain;
   display: none; /* Hidden - floor header icons */
   vertical-align: middle;
@@ -2967,8 +3065,6 @@ align-self: stretch;
   user-select: none;
 }
 
-
-
 .room-header {
   cursor: pointer;
   display: flex;
@@ -2995,13 +3091,10 @@ align-self: stretch;
   color: #423e3e;
 }
 
-
-
 .room-name {
   font-weight: 600;
   color: #423e3e;
 }
-
 
 .room-properties.collapsible-content {
   max-height: 0;

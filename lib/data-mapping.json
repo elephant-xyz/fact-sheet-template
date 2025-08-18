@@ -409,199 +409,152 @@
     {
       "lexiconClass": "structure",
       "lexiconProperty": "exterior_wall_material_primary",
-      "iconName": "exterior-material",
+      "iconName": "brick",
       "enumValue": "Brick",
       "enumDescription": "Brick Exterior"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "exterior_wall_material_primary",
-      "iconName": "exterior-material",
+      "iconName": "brick",
       "enumValue": "Natural Stone",
       "enumDescription": "Natural Stone Exterior"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "exterior_wall_material_primary",
-      "iconName": "exterior-material",
+      "iconName": "brick",
       "enumValue": "Manufactured Stone",
-      "enumDescription": "Manufactured Stone Exterior"
+      "enumDescription": "Manufactured Stone"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "exterior_wall_material_primary",
-      "iconName": "exterior-material",
+      "iconName": "brick",
       "enumValue": "Stucco",
-      "enumDescription": "Stucco Exterior"
+      "enumDescription": "Stucco"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "exterior_wall_material_primary",
-      "iconName": "exterior-material",
+      "iconName": "siding",
       "enumValue": "Vinyl Siding",
       "enumDescription": "Vinyl Siding"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "exterior_wall_material_primary",
-      "iconName": "exterior-material",
+      "iconName": "siding",
       "enumValue": "Wood Siding",
       "enumDescription": "Wood Siding"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "exterior_wall_material_primary",
-      "iconName": "exterior-material",
+      "iconName": "siding",
       "enumValue": "Fiber Cement Siding",
       "enumDescription": "Fiber Cement Siding"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "exterior_wall_material_primary",
-      "iconName": "exterior-material",
+      "iconName": "siding",
       "enumValue": "Metal Siding",
       "enumDescription": "Metal Siding"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "exterior_wall_material_primary",
-      "iconName": "exterior-material",
+      "iconName": "brick",
       "enumValue": "Concrete Block",
-      "enumDescription": "Concrete Block Exterior"
+      "enumDescription": "Concrete Block"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "exterior_wall_material_primary",
-      "iconName": "exterior-material",
+      "iconName": "brick",
       "enumValue": "EIFS",
-      "enumDescription": "EIFS Exterior"
+      "enumDescription": "EIFS"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "exterior_wall_material_primary",
-      "iconName": "exterior-material",
+      "iconName": "brick",
       "enumValue": "Log",
-      "enumDescription": "Log Exterior"
+      "enumDescription": "Log"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "exterior_wall_material_primary",
-      "iconName": "exterior-material",
+      "iconName": "brick",
       "enumValue": "Adobe",
-      "enumDescription": "Adobe Exterior"
+      "enumDescription": "Adobe Brick"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "exterior_wall_material_primary",
-      "iconName": "exterior-material",
+      "iconName": "brick",
       "enumValue": "Precast Concrete",
-      "enumDescription": "Concrete Exterior"
+      "enumDescription": "Concrete"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "exterior_wall_material_primary",
-      "iconName": "exterior-material",
+      "iconName": "brick",
       "enumValue": "Curtain Wall",
-      "enumDescription": "Curtain Wall Exterior"
+      "enumDescription": "Curtain Wall"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "exterior_wall_material_secondary",
-      "iconName": "exterior-material",
-      "enumValue": "Brick",
+      "iconName": "brick",
+      "enumValue": "Brick Accent",
       "enumDescription": "Brick Accent"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "exterior_wall_material_secondary",
-      "iconName": "exterior-material",
-      "enumValue": "Natural Stone",
-      "enumDescription": "Natural Stone Accent"
+      "iconName": "decorative-block",
+      "enumValue": "Decorative Block",
+      "enumDescription": "Decorative Block"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "exterior_wall_material_secondary",
-      "iconName": "exterior-material",
-      "enumValue": "Manufactured Stone",
-      "enumDescription": "Manufactured Stone Accent"
+      "iconName": "accent-trim",
+      "enumValue": "Metal Trim",
+      "enumDescription": "Metal Trim"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "exterior_wall_material_secondary",
-      "iconName": "exterior-material",
-      "enumValue": "Stucco",
+      "iconName": "manufactured-stone",
+      "enumValue": "Stone Accent",
+      "enumDescription": "Stone Accent"
+    },
+    
+    {
+      "lexiconClass": "structure",
+      "lexiconProperty": "exterior_wall_material_secondary",
+      "iconName": "stucco",
+      "enumValue": "Stucco Accent",
       "enumDescription": "Stucco Accent"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "exterior_wall_material_secondary",
-      "iconName": "exterior-material",
-      "enumValue": "Vinyl Siding",
-      "enumDescription": "Vinyl Siding Accent"
+      "iconName": "accent-trim",
+      "enumValue": "Vinyl Accent",
+      "enumDescription": "Vinyl Accent"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "exterior_wall_material_secondary",
-      "iconName": "exterior-material",
-      "enumValue": "Wood Siding",
-      "enumDescription": "Wood Siding Accent"
+      "iconName": "accent-trim",
+      "enumValue": "Wood Trim",
+      "enumDescription": "Wood Trim"
     },
-    {
-      "lexiconClass": "structure",
-      "lexiconProperty": "exterior_wall_material_secondary",
-      "iconName": "exterior-material",
-      "enumValue": "Fiber Cement Siding",
-      "enumDescription": "Fiber Cement Siding Accent"
-    },
-    {
-      "lexiconClass": "structure",
-      "lexiconProperty": "exterior_wall_material_secondary",
-      "iconName": "exterior-material",
-      "enumValue": "Metal Siding",
-      "enumDescription": "Metal Siding Accent"
-    },
-    {
-      "lexiconClass": "structure",
-      "lexiconProperty": "exterior_wall_material_secondary",
-      "iconName": "exterior-material",
-      "enumValue": "Concrete Block",
-      "enumDescription": "Concrete Block Accent"
-    },
-    {
-      "lexiconClass": "structure",
-      "lexiconProperty": "exterior_wall_material_secondary",
-      "iconName": "exterior-material",
-      "enumValue": "EIFS",
-      "enumDescription": "EIFS Accent"
-    },
-    {
-      "lexiconClass": "structure",
-      "lexiconProperty": "exterior_wall_material_secondary",
-      "iconName": "exterior-material",
-      "enumValue": "Log",
-      "enumDescription": "Log Accent"
-    },
-    {
-      "lexiconClass": "structure",
-      "lexiconProperty": "exterior_wall_material_secondary",
-      "iconName": "exterior-material",
-      "enumValue": "Adobe",
-      "enumDescription": "Adobe Accent"
-    },
-    {
-      "lexiconClass": "structure",
-      "lexiconProperty": "exterior_wall_material_secondary",
-      "iconName": "exterior-material",
-      "enumValue": "Precast Concrete",
-      "enumDescription": "Concrete Accent"
-    },
-    {
-      "lexiconClass": "structure",
-      "lexiconProperty": "exterior_wall_material_secondary",
-      "iconName": "exterior-material",
-      "enumValue": "Curtain Wall",
-      "enumDescription": "Curtain Wall Accent"
-    },
+   
     {
       "lexiconClass": "structure",
       "lexiconProperty": "flooring_material_primary",
