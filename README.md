@@ -238,6 +238,7 @@ npm run example-inline
 | `--domain, -d`  | Domain for asset URLs              | https://elephant.xyz |
 | `--inline-css`  | Embed CSS directly in HTML         | false                |
 | `--inline-js`   | Embed JavaScript directly in HTML  | false                |
+| `--inline-svg`  | Embed SVG icons directly in HTML   | false                |
 | `--minify`      | Minify HTML, CSS, and JavaScript   | false                |
 | `--verbose, -v` | Show detailed build information    | false                |
 
@@ -261,7 +262,8 @@ npx github:elephant-xyz/fact-sheet-template generate \
   --input ./data \
   --output ./ipfs-ready \
   --inline-css \
-  --inline-js
+  --inline-js \
+  --inline-svg
 
 # Production build with minification
 npx github:elephant-xyz/fact-sheet-template generate \
@@ -269,7 +271,8 @@ npx github:elephant-xyz/fact-sheet-template generate \
   --output ./production \
   --minify \
   --inline-css \
-  --inline-js
+  --inline-js \
+  --inline-svg
 ```
 
 #### Programmatic Usage
@@ -283,6 +286,7 @@ const builder = new Builder({
   domain: "https://my-domain.com",
   inlineCss: true,
   inlineJs: true,
+  inlineSvg: true,
   verbose: true,
 });
 
@@ -324,7 +328,7 @@ Your property data should follow the [Elephant Lexicon](https://lexicon.elephant
 
 Generated websites are self-contained and can be deployed anywhere:
 
-- **IPFS**: Use `--inline-css --inline-js` for best results
+- **IPFS**: Use `--inline-css --inline-js --inline-svg` for best results (reduces external dependencies)
 - **Static hosting**: Upload the output directory to any web server
 - **CDN**: Each property folder is independent and cacheable
 - **Local viewing**: Open `index.html` directly in a browser

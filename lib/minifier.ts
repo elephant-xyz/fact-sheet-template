@@ -39,20 +39,15 @@ export class Minifier {
         html5: true,
         decodeEntities: true,
         // Preserve Nunjucks and other template syntax
-        ignoreCustomFragments: [
-          /<%[\s\S]*?%>/,
-          /<\?[\s\S]*?\?>/,
-          /{{[\s\S]*?}}/,
-          /{%[\s\S]*?%}/
-        ]
+        ignoreCustomFragments: [/<%[\s\S]*?%>/, /<\?[\s\S]*?\?>/, /{{[\s\S]*?}}/, /{%[\s\S]*?%}/],
       });
 
       const minifiedSize = Buffer.byteLength(minified, 'utf8');
-      const reduction = ((originalSize - minifiedSize) / originalSize * 100).toFixed(1);
+      const reduction = (((originalSize - minifiedSize) / originalSize) * 100).toFixed(1);
       const duration = Date.now() - startTime;
 
       this.logger.debug(
-        `HTML minified: ${originalSize} → ${minifiedSize} bytes (${reduction}% reduction) in ${duration}ms`
+        `HTML minified: ${originalSize} → ${minifiedSize} bytes (${reduction}% reduction) in ${duration}ms`,
       );
 
       return minified;
@@ -74,18 +69,18 @@ export class Minifier {
 
       const result = await postcss([
         cssnano({
-          preset: 'default'
-        })
+          preset: 'default',
+        }),
       ]).process(css, {
-        from: from || 'input.css'
+        from: from || 'input.css',
       });
 
       const minifiedSize = Buffer.byteLength(result.css, 'utf8');
-      const reduction = ((originalSize - minifiedSize) / originalSize * 100).toFixed(1);
+      const reduction = (((originalSize - minifiedSize) / originalSize) * 100).toFixed(1);
       const duration = Date.now() - startTime;
 
       this.logger.debug(
-        `CSS minified: ${originalSize} → ${minifiedSize} bytes (${reduction}% reduction) in ${duration}ms`
+        `CSS minified: ${originalSize} → ${minifiedSize} bytes (${reduction}% reduction) in ${duration}ms`,
       );
 
       return result.css;
@@ -109,21 +104,21 @@ export class Minifier {
         compress: {
           drop_console: false, // Keep console logs for debugging
           drop_debugger: true,
-          passes: 2
+          passes: 2,
         },
         mangle: true,
         format: {
-          comments: false
-        }
+          comments: false,
+        },
       });
 
       if (result.code) {
         const minifiedSize = Buffer.byteLength(result.code, 'utf8');
-        const reduction = ((originalSize - minifiedSize) / originalSize * 100).toFixed(1);
+        const reduction = (((originalSize - minifiedSize) / originalSize) * 100).toFixed(1);
         const duration = Date.now() - startTime;
 
         this.logger.debug(
-          `JS minified${filename ? ` (${filename})` : ''}: ${originalSize} → ${minifiedSize} bytes (${reduction}% reduction) in ${duration}ms`
+          `JS minified${filename ? ` (${filename})` : ''}: ${originalSize} → ${minifiedSize} bytes (${reduction}% reduction) in ${duration}ms`,
         );
 
         return result.code;

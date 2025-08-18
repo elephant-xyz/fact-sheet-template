@@ -18,11 +18,7 @@ export interface FactSheetConfig {
 }
 
 export class ConfigLoader {
-  private configFiles = [
-    '.factsheetrc.json',
-    '.factsheetrc',
-    'factsheet.config.json'
-  ];
+  private configFiles = ['.factsheetrc.json', '.factsheetrc', 'factsheet.config.json'];
 
   async loadConfig(cwd: string = process.cwd()): Promise<FactSheetConfig | null> {
     for (const configFile of this.configFiles) {
@@ -87,19 +83,19 @@ export class ConfigLoader {
 
   async createDefaultConfig(cwd: string = process.cwd()): Promise<void> {
     const defaultConfig: FactSheetConfig = {
-      input: "./property-data",
-      output: "./dist",
+      input: './property-data',
+      output: './dist',
       dev: {
         port: 3000,
         open: true,
         reload: true,
-        verbose: false
+        verbose: false,
       },
       build: {
-        domain: "https://elephant.xyz/homes/public",
+        domain: 'https://elephant.xyz/homes/public',
         inlineCss: false,
-        inlineJs: false
-      }
+        inlineJs: false,
+      },
     };
 
     const configPath = path.join(cwd, '.factsheetrc.json');

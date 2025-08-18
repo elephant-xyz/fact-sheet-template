@@ -13,53 +13,57 @@ export class Logger {
     this.quiet = options.quiet || false;
     this.verbose = options.verbose || false;
     this.ci = options.ci || false;
-    this.logFile = options.logFile !== false ? (options.logFile || 'fact-sheet-build.log') : null;
+    this.logFile = options.logFile !== false ? options.logFile || 'fact-sheet-build.log' : null;
     this.startTime = Date.now();
   }
 
-  private formatMessage(level: LogEntry['level'], message: string, data: Record<string, any> = {}): LogEntry {
+  private formatMessage(
+    level: LogEntry['level'],
+    message: string,
+    data: Record<string, any> = {},
+  ): LogEntry {
     const timestamp = new Date().toISOString();
     const elapsed = Date.now() - this.startTime;
-    
+
     return {
       timestamp,
       elapsed,
       level,
       message,
-      ...data
+      ...data,
     };
   }
 
   private writeToFile(): void {
     if (!this.logFile) return;
-    
+
     try {
       const logData = {
         startTime: new Date(this.startTime).toISOString(),
         endTime: new Date().toISOString(),
         duration: Date.now() - this.startTime,
-        entries: this.logEntries
+        entries: this.logEntries,
       };
-      
+
       fs.writeFileSync(this.logFile, JSON.stringify(logData, null, 2));
-    } catch (error) {
+    } catch {
       // Silently fail if we can't write the log file
     }
   }
 
   private consoleOutput(level: LogEntry['level'], message: string): void {
     if (this.quiet && level !== 'error') return;
-    
+
     const prefix: Record<LogEntry['level'], string> = {
       info: '[INFO]',
       warn: '[WARN]',
       error: '[ERROR]',
       success: '[SUCCESS]',
-      debug: '[DEBUG]'
+      debug: '[DEBUG]',
     };
-    
+
     const output = this.ci ? `${prefix[level]} ${message}` : message;
-    
+
     if (level === 'error') {
       console.error(output);
     } else if (level === 'warn') {
@@ -103,10 +107,10 @@ export class Logger {
 
   progress(current: number, total: number, message: string): void {
     if (this.quiet || this.ci) return;
-    
+
     const percentage = Math.round((current / total) * 100);
     const progressMessage = `Progress: ${current}/${total} (${percentage}%) - ${message}`;
-    
+
     // In non-CI mode, we could use process.stdout.write for updating progress
     // For now, just log it normally
     this.info(progressMessage, { current, total, percentage });
