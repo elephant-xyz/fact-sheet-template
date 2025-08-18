@@ -558,21 +558,21 @@
     {
       "lexiconClass": "structure",
       "lexiconProperty": "flooring_material_primary",
-      "iconName": "flooring",
+      "iconName": "wood-floors",
       "enumValue": "Solid Hardwood",
       "enumDescription": "Hardwood Flooring"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "flooring_material_primary",
-      "iconName": "flooring",
+      "iconName": "wood-floors",
       "enumValue": "Engineered Hardwood",
       "enumDescription": "Hardwood Flooring"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "flooring_material_primary",
-      "iconName": "flooring",
+      "iconName": "wood-floors",
       "enumValue": "Laminate",
       "enumDescription": "Laminate Flooring"
     },
@@ -621,7 +621,7 @@
     {
       "lexiconClass": "structure",
       "lexiconProperty": "flooring_material_primary",
-      "iconName": "flooring",
+      "iconName": "area-rug",
       "enumValue": "Area Rugs",
       "enumDescription": "Area Rugs"
     },
@@ -635,7 +635,7 @@
     {
       "lexiconClass": "structure",
       "lexiconProperty": "flooring_material_primary",
-      "iconName": "flooring",
+      "iconName": "wood-floors",
       "enumValue": "Bamboo",
       "enumDescription": "Bamboo Flooring"
     },
@@ -677,28 +677,28 @@
     {
       "lexiconClass": "structure",
       "lexiconProperty": "flooring_material_primary",
-      "iconName": "flooring",
+      "iconName": "wood-floors",
       "enumValue": "Wood",
       "enumDescription": "Wood Flooring"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "flooring_material_secondary",
-      "iconName": "flooring",
+      "iconName": "wood-floors",
       "enumValue": "Solid Hardwood",
       "enumDescription": "Hardwood Flooring"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "flooring_material_secondary",
-      "iconName": "flooring",
+      "iconName": "wood-floors",
       "enumValue": "Engineered Hardwood",
       "enumDescription": "Hardwood Flooring"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "flooring_material_secondary",
-      "iconName": "flooring",
+      "iconName": "wood-floors",
       "enumValue": "Laminate",
       "enumDescription": "Laminate Flooring"
     },
@@ -719,14 +719,14 @@
     {
       "lexiconClass": "structure",
       "lexiconProperty": "flooring_material_secondary",
-      "iconName": "flooring",
+      "iconName": "carpet",
       "enumValue": "Carpet",
       "enumDescription": "Carpet Flooring"
     },
     {
       "lexiconClass": "structure",
       "lexiconProperty": "flooring_material_secondary",
-      "iconName": "flooring",
+      "iconName": "area-rug",
       "enumValue": "Area Rugs",
       "enumDescription": "Area Rugs"
     },
@@ -1062,7 +1062,7 @@
     {
       "lexiconClass": "layout",
       "lexiconProperty": "flooring_material_type",
-      "iconName": "flooring",
+      "iconName": "wood-floors",
       "enumValue": "Wood",
       "enumDescription": "Wood Flooring"
     },
@@ -1204,21 +1204,21 @@
     {
       "lexiconClass": "layout",
       "lexiconProperty": "flooring_wear",
-      "iconName": "flooring-wear",
+      "iconName": "good-condition",
       "enumValue": "Good",
       "enumDescription": "Floors in Good Condition"
     },
     {
       "lexiconClass": "layout",
       "lexiconProperty": "flooring_wear",
-      "iconName": "flooring-wear",
+      "iconName": "warning",
       "enumValue": "Moderate",
       "enumDescription": "Floors in Moderate Condition"
     },
     {
       "lexiconClass": "layout",
       "lexiconProperty": "flooring_wear",
-      "iconName": "flooring-wear",
+      "iconName": "good-condition",
       "enumValue": "Pristine",
       "enumDescription": "Pristine Floors"
     },

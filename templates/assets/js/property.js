@@ -40,33 +40,142 @@ function filterDataByTimeRange(data, years) {
 }
 
 /**
- * Displays a no-data message on the canvas
+ * Displays a no-data message in the chart container
  * @param {HTMLCanvasElement} canvasElement - The canvas element
  * @param {string} message - The message to display
  */
 function displayNoDataMessage(canvasElement, message) {
   const canvas = canvasElement.canvas || canvasElement;
-  const ctx = canvas.getContext("2d");
-  const width = canvas.width;
-  const height = canvas.height;
+  const chartContainer = canvas.closest('.sales-chart-container');
+  
+  if (!chartContainer) return;
 
-  // Clear the canvas
-  ctx.clearRect(0, 0, width, height);
+  // Hide the canvas
+  canvas.style.display = 'none';
 
-  // Set up text styling
-  ctx.font = "16px neue-haas-grotesk-display, system-ui, sans-serif";
-  ctx.fillStyle = "#8e8b8b";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
+  // Check if no-data message already exists
+  let noDataContainer = chartContainer.querySelector('.no-data-message');
+  
+  if (!noDataContainer) {
+    // Create no-data message container
+    noDataContainer = document.createElement('div');
+    noDataContainer.className = 'no-data-message';
+    chartContainer.appendChild(noDataContainer);
+  }
 
-  // Draw the message
-  const lines = message.split("\n");
-  const lineHeight = 24;
-  const startY = height / 2 - ((lines.length - 1) * lineHeight) / 2;
+  // Update the message
+  noDataContainer.innerHTML = `
+    <div class="no-data-content">
+      <div class="no-data-icon">📊</div>
+      <div class="no-data-text">${message.replace(/\n/g, '<br>')}</div>
+    </div>
+  `;
+}
 
-  lines.forEach((line, index) => {
-    ctx.fillText(line, width / 2, startY + index * lineHeight);
+/**
+ * Shows a sales table instead of chart when there are less than 3 sales
+ * @param {Array} salesData - Array of sales data objects
+ */
+function showSalesTable(salesData) {
+  const chartContainer = document.querySelector('.sales-chart-container');
+  if (!chartContainer) return;
+
+  // Hide the chart container
+  chartContainer.style.display = 'none';
+
+  // Check if table already exists
+  let tableContainer = chartContainer.parentNode.querySelector('.sales-table-container');
+  
+  if (!tableContainer) {
+    // Create table container
+    tableContainer = document.createElement('div');
+    tableContainer.className = 'sales-table-container';
+    tableContainer.innerHTML = `
+      <table class="sales-history-table">
+        <thead>
+          <tr>
+            <th class="h5-style">Purchase Price</th>
+            <th class="h5-style">Owner</th>
+            <th class="h5-style">Sale Date</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    `;
+    
+    // Insert table before chart container
+    chartContainer.parentNode.insertBefore(tableContainer, chartContainer);
+  }
+
+  // Clear existing table rows
+  const tbody = tableContainer.querySelector('tbody');
+  tbody.innerHTML = '';
+
+  // Add sales data to table
+  salesData.forEach((sale) => {
+    const row = document.createElement('tr');
+    
+    // Format price
+    const priceCell = document.createElement('td');
+    priceCell.className = 'sale-price-cell body-small-style';
+    priceCell.textContent = '$' + sale.amount.toLocaleString();
+    
+    // Format owner
+    const ownerCell = document.createElement('td');
+    ownerCell.className = 'sale-owner-cell body-small-style';
+    ownerCell.textContent = sale.owner || '-';
+    
+    // Format date
+    const dateCell = document.createElement('td');
+    dateCell.className = 'sale-date-cell body-small-style';
+    
+    // Parse and format the date
+    const date = new Date(sale.date);
+    if (!isNaN(date.getTime())) {
+      const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                          'July', 'August', 'September', 'October', 'November', 'December'];
+      const month = monthNames[date.getMonth()];
+      const year = date.getFullYear();
+      dateCell.textContent = `${month} ${year}`;
+    } else {
+      dateCell.textContent = sale.date;
+    }
+    
+    row.appendChild(priceCell);
+    row.appendChild(ownerCell);
+    row.appendChild(dateCell);
+    tbody.appendChild(row);
   });
+}
+
+/**
+ * Shows the sales chart and hides the table
+ */
+function showSalesChart() {
+  const chartContainer = document.querySelector('.sales-chart-container');
+  if (!chartContainer) return;
+
+  // Show the chart container
+  chartContainer.style.display = 'block';
+
+  // Show the canvas
+  const canvas = chartContainer.querySelector('canvas');
+  if (canvas) {
+    canvas.style.display = 'block';
+  }
+
+  // Hide any existing table
+  const tableContainer = chartContainer.parentNode.querySelector('.sales-table-container');
+  if (tableContainer) {
+    tableContainer.remove();
+  }
+
+  // Hide any existing no-data message
+  const noDataMessage = chartContainer.querySelector('.no-data-message');
+  if (noDataMessage) {
+    noDataMessage.remove();
+  }
 }
 
 /**
@@ -711,6 +820,15 @@ function renderSalesPriceChart() {
     );
     return;
   }
+
+  // If we have less than 3 sales after filtering, show table instead of chart
+  if (filteredSalesData.length < 3) {
+    showSalesTable(filteredSalesData);
+    return;
+  }
+
+  // Show chart container and hide any existing table
+  showSalesChart();
 
   const spacedSalesData = applySpacingToSalesData(filteredSalesData);
   // Extract only the year from the date string for x-axis labels

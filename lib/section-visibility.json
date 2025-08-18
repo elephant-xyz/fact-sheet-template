@@ -14,7 +14,8 @@
       "property-address",
       "provider-cards",
       "property-history",
-      "floorplan",
+      "photo-gallery",
+      "floorplan-layout",
       "building-details",
       "features",
       "parcel-id"
@@ -25,7 +26,8 @@
       "property-address",
       "provider-cards",
       "property-history",
-      "floorplan",
+      "photo-gallery",
+      "floorplan-layout",
       "building-details",
       "features",
       "parcel-id"
@@ -36,7 +38,7 @@
       "property-address",
       "provider-cards",
       "property-history",
-      "floorplan",
+      "photo-gallery",
       "floorplan-layout",
       "building-details",
       "features",
