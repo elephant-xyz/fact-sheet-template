@@ -513,7 +513,7 @@ function updateSectionVisibility(label) {
                 <!-- Chart Content -->
                 <div class="chart-content-container">
                   
-                  {% if homes[property_id].all_sales | length > 1 %}
+                  {% if homes[property_id].all_sales | length >= 1 %}
                   <div id="sales-chart-content" class="chart-content active">
                     {% if homes[property_id].all_sales | length < 3 %}
                     <!-- Sales Table for 1-2 sales -->
