@@ -22,14 +22,19 @@ export class AssetManager {
       quiet: options.quiet,
       verbose: options.verbose,
       ci: options.ci,
-      logFile: options.logFile
+      logFile: options.logFile,
     });
     this.minifier = new Minifier(options.minify || false, this.logger);
   }
 
-  async copyAssets(outputDir: string, propertyId: string, propertyDataPath?: string, propertyData?: TemplateData): Promise<void> {
+  async copyAssets(
+    outputDir: string,
+    propertyId: string,
+    propertyDataPath?: string,
+    propertyData?: TemplateData,
+  ): Promise<void> {
     const propertyDir = path.join(outputDir, propertyId);
-    
+
     this.logger.debug(`Copying assets for ${propertyId}...`);
 
     // Copy CSS files (unless inlining)
@@ -42,7 +47,7 @@ export class AssetManager {
       await this.copyJSAssets(propertyDir);
     }
 
-    // Always copy static assets for local builds
+    // Copy static assets (unless inlining SVGs, in which case copy only non-SVG files)
     await this.copyStaticAssets(propertyDir);
 
     // Copy property-specific images if they exist
@@ -57,7 +62,7 @@ export class AssetManager {
 
     if (await fs.pathExists(cssSourceDir)) {
       await fs.ensureDir(cssTargetDir);
-      
+
       // Copy and optionally minify CSS files
       const files = await fs.readdir(cssSourceDir);
       for (const file of files) {
@@ -65,18 +70,18 @@ export class AssetManager {
           const sourcePath = path.join(cssSourceDir, file);
           const targetPath = path.join(cssTargetDir, file);
           let content = await fs.readFile(sourcePath, 'utf8');
-          
+
           if (this.options.minify) {
             content = await this.minifier.minifyCSS(content, file);
           }
-          
+
           await fs.writeFile(targetPath, content, 'utf8');
         } else {
           // Copy non-CSS files as-is
           await fs.copy(path.join(cssSourceDir, file), path.join(cssTargetDir, file));
         }
       }
-      
+
       this.logger.debug(`Copied CSS assets to css/`);
     }
   }
@@ -87,7 +92,7 @@ export class AssetManager {
 
     if (await fs.pathExists(jsSourceDir)) {
       await fs.ensureDir(jsTargetDir);
-      
+
       // Copy and optionally minify JS files
       const files = await fs.readdir(jsSourceDir);
       for (const file of files) {
@@ -95,18 +100,18 @@ export class AssetManager {
           const sourcePath = path.join(jsSourceDir, file);
           const targetPath = path.join(jsTargetDir, file);
           let content = await fs.readFile(sourcePath, 'utf8');
-          
+
           if (this.options.minify) {
             content = await this.minifier.minifyJS(content, file);
           }
-          
+
           await fs.writeFile(targetPath, content, 'utf8');
         } else {
           // Copy already minified or non-JS files as-is
           await fs.copy(path.join(jsSourceDir, file), path.join(jsTargetDir, file));
         }
       }
-      
+
       this.logger.debug(`Copied JS assets to js/`);
     }
   }
@@ -114,15 +119,21 @@ export class AssetManager {
   private async copyStaticAssets(propertyDir: string): Promise<void> {
     // Copy static directory contents to root of property directory
     const staticSourceDir = path.join(this.templatesPath, 'assets', 'static');
-    
+
     if (await fs.pathExists(staticSourceDir)) {
       const files = await fs.readdir(staticSourceDir);
-      
+
       for (const file of files) {
+        // Skip SVG files if we're inlining them
+        if (this.options.inlineSvg && file.endsWith('.svg')) {
+          this.logger.debug(`Skipping SVG file (will be inlined): ${file}`);
+          continue;
+        }
+
         const sourcePath = path.join(staticSourceDir, file);
         const targetPath = path.join(propertyDir, file);
         await fs.copy(sourcePath, targetPath);
-        
+
         this.logger.debug(`Copied static asset: ${file}`);
       }
     }
@@ -134,7 +145,7 @@ export class AssetManager {
     if (await fs.pathExists(imagesSourceDir)) {
       await fs.ensureDir(imagesTargetDir);
       await fs.copy(imagesSourceDir, imagesTargetDir);
-      
+
       this.logger.debug(`Copied image assets to images/`);
     }
 
@@ -145,37 +156,9 @@ export class AssetManager {
     if (await fs.pathExists(iconsSourceDir)) {
       await fs.ensureDir(iconsTargetDir);
       await fs.copy(iconsSourceDir, iconsTargetDir);
-      
+
       this.logger.debug(`Copied icon assets to icons/`);
     }
-  }
-
-  async createManifest(outputDir: string, propertyId: string, propertyData: TemplateData): Promise<void> {
-    const propertyDir = path.join(outputDir, propertyId);
-    const manifestPath = path.join(propertyDir, 'manifest.json');
-
-    const manifest = {
-      propertyId,
-      generatedAt: new Date().toISOString(),
-      generator: '@elephant/fact-sheet',
-      version: '1.0.0',
-      domain: this.options.domain || 'https://elephant.xyz/homes/public',
-      options: {
-        inlineCss: this.options.inlineCss || false,
-        inlineJs: this.options.inlineJs || false
-      },
-      property: {
-        address: propertyData.address,
-        details: propertyData.property,
-        salesCount: propertyData.all_sales?.length || 0,
-        taxCount: propertyData.all_taxes?.length || 0,
-        dataSourcesCount: propertyData.data_sources?.length || 0
-      }
-    };
-
-    await fs.writeFile(manifestPath, JSON.stringify(manifest, null, 2), 'utf8');
-    
-    this.logger.debug(`Created manifest.json for ${propertyId}`);
   }
 
   async optimizeAssets(_outputDir: string, _propertyId: string): Promise<void> {
@@ -183,19 +166,23 @@ export class AssetManager {
     this.logger.debug(`Asset optimization not yet implemented`);
   }
 
-  private async copyPropertyImages(propertyDir: string, propertyDataPath: string, propertyData: TemplateData): Promise<void> {
+  private async copyPropertyImages(
+    propertyDir: string,
+    propertyDataPath: string,
+    propertyData: TemplateData,
+  ): Promise<void> {
     // Only copy images that are referenced in carousel_images
-    if (await fs.pathExists(propertyDataPath) && propertyData.carousel_images) {
+    if ((await fs.pathExists(propertyDataPath)) && propertyData.carousel_images) {
       for (const image of propertyData.carousel_images) {
         // Extract filename from ipfs_url
         const filename = path.basename(image.ipfs_url);
         const sourcePath = path.join(propertyDataPath, filename);
-        
+
         // Check if the image file exists
         if (await fs.pathExists(sourcePath)) {
           const targetPath = path.join(propertyDir, filename);
           await fs.copy(sourcePath, targetPath);
-          
+
           this.logger.debug(`Copied carousel image: ${filename}`);
         }
       }

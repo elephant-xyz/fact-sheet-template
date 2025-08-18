@@ -19,7 +19,7 @@ export class Builder {
       quiet: options.quiet,
       verbose: options.verbose,
       ci: options.ci,
-      logFile: options.logFile
+      logFile: options.logFile,
     });
     this.dataLoader = new DataLoader(options);
     this.renderer = new TemplateRenderer(options);
@@ -28,7 +28,7 @@ export class Builder {
 
   async build(): Promise<void> {
     const startTime = Date.now();
-    
+
     this.logger.section('Build Process');
     this.logger.info(`Input: ${this.options.input}`);
     this.logger.info(`Output: ${this.options.output}`);
@@ -36,9 +36,11 @@ export class Builder {
     try {
       // Step 1: Load all property data
       this.logger.info('Loading property data...');
-      const properties: Record<string, TemplateData> = await this.dataLoader.loadPropertyData(this.options.input);
+      const properties: Record<string, TemplateData> = await this.dataLoader.loadPropertyData(
+        this.options.input,
+      );
       const propertyIds = Object.keys(properties);
-      
+
       if (propertyIds.length === 0) {
         this.logger.warn('No properties found in input directory');
         return;
@@ -54,13 +56,13 @@ export class Builder {
         try {
           await this.buildProperty(propertyId, properties[propertyId]);
           successCount++;
-          
+
           this.logger.progress(successCount, propertyIds.length, 'Building properties');
         } catch (error) {
           errorCount++;
           this.logger.error(`Failed to build ${propertyId}: ${(error as Error).message}`, {
             propertyId,
-            error: (error as Error).stack
+            error: (error as Error).stack,
           });
         }
       }
@@ -74,13 +76,12 @@ export class Builder {
         this.logger.warn(`Failed: ${errorCount} properties`);
       }
       this.logger.info(`Output directory: ${this.options.output}`);
-      
+
       // Finalize the logger to write the log file
       this.logger.finalize();
-
     } catch (error) {
       this.logger.error(`Build process failed: ${(error as Error).message}`, {
-        error: (error as Error).stack
+        error: (error as Error).stack,
       });
       this.logger.finalize();
       throw error;
@@ -105,24 +106,26 @@ export class Builder {
 
     // Copy/manage assets
     const propertyDataPath = path.join(this.options.input, propertyId);
-    await this.assetManager.copyAssets(this.options.output, propertyId, propertyDataPath, propertyData);
-
-    // Create manifest file
-    await this.assetManager.createManifest(this.options.output, propertyId, propertyData);
+    await this.assetManager.copyAssets(
+      this.options.output,
+      propertyId,
+      propertyDataPath,
+      propertyData,
+    );
 
     this.logger.debug(`Completed ${propertyId}`);
   }
 
   async validateInput(): Promise<string[]> {
     // Check if input directory exists
-    if (!await fs.pathExists(this.options.input)) {
+    if (!(await fs.pathExists(this.options.input))) {
       throw new Error(`Input directory does not exist: ${this.options.input}`);
     }
 
     // Check if input directory has property subdirectories
     const items = await fs.readdir(this.options.input);
     const directories: string[] = [];
-    
+
     for (const item of items) {
       const itemPath = path.join(this.options.input, item);
       const stats = await fs.stat(itemPath);

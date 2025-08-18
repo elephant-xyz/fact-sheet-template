@@ -52,7 +52,6 @@ export interface AssociatedEntity {
   data: any;
 }
 
-
 export interface SalesEntry {
   key: string;
   data: SalesData;
@@ -73,8 +72,8 @@ export interface DataSource {
 }
 
 export interface CarouselImage {
-  ipfs_url: string;  // This will contain the relative path like "./003-2558GardensPkwy-PalmBeachGardens-FULL.jpg"
-  name?: string;     // Optional, for alt text
+  ipfs_url: string; // This will contain the relative path like "./003-2558GardensPkwy-PalmBeachGardens-FULL.jpg"
+  name?: string; // Optional, for alt text
   document_type?: string;
   file_format?: string;
 }
@@ -120,6 +119,7 @@ export interface BuilderOptions {
   domain?: string;
   inlineCss?: boolean;
   inlineJs?: boolean;
+  inlineSvg?: boolean;
   verbose?: boolean;
   quiet?: boolean;
   ci?: boolean;

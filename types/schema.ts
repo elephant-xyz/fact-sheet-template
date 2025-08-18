@@ -1,4 +1,4 @@
 export interface JsonSchema {
-  title: string,
-  [key: string | number]: any
+  title: string;
+  [key: string | number]: any;
 }

@@ -1,5 +1,14 @@
 {% extends "base.njk" %}
 
+{# Macro for rendering SVG icons that can be either inlined or external #}
+{% macro renderSvg(filename, altText, className="") %}
+    {% if config.inlineSvg and (filename | isSvg) %}
+        <span class="{{ className }}" aria-label="{{ altText }}">{{ filename | assetUrl | safe }}</span>
+    {% else %}
+        <img src="{{ filename | assetUrl }}" alt="{{ altText }}" {% if className %}class="{{ className }}"{% endif %}>
+    {% endif %}
+{% endmacro %}
+
 {# Macro for source links #}
 {% macro sourceLink(sourceData, sourceTitle="County Data") %}
   {% if sourceData and sourceData.source_http_request %}
@@ -105,7 +114,7 @@ function updateSectionVisibility(label) {
     <div class="nav-content">
         <!-- Logo -->
         <div class="nav-logo">
-            <img src="{{ 'elephant_logo-horizontal.svg' | assetUrl }}" alt="Elephant" class="logo-image">
+            {{ renderSvg('elephant_logo-horizontal.svg', 'Elephant', 'logo-image') }}
         </div>
         
         {% set has_sales_data_nav = false %}
@@ -152,7 +161,7 @@ function updateSectionVisibility(label) {
                     </div>
                     <div class="condensed-info">
                         <div class="condensed-name-row">
-                            <img src="{{ 'type=real-estate-agent.svg' | assetUrl }}" alt="Real Estate Agent" class="condensed-icon">
+                            {{ renderSvg('type=real-estate-agent.svg', 'Real Estate Agent', 'condensed-icon') }}
                             <span class="condensed-name">Annette Santiago</span>
                         </div>
                         <div class="condensed-phone">561-202-7707</div>
@@ -281,7 +290,7 @@ function updateSectionVisibility(label) {
 
                     {% if homes[property_id].rent.full_furnished %}
                     <div class="status-badge badge-furnished">
-                        <img src="{{ 'type=living.svg' | assetUrl }}" alt="Fully Furnished" class="furnished-icon">
+                        {{ renderSvg('type=living.svg', 'Fully Furnished', 'furnished-icon') }}
                         <span class="status-text">Fully Furnished</span>
                     </div>
                     {% endif %}
@@ -332,7 +341,7 @@ function updateSectionVisibility(label) {
                             {% if homes[property_id].property.property_type %}
                             <div class="property-overview-item">
                                 <div class="property-overview-icon">
-                                    <img src="{{ 'type=house.svg' | assetUrl }}" alt="Property Type">
+                                    {{ renderSvg('type=house.svg', 'Property Type') }}
                                 </div>
                                 <div class="property-overview-text">{{ homes[property_id].property.property_type | replace('_', ' ') }}</div>
                                 {% if homes[property_id].property.number_of_units_type and homes[property_id].property.number_of_units_type != 'null' %}
@@ -347,7 +356,7 @@ function updateSectionVisibility(label) {
                             {% if homes[property_id].property.property_structure_built_year or homes[property_id].property.builder_name %}
                             <div class="property-overview-item">
                                 <div class="property-overview-icon">
-                                    <img src="{{ 'type=build.svg' | assetUrl }}" alt="Year Built">
+                                    {{ renderSvg('type=build.svg', 'Year Built') }}
                                 </div>
                                 <div class="property-overview-text">Built in {{ homes[property_id].property.property_structure_built_year or 'Unknown' }}</div>
                                 {% if homes[property_id].property.builder_name %}
@@ -360,7 +369,7 @@ function updateSectionVisibility(label) {
                             {% if homes[property_id].lot and homes[property_id].lot.lot_area_sqft %}
                             <div class="property-overview-item">
                                 <div class="property-overview-icon">
-                                    <img src="{{ 'type=measure.svg' | assetUrl }}" alt="Lot Area">
+                                    {{ renderSvg('type=measure.svg', 'Lot Area') }}
                                 </div>
                                 <div class="property-overview-text">{{ homes[property_id].lot.lot_area_sqft | number }} sqft</div>
                             </div>
@@ -465,7 +474,7 @@ function updateSectionVisibility(label) {
                 {% if homes[property_id].all_sales | length > 4 %}
                 <button class="show-more-sales-btn" onclick="toggleMoreSalesData()">
                   <span>Show More Sale Events</span>
-                  <img src="{{ 'type=carat-down.svg' | assetUrl }}" alt="Dropdown" class="provider-dropdown-arrow">
+                  {{ renderSvg('type=carat-down.svg', 'Dropdown', 'provider-dropdown-arrow') }}
                 </button>
                 {% endif %}
                 
@@ -654,7 +663,7 @@ function updateSectionVisibility(label) {
               {% if homes[property_id].all_taxes | length > 1 %}
               <button class="show-more-tax-btn" onclick="toggleMoreTaxData()">
                 <span>Show More Tax Years</span>
-                <img src="{{ 'type=carat-down.svg' | assetUrl }}" alt="Dropdown" class="provider-dropdown-arrow">
+                {{ renderSvg('type=carat-down.svg', 'Dropdown', 'provider-dropdown-arrow') }}
               </button>
               {% endif %}
 
@@ -926,16 +935,16 @@ function updateSectionVisibility(label) {
                             <div class="room-header" onclick="toggleRoomDetails(this)">
                                 <div class="room-icon-container">
                                     {% if room.space_type.iconName %}
-                                        <img src="{{ room.space_type.iconName | assetUrl}}" alt="">
+                                        {{ renderSvg(room.space_type.iconName, '', '') }}
                                     {% endif %}
                                 </div>
                                 <span class="room-title">{{ room.space_type.enumDescription or 'Room' }}</span>
-                                <img src="{{ 'type=carat-down.svg' | assetUrl }}" alt="Expand" class="room-expand-icon">
+                                {{ renderSvg('type=carat-down.svg', 'Expand', 'room-expand-icon') }}
                             </div>
                             <ul class="room-properties" style="display: none;">
                             {% for key, value in room %}
                               {% if key != 'space_type' and key != 'floor_level' %} 
-                                <li>{% if value.iconName %}<img src="{{ value.iconName | assetUrl}}" alt="{{ value.enumDescription }}" class="room-property-icon"> {% endif %} {{ value.enumDescription }} </li>
+                                <li>{% if value.iconName %}{{ renderSvg(value.iconName, value.enumDescription, 'room-property-icon') }} {% endif %} {{ value.enumDescription }} </li>
                               {% endif %}
                             {% endfor %}
                             </ul>
@@ -943,7 +952,7 @@ function updateSectionVisibility(label) {
                             <div class="room-header">
                                 <div class="room-icon-container">
                                     {% if room.space_type.iconName %}
-                                        <img src="{{ room.space_type.iconName | assetUrl}}" alt="">
+                                        {{ renderSvg(room.space_type.iconName, '', '') }}
                                     {% endif %}
                                 </div>
                                 <span class="room-title">{{ room.space_type.enumDescription or 'Room' }}</span>
@@ -961,7 +970,7 @@ function updateSectionVisibility(label) {
                     {% if first_floor_rooms | length > 0 and first_floor_rooms | selectattr('space_type') | list | length > 0 %}
                     <div class="floor-section">
                         <div class="floor-header">
-                            <img src="{{ 'featuresicons-13.svg' | assetUrl }}" alt="1st Floor" class="floor-header-icon">
+                            {{ renderSvg('featuresicons-13.svg', '1st Floor', 'floor-header-icon') }}
                             <h3 class="section-subtitle">1st Floor</h3>
                         </div>
                         {{ floorRooms(first_floor_rooms) }}
@@ -972,7 +981,7 @@ function updateSectionVisibility(label) {
                     {% if second_floor_rooms | length > 0 and second_floor_rooms | selectattr('space_type') | list | length > 0 %}
                     <div class="floor-section">
                         <div class="floor-header">
-                            <img src="{{ 'featuresicons-5.svg' | assetUrl }}" alt="2nd Floor" class="floor-header-icon">
+                            {{ renderSvg('featuresicons-5.svg', '2nd Floor', 'floor-header-icon') }}
                             <h3 class="section-subtitle">2nd Floor</h3>
                         </div>
                         {{ floorRooms(second_floor_rooms) }}
@@ -983,7 +992,7 @@ function updateSectionVisibility(label) {
                     {% if other_rooms | length > 0 and other_rooms | selectattr('space_type') | list | length > 0 %}
                     <div class="floor-section">
                         <div class="floor-header">
-                            <img src="{{ 'featuresicons-33.svg' | assetUrl }}" alt="Other Floors" class="floor-header-icon">
+                            {{ renderSvg('featuresicons-33.svg', 'Other Floors', 'floor-header-icon') }}
                             <h3 class="section-subtitle">Other Floors</h3>
                         </div>
                         {{ floorRooms(other_rooms) }}
@@ -1008,7 +1017,7 @@ function updateSectionVisibility(label) {
                       <div class="feature-row">
                         {% set iconPath = feature.iconName %}
                         {% if iconPath %}
-                          <img src="{{ iconPath | assetUrl }}" alt="{{ feature.info.description }}">
+                          {{ renderSvg(iconPath, feature.info.description, '') }}
                         {% endif %}
                         <div class="feature-text-content">
                             <div class="feature-main-text">{{ feature.enumDescription }}</div>
@@ -1048,7 +1057,7 @@ function updateSectionVisibility(label) {
                                     <div class="feature-row">
                                       {% set iconPath = util.iconName %}
                                       {% if iconPath %}
-                                        <img src="{{ iconPath | assetUrl }}" alt="{{ util.enumDescription }}">
+                                        {{ renderSvg(iconPath, util.enumDescription, '') }}
                                       {% endif %}
                                       <div class="feature-text-content">
                                           <div class="feature-main-text">{{ util.enumDescription }}</div>
@@ -1070,7 +1079,7 @@ function updateSectionVisibility(label) {
                                     <div class="feature-row">
                                       {% set iconPath = appliance.appliance_type.iconName %}
                                       {% if iconPath %}
-                                        <img src="{{ iconPath | assetUrl }}" alt="{{ appliance.appliance_type.enumDescription }}">
+                                        {{ renderSvg(iconPath, appliance.appliance_type.enumDescription, '') }}
                                       {% endif %}
                                       <div class="feature-text-content">
                                           <div class="feature-main-text">{%if appliance.finish %}{{ appliance.finish.enumDescription }}{% endif %} {{ appliance.appliance_type.enumDescription }}</div>
@@ -1126,7 +1135,7 @@ function updateSectionVisibility(label) {
 
                     <button class="less-info-btn" onclick="toggleMoreInfo()">
                         <span>Less Info</span>
-                        <img src="{{ 'uiicons-1.svg' | assetUrl }}" alt="Dropdown" class="dropdown-arrow rotated">
+                        {{ renderSvg('uiicons-1.svg', 'Dropdown', 'dropdown-arrow rotated') }}
                     </button>
                 </div>
 
@@ -1143,7 +1152,7 @@ function updateSectionVisibility(label) {
                             </div>
                             <div class="provider-info">
                                 <div class="provider-header">
-                                    <img src="{{ 'type=real-estate-agent.svg' | assetUrl }}" alt="Provider icon" class="provider-icon">
+                                    {{ renderSvg('type=real-estate-agent.svg', 'Provider icon', 'provider-icon') }}
                                     <span class="provider-name" data-tooltip="{{ provider.role }}">{{ provider.name }}</span>
                                 </div>
                                 <div class="provider-contact">
@@ -1155,7 +1164,7 @@ function updateSectionVisibility(label) {
                                     </div>
                                     <button class="provider-more-info-btn" onclick="toggleProviderInfo(this)">
                                         <span>More Info</span>
-                                        <img src="{{ 'type=carat-down.svg' | assetUrl }}" alt="Dropdown" class="provider-dropdown-arrow">
+                                        {{ renderSvg('type=carat-down.svg', 'Dropdown', 'provider-dropdown-arrow') }}
                                     </button>
                                 </div>
                                 <div class="provider-expanded-content" style="display: none;">
@@ -1176,7 +1185,7 @@ function updateSectionVisibility(label) {
                         <!-- Mobile expand button after first provider -->
                         <button class="view-all-providers-btn view-all-providers-btn-mobile" onclick="toggleAllProviders(this)">
                             <span>View all providers</span>
-                            <img src="{{ 'type=carat-down.svg' | assetUrl }}" alt="Expand" class="arrow">
+                            {{ renderSvg('type=carat-down.svg', 'Expand', 'arrow') }}
                         </button>
                         
                         {% else %}
@@ -1189,7 +1198,7 @@ function updateSectionVisibility(label) {
                             </div>
                             <div class="provider-info">
                                 <div class="provider-header">
-                                    <img src="{{ 'type=real-estate-agent.svg' | assetUrl }}" alt="Provider icon" class="provider-icon">
+                                    {{ renderSvg('type=real-estate-agent.svg', 'Provider icon', 'provider-icon') }}
                                     <span class="provider-name" data-tooltip="Real Estate Agent">Annette Santiago</span>
                                 </div>
                                 <div class="provider-contact">
@@ -1201,7 +1210,7 @@ function updateSectionVisibility(label) {
                                     </div>
                                     <button class="provider-more-info-btn" onclick="toggleProviderInfo(this)">
                                         <span>More Info</span>
-                                        <img src="{{ 'type=carat-down.svg' | assetUrl }}" alt="Dropdown" class="provider-dropdown-arrow">
+                                        {{ renderSvg('type=carat-down.svg', 'Dropdown', 'provider-dropdown-arrow') }}
                                     </button>
                                 </div>
                                 <div class="provider-expanded-content" style="display: none;">
@@ -1220,7 +1229,7 @@ function updateSectionVisibility(label) {
                         <!-- Mobile expand button after first provider -->
                         <button class="view-all-providers-btn view-all-providers-btn-mobile" onclick="toggleAllProviders(this)">
                             <span>View all providers</span>
-                            <img src="{{ 'type=carat-down.svg' | assetUrl }}" alt="Expand" class="arrow">
+                            {{ renderSvg('type=carat-down.svg', 'Expand', 'arrow') }}
                         </button>
 
                         <!-- Provider 2: Home Inspector -->
@@ -1230,7 +1239,7 @@ function updateSectionVisibility(label) {
                             </div>
                             <div class="provider-info">
                                 <div class="provider-header">
-                                    <img src="{{ 'type=inspector.svg' | assetUrl }}" alt="Provider icon" class="provider-icon">
+                                    {{ renderSvg('type=inspector.svg', 'Provider icon', 'provider-icon') }}
                                     <span class="provider-name" data-tooltip="Home Inspector">Michael Johnson</span>
                                 </div>
                                 <div class="provider-contact">
@@ -1242,7 +1251,7 @@ function updateSectionVisibility(label) {
                                     </div>
                                     <button class="provider-more-info-btn" onclick="toggleProviderInfo(this)">
                                         <span>More Info</span>
-                                        <img src="{{ 'type=carat-down.svg' | assetUrl }}" alt="Dropdown" class="provider-dropdown-arrow">
+                                        {{ renderSvg('type=carat-down.svg', 'Dropdown', 'provider-dropdown-arrow') }}
                                     </button>
                                 </div>
                                 <div class="provider-expanded-content" style="display: none;">
@@ -1265,7 +1274,7 @@ function updateSectionVisibility(label) {
                             </div>
                             <div class="provider-info">
                                 <div class="provider-header">
-                                    <img src="{{ 'type=mortgage-broker.svg' | assetUrl }}" alt="Provider icon" class="provider-icon">
+                                    {{ renderSvg('type=mortgage-broker.svg', 'Provider icon', 'provider-icon') }}
                                     <span class="provider-name" data-tooltip="Mortgage Broker">Sarah Williams</span>
                                 </div>
                                 <div class="provider-contact">
@@ -1277,7 +1286,7 @@ function updateSectionVisibility(label) {
                                     </div>
                                     <button class="provider-more-info-btn" onclick="toggleProviderInfo(this)">
                                         <span>More Info</span>
-                                        <img src="{{ 'type=carat-down.svg' | assetUrl }}" alt="Dropdown" class="provider-dropdown-arrow">
+                                        {{ renderSvg('type=carat-down.svg', 'Dropdown', 'provider-dropdown-arrow') }}
                                     </button>
                                 </div>
                                 <div class="provider-expanded-content" style="display: none;">
@@ -1300,7 +1309,7 @@ function updateSectionVisibility(label) {
                             </div>
                             <div class="provider-info">
                                 <div class="provider-header">
-                                    <img src="{{ 'type=appraiser.svg' | assetUrl }}" alt="Provider icon" class="provider-icon">
+                                    {{ renderSvg('type=appraiser.svg', 'Provider icon', 'provider-icon') }}
                                     <span class="provider-name" data-tooltip="Licensed Appraiser">David Rodriguez</span>
                                 </div>
                                 <div class="provider-contact">
@@ -1312,7 +1321,7 @@ function updateSectionVisibility(label) {
                                     </div>
                                     <button class="provider-more-info-btn" onclick="toggleProviderInfo(this)">
                                         <span>More Info</span>
-                                        <img src="{{ 'type=carat-down.svg' | assetUrl }}" alt="Dropdown" class="provider-dropdown-arrow">
+                                        {{ renderSvg('type=carat-down.svg', 'Dropdown', 'provider-dropdown-arrow') }}
                                     </button>
                                 </div>
                                 <div class="provider-expanded-content" style="display: none;">
@@ -1335,7 +1344,7 @@ function updateSectionVisibility(label) {
                             </div>
                             <div class="provider-info">
                                 <div class="provider-header">
-                                    <img src="{{ 'type=title-agent.svg' | assetUrl }}" alt="Provider icon" class="provider-icon">
+                                    {{ renderSvg('type=title-agent.svg', 'Provider icon', 'provider-icon') }}
                                     <span class="provider-name" data-tooltip="Title Agent">Jennifer Chen</span>
                                 </div>
                                 <div class="provider-contact">
@@ -1347,7 +1356,7 @@ function updateSectionVisibility(label) {
                                     </div>
                                     <button class="provider-more-info-btn" onclick="toggleProviderInfo(this)">
                                         <span>More Info</span>
-                                        <img src="{{ 'type=carat-down.svg' | assetUrl }}" alt="Dropdown" class="provider-dropdown-arrow">
+                                        {{ renderSvg('type=carat-down.svg', 'Dropdown', 'provider-dropdown-arrow') }}
                                     </button>
                                 </div>
                                 <div class="provider-expanded-content" style="display: none;">
@@ -1370,7 +1379,7 @@ function updateSectionVisibility(label) {
                             </div>
                             <div class="provider-info">
                                 <div class="provider-header">
-                                    <img src="{{ 'type=insurance-broker.svg' | assetUrl }}" alt="Provider icon" class="provider-icon">
+                                    {{ renderSvg('type=insurance-broker.svg', 'Provider icon', 'provider-icon') }}
                                     <span class="provider-name" data-tooltip="Insurance Broker">Robert Thompson</span>
                                 </div>
                                 <div class="provider-contact">
@@ -1382,7 +1391,7 @@ function updateSectionVisibility(label) {
                                     </div>
                                     <button class="provider-more-info-btn" onclick="toggleProviderInfo(this)">
                                         <span>More Info</span>
-                                        <img src="{{ 'type=carat-down.svg' | assetUrl }}" alt="Dropdown" class="provider-dropdown-arrow">
+                                        {{ renderSvg('type=carat-down.svg', 'Dropdown', 'provider-dropdown-arrow') }}
                                     </button>
                                 </div>
                                 <div class="provider-expanded-content" style="display: none;">
@@ -1405,7 +1414,7 @@ function updateSectionVisibility(label) {
                             </div>
                             <div class="provider-info">
                                 <div class="provider-header">
-                                    <img src="{{ 'type=photographer.svg' | assetUrl }}" alt="Provider icon" class="provider-icon">
+                                    {{ renderSvg('type=photographer.svg', 'Provider icon', 'provider-icon') }}
                                     <span class="provider-name" data-tooltip="Real Estate Photographer">Lisa Martinez</span>
                                 </div>
                                 <div class="provider-contact">
@@ -1417,7 +1426,7 @@ function updateSectionVisibility(label) {
                                     </div>
                                     <button class="provider-more-info-btn" onclick="toggleProviderInfo(this)">
                                         <span>More Info</span>
-                                        <img src="{{ 'type=carat-down.svg' | assetUrl }}" alt="Dropdown" class="provider-dropdown-arrow">
+                                        {{ renderSvg('type=carat-down.svg', 'Dropdown', 'provider-dropdown-arrow') }}
                                     </button>
                                 </div>
                                 <div class="provider-expanded-content" style="display: none;">
@@ -1437,7 +1446,7 @@ function updateSectionVisibility(label) {
                         <!-- Mobile collapse button at bottom (only shows when expanded) -->
                         <button class="view-less-providers-btn" onclick="toggleAllProviders(this)">
                             <span>View less</span>
-                            <img src="{{ 'type=carat-down.svg' | assetUrl }}" alt="Collapse" class="arrow">
+                            {{ renderSvg('type=carat-down.svg', 'Collapse', 'arrow') }}
                         </button>
                         
                         {% endif %}
