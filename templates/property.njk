@@ -136,7 +136,14 @@ function updateSectionVisibility(label) {
           {% endif %}
         {% endif %}
         
-        {% if has_sales_data_nav or (homes[property_id].all_taxes | length > 0) or has_features_nav %}
+        {% set has_floorplan_nav = false %}
+        {% if homes[property_id].layouts %}
+          {% if homes[property_id].layouts.firstFloorLayouts or homes[property_id].layouts.secondFloorLayouts or homes[property_id].layouts.otherLayouts %}
+            {% set has_floorplan_nav = true %}
+          {% endif %}
+        {% endif %}
+        
+        {% if has_sales_data_nav or (homes[property_id].all_taxes | length > 0) or has_features_nav or has_floorplan_nav %}
         <div class="nav-tabs">
                 <a href="#property-header" class="nav-tab">Overview</a>
                 
@@ -146,6 +153,10 @@ function updateSectionVisibility(label) {
                 
                 {% if has_features_nav %}
                 <a href="#features" class="nav-tab">Features</a>
+                {% endif %}
+                
+                {% if has_floorplan_nav %}
+                <a href="#floorplan" class="nav-tab">Floorplan</a>
                 {% endif %}
             </div>
         {% endif %}
@@ -192,11 +203,10 @@ function updateSectionVisibility(label) {
 
 
 <div class="container" id="main-content">
-            <!-- Property Header -->
-            <header class="property-header" data-section="property-header">
-                <!-- Image Carousel -->
-                {% if homes[property_id].carousel_images and homes[property_id].carousel_images | length > 0 %}
-                <div class="carousel-container" id="photos">
+            <!-- Photos Section - First Section -->
+            {% if homes[property_id].carousel_images and homes[property_id].carousel_images | length > 0 %}
+            <section id="photos" class="section scroll-offset-section show" data-section="photo-gallery">
+                <div class="carousel-container">
                     {% for image in homes[property_id].carousel_images %}
                     <input type="radio" name="carousel-radio-{{ property_id }}" id="carousel-radio-{{ property_id }}-{{ loop.index }}" class="carousel-radio" {% if loop.first %}checked{% endif %}/>
                     {% endfor %}
@@ -225,7 +235,19 @@ function updateSectionVisibility(label) {
                         </button>
                     </div>
                 </div>
+                
+                <!-- Source Link -->
+                {% if homes[property_id].carousel_images and homes[property_id].carousel_images | length > 0 and homes[property_id].carousel_images[0].source_http_request %}
+                  {{ sourceLink(homes[property_id].carousel_images[0], "Photo Source") }}
+                {% elif homes[property_id].property and homes[property_id].property.source_http_request %}
+                  {{ sourceLink(homes[property_id].property, "County Appraiser") }}
                 {% endif %}
+            </section>
+            {% endif %}
+            
+            <!-- Property Header -->
+            <header class="property-header" data-section="property-header">
+
                     <h1 class="property-address-title body-large-style">
                         {% if homes[property_id].address %}
                             {% if homes[property_id].address.street_number %}{{ homes[property_id].address.street_number }}{% endif %}
@@ -296,9 +318,9 @@ function updateSectionVisibility(label) {
                     {% endif %}
                     
                     {% if homes[property_id].address and homes[property_id].address.source_http_request %}
-                      {{ sourceLink(homes[property_id].address, "Palm Beach County Property Appraiser") }}
+                      {{ sourceLink(homes[property_id].address, "County Appraiser") }}
                     {% elif homes[property_id].property and homes[property_id].property.source_http_request %}
-                      {{ sourceLink(homes[property_id].property, "Palm Beach County Property Appraiser") }}
+                      {{ sourceLink(homes[property_id].property, "County Appraiser") }}
                     {% endif %}
             </header>
 
@@ -437,9 +459,9 @@ function updateSectionVisibility(label) {
                     </div>
                     {% endif %}
                                  {% if homes[property_id].structure and homes[property_id].structure.source_http_request %}
-                   {{ sourceLink(homes[property_id].structure, "Palm Beach County Property Appraiser") }}
+                   {{ sourceLink(homes[property_id].structure, "County Registrar") }}
                  {% elif homes[property_id].property and homes[property_id].property.source_http_request %}
-                   {{ sourceLink(homes[property_id].property, "Palm Beach County Property Appraiser") }}
+                   {{ sourceLink(homes[property_id].property, "County Appraiser") }}
                  {% endif %}
             </section>
 
@@ -513,7 +535,7 @@ function updateSectionVisibility(label) {
                 <!-- Chart Content -->
                 <div class="chart-content-container">
                   
-                  {% if homes[property_id].all_sales | length >= 1 %}
+                  {% if homes[property_id].all_sales | length > 1 %}
                   <div id="sales-chart-content" class="chart-content active">
                     {% if homes[property_id].all_sales | length < 3 %}
                     <!-- Sales Table for 1-2 sales -->
@@ -570,9 +592,9 @@ function updateSectionVisibility(label) {
               </div>
               {% endif %}
                   {% if homes[property_id].all_sales and homes[property_id].all_sales|length > 0 and homes[property_id].all_sales[0].data.source_http_request %}
-                    {{ sourceLink(homes[property_id].all_sales[0].data, "Palm Beach County Property Appraiser") }}
+                    {{ sourceLink(homes[property_id].all_sales[0].data, "County Appraiser") }}
                   {% elif homes[property_id].property and homes[property_id].property.source_http_request %}
-                    {{ sourceLink(homes[property_id].property, "Palm Beach County Property Appraiser") }}
+                    {{ sourceLink(homes[property_id].property, "County Appraiser") }}
                   {% endif %}
                 </section>
 
@@ -883,9 +905,9 @@ function updateSectionVisibility(label) {
                 </div>
                     {% endif %}
                     {% if homes[property_id].all_taxes and homes[property_id].all_taxes|length > 0 and homes[property_id].all_taxes[0].data.source_http_request %}
-                      {{ sourceLink(homes[property_id].all_taxes[0].data, "Palm Beach County Property Appraiser") }}
+                      {{ sourceLink(homes[property_id].all_taxes[0].data, "County Appraiser") }}
                     {% elif homes[property_id].property and homes[property_id].property.source_http_request %}
-                      {{ sourceLink(homes[property_id].property, "Palm Beach County Property Appraiser") }}
+                      {{ sourceLink(homes[property_id].property, "County Appraiser") }}
                     {% endif %}
                 </section>
             {% endif %}
@@ -895,32 +917,18 @@ function updateSectionVisibility(label) {
             <!-- Floorplan -->
             {% set bedroom_count = property_config[property_id].bedroom_count or 0 %}
             {% set bathroom_count = property_config[property_id].bathroom_count or 0 %}
-            {% set has_room_data = (first_floor_rooms | length > 0 and first_floor_rooms | selectattr('space_type') | list | length > 0) or (second_floor_rooms | length > 0 and second_floor_rooms | selectattr('space_type') | list | length > 0) or (other_rooms | length > 0 and other_rooms | selectattr('space_type') | list | length > 0) %}
-            {% set has_floorplan_data = ((bedroom_count > 0) or (bathroom_count > 0) or property_config[property_id].has_size_data) and has_room_data %}
             
-            {% if has_floorplan_data %}
-            <div id="floorplan" class="section scroll-offset-section" data-section="floorplan">
-                <div class="floorplan-info">
-                    <div class="floorplan-description">
-                        {% if bedroom_count > 0 and bathroom_count > 0 %}
-                            {{ bedroom_count | int }}-bedroom, {{ bathroom_count }}-bathroom property
-                        {% elif bedroom_count > 0 %}
-                            {{ bedroom_count | int }}-bedroom property
-                        {% elif bathroom_count > 0 %}
-                            {{ bathroom_count }}-bathroom property
-                        {% else %}
-                            Property layout details
-                        {% endif %}
-                </div>
-                </div>
+            {# Group all layout rooms by floor level - try multiple data sources #}
+            {% set all_layouts = homes[property_id].layouts or homes[property_id].all_layouts or homes[property_id].layout or homes[property_id].floorplan or [] %}
+            {% set first_floor_rooms = all_layouts.firstFloorLayouts or all_layouts.first_floor_layouts or all_layouts.firstFloor or [] %}
+            {% set second_floor_rooms = all_layouts.secondFloorLayouts or all_layouts.second_floor_layouts or all_layouts.secondFloor or [] %}
+            {% set other_rooms = all_layouts.otherLayouts or all_layouts.other_layouts or all_layouts.otherFloors or [] %}
 
-                
-                {# Group all layout rooms by floor level #}
-                {% set all_layouts = homes[property_id].layouts or [] %}
-                {% set first_floor_rooms = all_layouts.firstFloorLayouts %}
-                {% set second_floor_rooms = all_layouts.secondFloorLayouts %}
-                {% set other_rooms = all_layouts.otherLayouts %}
-                {% macro floorRooms(roomList) %}
+            
+            {% set has_room_data = (first_floor_rooms | length > 0 and first_floor_rooms | selectattr('space_type') | list | length > 0) or (second_floor_rooms | length > 0 and second_floor_rooms | selectattr('space_type') | list | length > 0) or (other_rooms | length > 0 and other_rooms | selectattr('space_type') | list | length > 0) %}
+            {% set has_floorplan_data = has_room_data %}
+            
+            {% macro floorRooms(roomList) %}
                   <div class="floor-rooms collapsible-content">
                     {% for room in roomList %}
                       {% set roomProperties = [] %}
@@ -938,7 +946,7 @@ function updateSectionVisibility(label) {
                                         {{ renderSvg(room.space_type.iconName, '', '') }}
                                     {% endif %}
                                 </div>
-                                <span class="room-title">{{ room.space_type.enumDescription or 'Room' }}</span>
+                                <span class="room-title body-small-style">{{ room.space_type.enumDescription or 'Room' }}</span>
                                 {{ renderSvg('type=carat-down.svg', 'Expand', 'room-expand-icon') }}
                             </div>
                             <ul class="room-properties" style="display: none;">
@@ -955,7 +963,7 @@ function updateSectionVisibility(label) {
                                         {{ renderSvg(room.space_type.iconName, '', '') }}
                                     {% endif %}
                                 </div>
-                                <span class="room-title">{{ room.space_type.enumDescription or 'Room' }}</span>
+                                <span class="room-title body-small-style">{{ room.space_type.enumDescription or 'Room' }}</span>
                             </div>
                             {% endif %}
                       </div>
@@ -963,15 +971,21 @@ function updateSectionVisibility(label) {
                   </div>
                 {% endmacro %}
 
+
+
+
+            
+            <!-- Floorplan Layout Section - Standalone -->
+            {% if has_floorplan_data or all_layouts | length > 0 %}
                 {% if (first_floor_rooms | length > 0 and first_floor_rooms | selectattr('space_type') | list | length > 0) or (second_floor_rooms | length > 0 and second_floor_rooms | selectattr('space_type') | list | length > 0) or (other_rooms | length > 0 and other_rooms | selectattr('space_type') | list | length > 0) %}
-                <div class="floorplan-layout" data-section="floorplan-layout">
+                <section id="floorplan-layout" class="section scroll-offset-section show floorplan-layout" data-section="floorplan-layout">
                   <div class="floorplan-floors">
                     <!-- 1st Floor -->
                     {% if first_floor_rooms | length > 0 and first_floor_rooms | selectattr('space_type') | list | length > 0 %}
                     <div class="floor-section">
                         <div class="floor-header">
                             {{ renderSvg('featuresicons-13.svg', '1st Floor', 'floor-header-icon') }}
-                            <h3 class="section-subtitle">1st Floor</h3>
+                            <h3 class="h5-style">1st Floor</h3>
                         </div>
                         {{ floorRooms(first_floor_rooms) }}
                     </div>
@@ -982,7 +996,7 @@ function updateSectionVisibility(label) {
                     <div class="floor-section">
                         <div class="floor-header">
                             {{ renderSvg('featuresicons-5.svg', '2nd Floor', 'floor-header-icon') }}
-                            <h3 class="section-subtitle">2nd Floor</h3>
+                            <h3 class="h5-style">2nd Floor</h3>
                         </div>
                         {{ floorRooms(second_floor_rooms) }}
                     </div>
@@ -993,16 +1007,58 @@ function updateSectionVisibility(label) {
                     <div class="floor-section">
                         <div class="floor-header">
                             {{ renderSvg('featuresicons-33.svg', 'Other Floors', 'floor-header-icon') }}
-                            <h3 class="section-subtitle">Other Floors</h3>
+                            <h3 class="h5-style">Other Floors</h3>
                         </div>
                         {{ floorRooms(other_rooms) }}
                     </div>
                     {% endif %}
                   </div>
-                </div>
+                  
+                  <!-- Source Link -->
+                  {% if homes[property_id].layouts and homes[property_id].layouts.source_http_request %}
+                    {{ sourceLink(homes[property_id].layouts, "County Appraiser") }}
+                  {% elif homes[property_id].property and homes[property_id].property.source_http_request %}
+                    {{ sourceLink(homes[property_id].property, "County Appraiser") }}
+                  {% endif %}
+                </section>
+                {% else %}
+                <!-- Show all rooms in one section when no floor level data is present -->
+                {% set all_rooms = [] %}
+                {% if first_floor_rooms %}
+                    {% set all_rooms = all_rooms + first_floor_rooms %}
                 {% endif %}
-            </div>
+                {% if second_floor_rooms %}
+                    {% set all_rooms = all_rooms + second_floor_rooms %}
+                {% endif %}
+                {% if other_rooms %}
+                    {% set all_rooms = all_rooms + other_rooms %}
+                {% endif %}
+                
+                {% if all_rooms | length > 0 %}
+                <section id="floorplan-layout" class="section scroll-offset-section show floorplan-layout" data-section="floorplan-layout">
+                  <div class="floorplan-floors">
+                    <div class="floor-section">
+                        <div class="floor-header">
+                            {{ renderSvg('featuresicons-13.svg', 'Property Layout', 'floor-header-icon') }}
+                            <h3 class="h5-style">Property Layout</h3>
+                        </div>
+                        {{ floorRooms(all_rooms) }}
+                    </div>
+                  </div>
+                  
+                  <!-- Source Link -->
+                  {% if homes[property_id].layouts and homes[property_id].layouts.source_http_request %}
+                    {{ sourceLink(homes[property_id].layouts, "County Appraiser") }}
+                  {% elif homes[property_id].property and homes[property_id].property.source_http_request %}
+                    {{ sourceLink(homes[property_id].property, "County Appraiser") }}
+                  {% endif %}
+                </section>
+                {% endif %}
+                {% endif %}
             {% endif %}
+            
+
+            
             <!-- Utility Systems -->
             <!-- Property Features -->
             {% set interior_features = homes[property_id].features.interior %}
@@ -1092,9 +1148,9 @@ function updateSectionVisibility(label) {
                         {% endif %}
                 </div>
                                  {% if homes[property_id].structure and homes[property_id].structure.source_http_request %}
-                   {{ sourceLink(homes[property_id].structure, "Palm Beach County Property Appraiser") }}
+                   {{ sourceLink(homes[property_id].structure, "County Appraiser") }}
                  {% elif homes[property_id].property and homes[property_id].property.source_http_request %}
-                   {{ sourceLink(homes[property_id].property, "Palm Beach County Property Appraiser") }}
+                   {{ sourceLink(homes[property_id].property, "County Appraiser") }}
                  {% endif %}
             </section>
             {% endif %}
