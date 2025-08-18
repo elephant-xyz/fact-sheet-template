@@ -635,7 +635,7 @@ function updateSectionVisibility(label) {
               {% if homes[property_id].all_taxes | length > 1 %}
               <button class="show-more-tax-btn" onclick="toggleMoreTaxData()">
                 <span>Show More Tax Years</span>
-                <img src="{{ 'type=carat-down.svg' | assetUrl }}" alt="Dropdown" class="provider-dropdown-arrow">
+                {{ renderSvg('type=carat-down.svg', 'Dropdown', 'provider-dropdown-arrow') }}
               </button>
               {% endif %}
 
@@ -903,7 +903,7 @@ function updateSectionVisibility(label) {
                             <div class="room-header" onclick="toggleRoomDetails(this)">
                                 <div class="room-icon-container">
                                     {% if room.space_type.iconName %}
-                                        <img src="{{ room.space_type.iconName | assetUrl}}" alt="">
+                                        {{ renderSvg(room.space_type.iconName, '', '') }}
                                     {% endif %}
                                 </div>
                                 <span class="room-title">{{ room.space_type.enumDescription or 'Room' }}</span>
@@ -912,7 +912,7 @@ function updateSectionVisibility(label) {
                             <ul class="room-properties" style="display: none;">
                             {% for key, value in room %}
                               {% if key != 'space_type' and key != 'floor_level' %} 
-                                <li>{% if value.iconName %}<img src="{{ value.iconName | assetUrl}}" alt="{{ value.enumDescription }}" class="room-property-icon"> {% endif %} {{ value.enumDescription }} </li>
+                                <li>{% if value.iconName %}{{ renderSvg(value.iconName, value.enumDescription, 'room-property-icon') }} {% endif %} {{ value.enumDescription }} </li>
                               {% endif %}
                             {% endfor %}
                             </ul>
@@ -920,7 +920,7 @@ function updateSectionVisibility(label) {
                             <div class="room-header">
                                 <div class="room-icon-container">
                                     {% if room.space_type.iconName %}
-                                        <img src="{{ room.space_type.iconName | assetUrl}}" alt="">
+                                        {{ renderSvg(room.space_type.iconName, '', '') }}
                                     {% endif %}
                                 </div>
                                 <span class="room-title">{{ room.space_type.enumDescription or 'Room' }}</span>
@@ -985,7 +985,7 @@ function updateSectionVisibility(label) {
                       <div class="feature-row">
                         {% set iconPath = feature.iconName %}
                         {% if iconPath %}
-                          <img src="{{ iconPath | assetUrl }}" alt="{{ feature.info.description }}">
+                          {{ renderSvg(iconPath, feature.info.description, '') }}
                         {% endif %}
                         <div class="feature-text-content">
                             <div class="feature-main-text">{{ feature.enumDescription }}</div>
@@ -1025,7 +1025,7 @@ function updateSectionVisibility(label) {
                                     <div class="feature-row">
                                       {% set iconPath = util.iconName %}
                                       {% if iconPath %}
-                                        <img src="{{ iconPath | assetUrl }}" alt="{{ util.enumDescription }}">
+                                        {{ renderSvg(iconPath, util.enumDescription, '') }}
                                       {% endif %}
                                       <div class="feature-text-content">
                                           <div class="feature-main-text">{{ util.enumDescription }}</div>
@@ -1047,7 +1047,7 @@ function updateSectionVisibility(label) {
                                     <div class="feature-row">
                                       {% set iconPath = appliance.appliance_type.iconName %}
                                       {% if iconPath %}
-                                        <img src="{{ iconPath | assetUrl }}" alt="{{ appliance.appliance_type.enumDescription }}">
+                                        {{ renderSvg(iconPath, appliance.appliance_type.enumDescription, '') }}
                                       {% endif %}
                                       <div class="feature-text-content">
                                           <div class="feature-main-text">{%if appliance.finish %}{{ appliance.finish.enumDescription }}{% endif %} {{ appliance.appliance_type.enumDescription }}</div>
