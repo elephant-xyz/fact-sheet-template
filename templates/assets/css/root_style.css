@@ -279,7 +279,7 @@ option {
   justify-content: center;
   align-items: center;
   height: 80px;
-  padding: 0 160px;
+  padding: 0 48px;
   max-width: 1080px;
   margin: 0 auto;
   margin-top: 4px !important;
@@ -294,7 +294,7 @@ option {
   align-items: center;
   height: 100%;
   position: absolute;
-  left: 160px;
+  left: 48px;
   top: 0;
 }
 
@@ -310,22 +310,13 @@ option {
   height: 60%;
 }
 
-/* Condensed Providers in Navigation */
+/* Condensed Providers in Navigation - HIDDEN */
 .nav-providers-condensed {
-  display: none;
-  flex-direction: column;
-  gap: 4px;
-  border: none;
-  border-radius: 8px;
-  font-size: 12px;
-  color: #423e3e;
-  width: 274px;
-  margin-bottom: 8px;
-  padding-left: 4px;
+  display: none !important;
 }
 
 .nav-providers-condensed.show {
-  display: flex;
+  display: none !important;
 }
 
 /* Condensed Header */
@@ -571,7 +562,7 @@ option {
 .carousel-image {
   width: 100%;
   height: 100%;
-  border-radius: 16px;
+  border-radius: 12px;
   background-color: #fff;
   position: relative;
   overflow: hidden;
@@ -1566,12 +1557,12 @@ h1 {
     padding: 32px;
   }
   .nav-content {
-    padding: 0 104px;
-    max-width: 1536px;
+    padding: 0 32px;
+    max-width: 1080px;
     margin: 0 auto;
   }
   .nav-logo {
-    left: 104px;
+    left: 32px;
   }
 }
 
@@ -1586,12 +1577,12 @@ h1 {
   }
 
   .nav-content {
-    padding: 0 52px;
-    max-width: 1536px;
+    padding: 0 24px;
+    max-width: 1080px;
     margin: 0 auto;
   }
   .nav-logo {
-    left: 52px;
+    left: 24px;
   }
   .providers-card {
     padding: 8px;
@@ -1663,7 +1654,7 @@ h1 {
     padding: 48px 48px 16px 48px !important;
   }
   .section#photos.show {
-    padding: 48px 48px 16px 48px !important;
+    padding: 16px !important;
   }
   
   /* Typography adjustments for mobile */
@@ -1688,7 +1679,7 @@ h1 {
   .nav-content {
     padding: 0 24px;
     height: 80px;
-    max-width: 1536px;
+    max-width: 1080px;
     margin: 0 auto;
   }
   .nav-logo {
@@ -1841,6 +1832,7 @@ h1 {
   .nav-content {
     justify-content: center;
     padding: 0 16px;
+    max-width: 1080px;
   }
   
   .breadcrumb {
@@ -1944,7 +1936,7 @@ h1 {
     padding: 16px 16px 16px 16px !important;
   }
   .section#photos.show {
-    padding: 16px 16px 16px 16px !important;
+    padding: 8px !important;
   }
 }
 
@@ -3177,12 +3169,52 @@ align-self: stretch;
 .room-icon-container {
   width: 24px;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .room-icon-container img {
   width: 100%;
   height: auto;
   display: block;
+}
+
+/* Universal icon vertical alignment fixes */
+/* Ensure all SVG icons are vertically centered */
+svg {
+  vertical-align: middle;
+  display: inline-block;
+}
+
+/* Universal span fixes for icon containers - fallback for all browsers */
+.feature-row > span,
+.floor-header > span,
+.room-header > span,
+.room-icon-container > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+/* More specific icon wrapper fixes */
+.feature-row svg,
+.floor-header svg,
+.room-header svg,
+.room-icon-container svg {
+  vertical-align: middle;
+  display: inline-block;
+}
+
+/* Ensure spans containing SVG icons are vertically centered (modern browsers) */
+span:has(svg) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  line-height: 1;
 }
 
 
@@ -3224,7 +3256,7 @@ align-self: stretch;
   border-radius: 16px;
   border: 1px solid #f0f0f0;
   display: flex !important;
-  padding: 32px 16px 16px 16px !important;
+  padding: 16px 16px 16px 16px !important;
   flex-direction: column;
   align-items: center;
   justify-content: center;
