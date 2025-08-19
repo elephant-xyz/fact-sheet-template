@@ -143,8 +143,12 @@ function updateSectionVisibility(label) {
           {% endif %}
         {% endif %}
         
-        {% if has_sales_data_nav or (homes[property_id].all_taxes | length > 0) or has_features_nav or has_floorplan_nav %}
+        {% if (homes[property_id].carousel_images and homes[property_id].carousel_images | length > 0) or has_sales_data_nav or (homes[property_id].all_taxes | length > 0) or has_features_nav %}
         <div class="nav-tabs">
+                {% if homes[property_id].carousel_images and homes[property_id].carousel_images | length > 0 %}
+                <a href="#photos" class="nav-tab">Photos</a>
+                {% endif %}
+                
                 <a href="#property-header" class="nav-tab">Overview</a>
                 
                 {% if has_sales_data_nav or (homes[property_id].all_taxes | length > 0) %}
@@ -153,10 +157,6 @@ function updateSectionVisibility(label) {
                 
                 {% if has_features_nav %}
                 <a href="#features" class="nav-tab">Features</a>
-                {% endif %}
-                
-                {% if has_floorplan_nav %}
-                <a href="#floorplan" class="nav-tab">Floorplan</a>
                 {% endif %}
             </div>
         {% endif %}
@@ -237,10 +237,8 @@ function updateSectionVisibility(label) {
                 </div>
                 
                 <!-- Source Link -->
-                {% if homes[property_id].carousel_images and homes[property_id].carousel_images | length > 0 and homes[property_id].carousel_images[0].source_http_request %}
+                {% if homes[property_id].carousel_images and homes[property_id].carousel_images | length > 0 and homes[property_id].carousel_images[0].source_http_request and homes[property_id].carousel_images[0].source_http_request.url %}
                   {{ sourceLink(homes[property_id].carousel_images[0], "Photo Source") }}
-                {% elif homes[property_id].property and homes[property_id].property.source_http_request %}
-                  {{ sourceLink(homes[property_id].property, "County Appraiser") }}
                 {% endif %}
             </section>
             {% endif %}
@@ -317,9 +315,9 @@ function updateSectionVisibility(label) {
                     </div>
                     {% endif %}
                     
-                    {% if homes[property_id].address and homes[property_id].address.source_http_request %}
+                    {% if homes[property_id].address and homes[property_id].address.source_http_request and homes[property_id].address.source_http_request.url %}
                       {{ sourceLink(homes[property_id].address, "County Appraiser") }}
-                    {% elif homes[property_id].property and homes[property_id].property.source_http_request %}
+                    {% elif homes[property_id].property and homes[property_id].property.source_http_request and homes[property_id].property.source_http_request.url %}
                       {{ sourceLink(homes[property_id].property, "County Appraiser") }}
                     {% endif %}
             </header>
@@ -458,9 +456,9 @@ function updateSectionVisibility(label) {
                         </div>
                     </div>
                     {% endif %}
-                                 {% if homes[property_id].structure and homes[property_id].structure.source_http_request %}
+                                 {% if homes[property_id].structure and homes[property_id].structure.source_http_request and homes[property_id].structure.source_http_request.url %}
                    {{ sourceLink(homes[property_id].structure, "County Registrar") }}
-                 {% elif homes[property_id].property and homes[property_id].property.source_http_request %}
+                 {% elif homes[property_id].property and homes[property_id].property.source_http_request and homes[property_id].property.source_http_request.url %}
                    {{ sourceLink(homes[property_id].property, "County Appraiser") }}
                  {% endif %}
             </section>
@@ -591,9 +589,9 @@ function updateSectionVisibility(label) {
                 </div>
               </div>
               {% endif %}
-                  {% if homes[property_id].all_sales and homes[property_id].all_sales|length > 0 and homes[property_id].all_sales[0].data.source_http_request %}
+                  {% if homes[property_id].all_sales and homes[property_id].all_sales|length > 0 and homes[property_id].all_sales[0].data.source_http_request and homes[property_id].all_sales[0].data.source_http_request.url %}
                     {{ sourceLink(homes[property_id].all_sales[0].data, "County Appraiser") }}
-                  {% elif homes[property_id].property and homes[property_id].property.source_http_request %}
+                  {% elif homes[property_id].property and homes[property_id].property.source_http_request and homes[property_id].property.source_http_request.url %}
                     {{ sourceLink(homes[property_id].property, "County Appraiser") }}
                   {% endif %}
                 </section>
@@ -904,9 +902,9 @@ function updateSectionVisibility(label) {
                     </div>
                 </div>
                     {% endif %}
-                    {% if homes[property_id].all_taxes and homes[property_id].all_taxes|length > 0 and homes[property_id].all_taxes[0].data.source_http_request %}
+                    {% if homes[property_id].all_taxes and homes[property_id].all_taxes|length > 0 and homes[property_id].all_taxes[0].data.source_http_request and homes[property_id].all_taxes[0].data.source_http_request.url %}
                       {{ sourceLink(homes[property_id].all_taxes[0].data, "County Appraiser") }}
-                    {% elif homes[property_id].property and homes[property_id].property.source_http_request %}
+                    {% elif homes[property_id].property and homes[property_id].property.source_http_request and homes[property_id].property.source_http_request.url %}
                       {{ sourceLink(homes[property_id].property, "County Appraiser") }}
                     {% endif %}
                 </section>
@@ -1015,9 +1013,9 @@ function updateSectionVisibility(label) {
                   </div>
                   
                   <!-- Source Link -->
-                  {% if homes[property_id].layouts and homes[property_id].layouts.source_http_request %}
+                  {% if homes[property_id].layouts and homes[property_id].layouts.source_http_request and homes[property_id].layouts.source_http_request.url %}
                     {{ sourceLink(homes[property_id].layouts, "County Appraiser") }}
-                  {% elif homes[property_id].property and homes[property_id].property.source_http_request %}
+                  {% elif homes[property_id].property and homes[property_id].property.source_http_request and homes[property_id].property.source_http_request.url %}
                     {{ sourceLink(homes[property_id].property, "County Appraiser") }}
                   {% endif %}
                 </section>
@@ -1047,9 +1045,9 @@ function updateSectionVisibility(label) {
                   </div>
                   
                   <!-- Source Link -->
-                  {% if homes[property_id].layouts and homes[property_id].layouts.source_http_request %}
+                  {% if homes[property_id].layouts and homes[property_id].layouts.source_http_request and homes[property_id].layouts.source_http_request.url %}
                     {{ sourceLink(homes[property_id].layouts, "County Appraiser") }}
-                  {% elif homes[property_id].property and homes[property_id].property.source_http_request %}
+                  {% elif homes[property_id].property and homes[property_id].property.source_http_request and homes[property_id].property.source_http_request.url %}
                     {{ sourceLink(homes[property_id].property, "County Appraiser") }}
                   {% endif %}
                 </section>
@@ -1147,9 +1145,9 @@ function updateSectionVisibility(label) {
                         </div>
                         {% endif %}
                 </div>
-                                 {% if homes[property_id].structure and homes[property_id].structure.source_http_request %}
+                                 {% if homes[property_id].structure and homes[property_id].structure.source_http_request and homes[property_id].structure.source_http_request.url %}
                    {{ sourceLink(homes[property_id].structure, "County Appraiser") }}
-                 {% elif homes[property_id].property and homes[property_id].property.source_http_request %}
+                 {% elif homes[property_id].property and homes[property_id].property.source_http_request and homes[property_id].property.source_http_request.url %}
                    {{ sourceLink(homes[property_id].property, "County Appraiser") }}
                  {% endif %}
             </section>

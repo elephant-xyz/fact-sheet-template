@@ -56,6 +56,7 @@ interface CarouselImage {
   name?: string;
   document_type?: string;
   file_format?: string;
+  source_http_request?: any;
 }
 
 interface LayoutInfo {
@@ -965,6 +966,7 @@ export class IPLDDataLoader {
                   name: fileNode.data.name || '',
                   document_type: fileNode.data.document_type,
                   file_format: fileNode.data.file_format,
+                  source_http_request: fileNode.data.source_http_request,
                 });
               }
             }
@@ -994,6 +996,7 @@ export class IPLDDataLoader {
                   name: fileNode.data.name || '',
                   document_type: fileNode.data.document_type,
                   file_format: fileNode.data.file_format,
+                  source_http_request: fileNode.data.source_http_request,
                 });
               }
             }
@@ -1024,6 +1027,7 @@ export class IPLDDataLoader {
                 name: fileNode.data.name || '',
                 document_type: fileNode.data.document_type,
                 file_format: fileNode.data.file_format,
+                source_http_request: fileNode.data.source_http_request,
               });
             }
           }

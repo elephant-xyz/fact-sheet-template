@@ -76,6 +76,7 @@ export interface CarouselImage {
   name?: string; // Optional, for alt text
   document_type?: string;
   file_format?: string;
+  source_http_request?: any; // Source information for the photo
 }
 
 export interface SectionVisibility {
