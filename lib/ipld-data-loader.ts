@@ -193,7 +193,7 @@ export class IPLDDataLoader {
     const graph = await this.buildGraph(rootDir);
 
     // 3. Transform graph into PropertyData structure
-    return this.transformToPropertyData(graph, rootDir);
+    return this.transformToPropertyData(graph, rootDir, rootCID);
   }
 
   private parseEnumMapping(mappingRaw: EnumMappingRaw[]): EnumMapping {
@@ -321,6 +321,7 @@ export class IPLDDataLoader {
   private async transformToPropertyData(
     graph: Map<string, DataNode>,
     rootDir: string,
+    rootCID: string,
   ): Promise<PropertyData> {
     // Find core entities
     const propertyNode =
@@ -345,6 +346,8 @@ export class IPLDDataLoader {
       structureNode,
       layouts,
       unnormalizedAddressNode,
+      graph,
+      rootCID,
     );
 
     const sales = this.extractSalesHistory(salesNodes, graph);
@@ -534,6 +537,8 @@ export class IPLDDataLoader {
     structureNode?: DataNode,
     layoutNodes?: LayoutSummary,
     unnormalizedAddress?: DataNode,
+    graph?: Map<string, DataNode>,
+    rootCID?: string,
   ): PropertyInfo {
     const propertyData = propertyNode?.data || {};
     const addressData = addressNode?.data || {};
@@ -576,57 +581,107 @@ export class IPLDDataLoader {
       fullAddress = unnormalizedAddress.data.full_address || '';
     }
 
-    // Calculate beds/baths from layout data
+    // Calculate beds/baths with County preference
+    // 1) Prefer County (structure) counts if available
     let beds = 0;
     let baths = 0;
 
-    if (layoutNodes) {
+    if (structureData) {
+      const structureBeds = parseInt(structureData.structure_rooms_bedroom) || 0;
+      const fullBathsFromStructure = parseInt(structureData.structure_rooms_bathroom) || 0;
+      const halfBathsFromStructure = parseInt(structureData.structure_rooms_bathroom_half) || 0;
+      beds = structureBeds;
+      baths = fullBathsFromStructure + halfBathsFromStructure * 0.5;
+    }
+
+    // 2) If still missing, derive from County layouts first (relationships with label === 'County')
+    if ((beds === 0 || baths === 0) && graph) {
+      let bedsFromCounty = 0;
+      let bathsFromCounty = 0;
+      for (const node of graph.values()) {
+        if (node.data?.relationships?.property_has_layout && node.data?.label === 'County') {
+          const propertyHasLayoutLinks = node.data.relationships.property_has_layout;
+          for (const relationshipLink of propertyHasLayoutLinks) {
+            if (this.isIPLDLink(relationshipLink)) {
+              const relationshipNode = this.resolveNodeFromLink(relationshipLink, graph);
+              if (!relationshipNode?.data?.to) continue;
+              const layoutNode = this.resolveNodeFromLink(relationshipNode.data.to, graph);
+              const spaceType = layoutNode?.data?.space_type;
+              if (spaceType && typeof spaceType === 'string') {
+                const lower = spaceType.toLowerCase();
+                if (lower.includes('bedroom') || lower.includes('primary bedroom')) bedsFromCounty += 1;
+                if (lower.includes('full bathroom')) bathsFromCounty += 1;
+                else if (
+                  lower.includes('half bathroom') ||
+                  lower.includes('half bath') ||
+                  lower.includes('powder room')
+                ) bathsFromCounty += 0.5;
+              }
+            }
+          }
+        }
+      }
+      if (beds === 0 && bedsFromCounty > 0) beds = bedsFromCounty;
+      if (baths === 0 && bathsFromCounty > 0) baths = bathsFromCounty;
+    }
+
+    // 3) If still missing, derive from root CID folder layouts (scan any relationship files within root set)
+    if ((beds === 0 || baths === 0) && graph && rootCID) {
+      let bedsFromRoot = 0;
+      let bathsFromRoot = 0;
+      for (const node of graph.values()) {
+        // Consider nodes that live under the same root CID directory
+        if (node.filePath && node.filePath.includes(path.sep + rootCID + path.sep)) {
+          if (node.data?.to) {
+            const layoutNode = this.resolveNodeFromLink(node.data.to, graph);
+            const spaceType = layoutNode?.data?.space_type;
+            if (spaceType && typeof spaceType === 'string') {
+              const lower = spaceType.toLowerCase();
+              if (lower.includes('bedroom') || lower.includes('primary bedroom')) bedsFromRoot += 1;
+              if (lower.includes('full bathroom')) bathsFromRoot += 1;
+              else if (
+                lower.includes('half bathroom') ||
+                lower.includes('half bath') ||
+                lower.includes('powder room')
+              ) bathsFromRoot += 0.5;
+            }
+          }
+        }
+      }
+      if (beds === 0 && bedsFromRoot > 0) beds = bedsFromRoot;
+      if (baths === 0 && bathsFromRoot > 0) baths = bathsFromRoot;
+    }
+
+    // 4) If still missing, derive from selected layouts (Photo/County/etc.) as final fallback
+    if ((beds === 0 || baths === 0) && layoutNodes) {
+      let bedsFromLayouts = 0;
+      let bathsFromLayouts = 0;
       for (const layoutGroup of Object.values(layoutNodes)) {
         layoutGroup.forEach((node: RenderItem) => {
-          console.log(node);
           const spaceType = node.space_type;
           if (spaceType) {
             const lowerSpaceType = spaceType.enumDescription.toLowerCase();
-            console.log('Processing space_type:', spaceType.enumDescription);
 
             // Count bedrooms
             if (lowerSpaceType.includes('bedroom') || lowerSpaceType.includes('primary bedroom')) {
-              beds += 1;
+              bedsFromLayouts += 1;
             }
 
             // Count bathrooms
             if (lowerSpaceType.includes('full bathroom')) {
-              console.log('Found full bathroom:', spaceType.enumDescription);
-              baths += 1;
+              bathsFromLayouts += 1;
             } else if (
               lowerSpaceType.includes('half bathroom') ||
               lowerSpaceType.includes('half bath') ||
               lowerSpaceType.includes('powder room')
             ) {
-              console.log('Found half bathroom/powder room:', spaceType.enumDescription);
-              baths += 0.5;
-            } else {
-              console.log(
-                'Checking bathroom - space_type:',
-                spaceType.enumDescription,
-                'lowerSpaceType:',
-                lowerSpaceType,
-              );
+              bathsFromLayouts += 0.5;
             }
           }
         });
       }
-    }
-
-    // Fallback to structure data if no layout data
-    if (beds === 0 && structureData.structure_rooms_bedroom) {
-      beds = parseInt(structureData.structure_rooms_bedroom) || 0;
-    }
-
-    if (baths === 0) {
-      const fullBaths = parseInt(structureData.structure_rooms_bathroom) || 0;
-      const halfBaths = parseInt(structureData.structure_rooms_bathroom_half) || 0;
-      baths = fullBaths + halfBaths * 0.5;
+      if (beds === 0) beds = bedsFromLayouts;
+      if (baths === 0) baths = bathsFromLayouts;
     }
 
     const sqft = parseInt(propertyData.livable_floor_area);
