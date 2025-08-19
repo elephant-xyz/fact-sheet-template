@@ -15,9 +15,8 @@
       "provider-cards",
       "property-history",
       "photo-gallery",
-      "floorplan-layout",
       "building-details",
-      "features",
+      "comprehensive-details",
       "parcel-id"
     ],
     "Photo": [
@@ -27,9 +26,8 @@
       "provider-cards",
       "property-history",
       "photo-gallery",
-      "floorplan-layout",
       "building-details",
-      "features",
+      "comprehensive-details",
       "parcel-id"
     ],
     "Photo Metadata": [
@@ -39,9 +37,8 @@
       "provider-cards",
       "property-history",
       "photo-gallery",
-      "floorplan-layout",
       "building-details",
-      "features",
+      "comprehensive-details",
       "parcel-id"
     ]
   }
