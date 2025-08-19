@@ -904,6 +904,7 @@
       "iconName": "bedroom",
       "enumValue": "Bedroom",
       "enumDescription": "Bedroom"
+      
     },
     {
       "lexiconClass": "layout",
@@ -911,6 +912,7 @@
       "iconName": "closet",
       "enumValue": "Closet",
       "enumDescription": "Closet"
+      
     },
     {
       "lexiconClass": "layout",
@@ -918,55 +920,63 @@
       "iconName": "closet",
       "enumValue": "Walk-in Closet",
       "enumDescription": "Walk-in Closet"
+      
     },
     {
       "lexiconClass": "layout",
       "lexiconProperty": "space_type",
       "iconName": "balcony",
       "enumValue": "Balcony",
-      "enumDescription": "Balcony"
+      "enumDescription": "Balcony",
+      "category": "outdoor_space"
     },
     {
       "lexiconClass": "layout",
       "lexiconProperty": "space_type",
       "iconName": "exterior",
       "enumValue": "Exterior",
-      "enumDescription": "Exterior"
+      "enumDescription": "Exterior",
+      "category": "outdoor_space"
     },
     {
       "lexiconClass": "layout",
       "lexiconProperty": "space_type",
       "iconName": "pool",
       "enumValue": "Pool Area",
-      "enumDescription": "Pool"
+      "enumDescription": "Pool",
+      "category": "outdoor_space"
     },
     {
       "lexiconClass": "layout",
       "lexiconProperty": "space_type",
       "iconName": "patio",
       "enumValue": "Porch",
-      "enumDescription": "Porch"
+      "enumDescription": "Porch",
+      "category": "outdoor_space"
     },
     {
       "lexiconClass": "layout",
       "lexiconProperty": "space_type",
       "iconName": "patio",
       "enumValue": "Patio",
-      "enumDescription": "Patio"
+      "enumDescription": "Patio",
+      "category": "outdoor_space"
     },
     {
       "lexiconClass": "layout",
       "lexiconProperty": "space_type",
       "iconName": "deck",
       "enumValue": "Deck",
-      "enumDescription": "Deck"
+      "enumDescription": "Deck",
+      "category": "outdoor_space"
     },
     {
       "lexiconClass": "layout",
       "lexiconProperty": "space_type",
       "iconName": "garage",
       "enumValue": "Attached Garage",
-      "enumDescription": "Attached Garage"
+      "enumDescription": "Attached Garage",
+      "category": "parking"
     },
     {
       "lexiconClass": "layout",
@@ -974,6 +984,7 @@
       "iconName": "fridge",
       "enumValue": "Kitchen",
       "enumDescription": "Kitchen"
+      
     },
     {
       "lexiconClass": "layout",
@@ -981,6 +992,7 @@
       "iconName": "living",
       "enumValue": "Living Room",
       "enumDescription": "Living Room"
+      
     },
     {
       "lexiconClass": "layout",
@@ -995,6 +1007,7 @@
       "iconName": "bathroom",
       "enumValue": "Half Bathroom / Powder Room",
       "enumDescription": "Half Bathroom"
+      
     },
     {
       "lexiconClass": "layout",
@@ -1002,6 +1015,7 @@
       "iconName": "laundry",
       "enumValue": "Laundry Room",
       "enumDescription": "Laundry Room"
+      
     },
     {
       "lexiconClass": "layout",
@@ -1009,6 +1023,7 @@
       "iconName": "dining-room",
       "enumValue": "Dining Room",
       "enumDescription": "Dining Room"
+      
     },
     {
       "lexiconClass": "layout",
@@ -1016,6 +1031,7 @@
       "iconName": "bedroom",
       "enumValue": "Primary Bedroom",
       "enumDescription": "Primary Bedroom"
+     
     },
     {
       "lexiconClass": "layout",

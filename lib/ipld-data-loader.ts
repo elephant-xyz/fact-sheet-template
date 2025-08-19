@@ -1117,24 +1117,48 @@ export class IPLDDataLoader {
       ),
     );
 
-    if (Object.keys(layoutsByDataGroup).length === 1) {
-      layouts = layoutsByDataGroup[Object.keys(layoutsByDataGroup)[0]];
-      console.log('Selected single data group:', Object.keys(layoutsByDataGroup)[0]);
-    } else if (Object.hasOwn(layoutsByDataGroup, 'Photo Metadata')) {
-      layouts = layoutsByDataGroup['Photo Metadata'];
-      console.log('Selected Photo Metadata data group');
-    } else {
-      if (Object.keys(layoutsByDataGroup).length === 0) {
-        layouts = [];
-        console.log('No data groups found');
-      } else {
-        const [, value] = Object.entries(layoutsByDataGroup).reduce((max, current) =>
-          current[1].length > max[1].length ? current : max,
-        );
-        layouts = value;
-        console.log('Selected largest data group');
+    // Combine all layout data sources, with more specific data taking precedence
+    const layoutMap: Map<string, LayoutInfo> = new Map();
+    
+    // First, add county layouts (layouts 1-4) as base data
+    const countyGroups = ['County', 'county'];
+    for (const groupName of countyGroups) {
+      if (layoutsByDataGroup[groupName]) {
+        for (const layout of layoutsByDataGroup[groupName]) {
+          const key = `${layout.space_type}_${layout.floor_level || 'unknown'}`;
+          layoutMap.set(key, layout);
+        }
+        console.log(`Added ${layoutsByDataGroup[groupName].length} layouts from ${groupName} group`);
       }
     }
+    
+    // Then, layer on batch layout data (more specific data takes precedence)
+    const batchGroups = ['Photo Metadata', 'Batch', 'batch'];
+    for (const groupName of batchGroups) {
+      if (layoutsByDataGroup[groupName]) {
+        for (const layout of layoutsByDataGroup[groupName]) {
+          const key = `${layout.space_type}_${layout.floor_level || 'unknown'}`;
+          // More specific batch data overwrites county data
+          layoutMap.set(key, layout);
+        }
+        console.log(`Layered ${layoutsByDataGroup[groupName].length} layouts from ${groupName} group`);
+      }
+    }
+    
+    // If no county or batch data found, combine all available data groups
+    if (layoutMap.size === 0) {
+      console.log('No county or batch data found, combining all available groups');
+      for (const [groupName, groupLayouts] of Object.entries(layoutsByDataGroup)) {
+        for (const layout of groupLayouts) {
+          const key = `${layout.space_type}_${layout.floor_level || 'unknown'}_${groupName}`;
+          layoutMap.set(key, layout);
+        }
+        console.log(`Added ${groupLayouts.length} layouts from ${groupName} group`);
+      }
+    }
+    
+    layouts = Array.from(layoutMap.values());
+    console.log('Combined layout data from multiple sources:', layouts.length, 'total layouts');
 
     console.log('Final layouts count:', layouts.length);
     console.log(
