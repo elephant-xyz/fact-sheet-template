@@ -1,0 +1,31 @@
+{
+  "source_http_request": {
+    "method": "GET",
+    "url": "https://pbcpao.gov/Property/Details",
+    "multiValueQueryString": {
+      "parcelId": [
+        "52434205310037080"
+      ]
+    }
+  },
+  "request_identifier": "52434205310037080_mailing_address_1",
+  "city_name": null,
+  "country_code": "US",
+  "county_name": "PALM BEACH",
+  "latitude": null,
+  "longitude": null,
+  "plus_four_postal_code": null,
+  "postal_code": null,
+  "state_code": null,
+  "street_name": "AMHERST AVE MARGATE CITY NJ 08402 1002",
+  "street_post_directional_text": null,
+  "street_pre_directional_text": null,
+  "street_number": "9406",
+  "street_suffix_type": null,
+  "unit_identifier": null,
+  "route_number": null,
+  "township": null,
+  "range": null,
+  "section": null,
+  "block": null
+}

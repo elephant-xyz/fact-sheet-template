@@ -107,6 +107,8 @@ interface SectionVisibility {
 export interface PropertyData {
   property: PropertyInfo;
   address?: any;
+  mailing_address?: any;
+  flood_storm_information?: any;
   sales: SaleInfo[];
   taxes: TaxInfo[];
   features: PropertyFeatures | null;
@@ -337,6 +339,16 @@ export class IPLDDataLoader {
     const utilityNode = this.findNodeByContent(graph, 'cooling_system_type');
     const unnormalizedAddressNode = this.findNodeByContent(graph, 'full_address');
     const applianceNodes = this.findNodesByContent(graph, 'appliance_type');
+    // Find mailing address nodes by looking for nodes with specific mailing address characteristics
+    const mailingAddressNodes = Array.from(graph.values()).filter(node => 
+      node.filePath && node.filePath.includes('mailing_address') && node.data.county_name
+    );
+    // Find flood storm information node by filename pattern
+    const floodStormNode = Array.from(graph.values()).find(node => 
+      node.filePath && node.filePath.includes('flood_storm_information')
+    ) || this.findNodeByContent(graph, 'evacuation_zone') || this.findNodeByContent(graph, 'flood_zone');
+    
+
 
     const layouts = this.loadLayoutData(graph);
 
@@ -395,6 +407,29 @@ export class IPLDDataLoader {
       source_http_request: addressNode?.data?.source_http_request || null,
     };
 
+    // Extract mailing address data
+    let mailingAddressData = null;
+    if (mailingAddressNodes && mailingAddressNodes.length > 0) {
+      // Use the first mailing address node found
+      const mailingAddressNode = mailingAddressNodes[0];
+      
+      if (mailingAddressNode && mailingAddressNode.data.county_name) {
+        mailingAddressData = {
+          street_number: mailingAddressNode.data.street_number,
+          street_name: mailingAddressNode.data.street_name,
+          street_suffix_type: mailingAddressNode.data.street_suffix_type,
+          city_name: mailingAddressNode.data.city_name,
+          state_code: mailingAddressNode.data.state_code,
+          county_name: mailingAddressNode.data.county_name,
+          county_jurisdiction: mailingAddressNode.data.county_jurisdiction,
+          county: mailingAddressNode.data.county,
+          postal_code: mailingAddressNode.data.postal_code,
+          country_code: mailingAddressNode.data.country_code,
+          source_http_request: mailingAddressNode.data.source_http_request || null,
+        };
+      }
+    }
+
     // Create sales data with source information
     const salesData = sales.map((sale, index) => ({
       ...sale,
@@ -418,6 +453,8 @@ export class IPLDDataLoader {
     return {
       property,
       address: addressData,
+      mailing_address: mailingAddressData,
+      flood_storm_information: floodStormNode?.data || null,
       sales: salesData,
       taxes: taxData,
       features,

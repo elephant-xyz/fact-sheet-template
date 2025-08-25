@@ -108,6 +108,43 @@ body {
   gap: 24px;
 }
 
+/* Flood & Storm Information Section - Same styling as Building Details */
+#flood-storm-information {
+  border-radius: 16px;
+  border: 1px solid #f0f0f0;
+  display: flex !important;
+  padding: 48px 16px 16px 16px;
+  flex-direction: column;
+  align-items: center;
+  align-self: stretch;
+  gap: 24px;
+}
+
+/* Remove margins from elements in flood storm section */
+#flood-storm-information .property-overview-row {
+  margin-bottom: 0 !important;
+  gap: 32px !important;
+}
+
+/* Set consistent min-width for all property overview items in flood storm section */
+#flood-storm-information .property-overview-item {
+  min-width: 200px;
+}
+
+#flood-storm-information .show-all-features-container {
+  margin-top: 16px !important;
+  margin-bottom: 16px !important;
+}
+
+#flood-storm-information .show-all-features-btn {
+  margin-top: 0 !important;
+  text-decoration: none !important;
+}
+
+#flood-storm-information .show-all-features-btn:hover {
+  text-decoration: none !important;
+}
+
 .tax-information-section {
   display: none;
 }
@@ -3093,11 +3130,21 @@ align-self: stretch;
 @media (max-width: 880px) {
   .desktop-only { display: none !important; }
   .tablet-only { display: flex !important; }
+  /* Reset explicit grid positioning so items don't create a 3rd column */
+  #comprehensive-details .comprehensive-details-grid > .feature-item-detailed {
+    grid-column: auto !important;
+    grid-row: auto !important;
+  }
 }
 
 @media (max-width: 480px) {
   .tablet-only { display: none !important; }
   .mobile-only { display: flex !important; }
+  /* Stack items to a single column by clearing manual positions */
+  #comprehensive-details .comprehensive-details-grid > .feature-item-detailed {
+    grid-column: auto !important;
+    grid-row: auto !important;
+  }
 }
 
 .show-all-features-btn {

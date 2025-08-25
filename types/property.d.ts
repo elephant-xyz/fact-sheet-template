@@ -85,6 +85,8 @@ export interface SectionVisibility {
 
 export interface TemplateData {
   address?: Address;
+  mailing_address?: Address;
+  flood_storm_information?: any;
   property?: {
     bedrooms?: number;
     bathrooms?: number;

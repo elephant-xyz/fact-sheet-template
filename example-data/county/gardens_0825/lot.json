@@ -1,0 +1,24 @@
+{
+  "source_http_request": {
+    "method": "GET",
+    "url": "https://pbcpao.gov/Property/Details",
+    "multiValueQueryString": {
+      "parcelId": [
+        "52434205310037080"
+      ]
+    }
+  },
+  "request_identifier": "52434205310037080",
+  "lot_type": null,
+  "lot_length_feet": null,
+  "lot_width_feet": null,
+  "lot_area_sqft": null,
+  "landscaping_features": null,
+  "view": null,
+  "fencing_type": null,
+  "fence_height": null,
+  "fence_length": null,
+  "driveway_material": null,
+  "driveway_condition": null,
+  "lot_condition_issues": null
+}
