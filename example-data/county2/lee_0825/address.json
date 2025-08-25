@@ -1,0 +1,52 @@
+{
+  "source_http_request": {
+    "method": "GET",
+    "url": "https://www.leepa.org/Display/DisplayParcel.aspx#ElevationDetails",
+    "multiValueQueryString": {
+      "FolioID": [
+        "10169614"
+      ],
+      "PropertyDetails": [
+        "True"
+      ],
+      "AuthDetails": [
+        "True"
+      ],
+      "SalesDetails": [
+        "True"
+      ],
+      "PermitDetails": [
+        "True"
+      ],
+      "RenumberDetails": [
+        "True"
+      ],
+      "GarbageDetails": [
+        "True"
+      ],
+      "ElevationDetails": [
+        "True"
+      ]
+    }
+  },
+  "request_identifier": "10169614",
+  "city_name": "CAPE CORAL",
+  "country_code": "US",
+  "county_name": "LEE",
+  "latitude": 26.62936,
+  "longitude": -81.94403,
+  "plus_four_postal_code": null,
+  "postal_code": "33990",
+  "state_code": "FL",
+  "street_name": "12TH",
+  "street_post_directional_text": null,
+  "street_pre_directional_text": "SE",
+  "street_number": "1418",
+  "street_suffix_type": "Ter",
+  "unit_identifier": null,
+  "route_number": null,
+  "township": "44",
+  "range": "24E",
+  "section": "19",
+  "block": "00731"
+}

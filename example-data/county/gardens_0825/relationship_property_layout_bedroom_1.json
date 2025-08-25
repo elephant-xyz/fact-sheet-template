@@ -1,0 +1,8 @@
+{
+  "from": {
+    "/": "./property.json"
+  },
+  "to": {
+    "/": "./layout_bedroom_1.json"
+  }
+}

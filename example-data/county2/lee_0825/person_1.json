@@ -1,0 +1,41 @@
+{
+  "source_http_request": {
+    "method": "GET",
+    "url": "https://www.leepa.org/Display/DisplayParcel.aspx#ElevationDetails",
+    "multiValueQueryString": {
+      "FolioID": [
+        "10169614"
+      ],
+      "PropertyDetails": [
+        "True"
+      ],
+      "AuthDetails": [
+        "True"
+      ],
+      "SalesDetails": [
+        "True"
+      ],
+      "PermitDetails": [
+        "True"
+      ],
+      "RenumberDetails": [
+        "True"
+      ],
+      "GarbageDetails": [
+        "True"
+      ],
+      "ElevationDetails": [
+        "True"
+      ]
+    }
+  },
+  "request_identifier": "10169614",
+  "birth_date": null,
+  "first_name": "Sylvain",
+  "last_name": "Jacques",
+  "middle_name": "Roland",
+  "prefix_name": null,
+  "suffix_name": null,
+  "us_citizenship_status": null,
+  "veteran_status": null
+}

@@ -1903,5 +1903,72 @@
       "lexiconProperty": "finish",
       "enumValue": "Stainless Steel",
       "enumDescription": "Stainless Steel"
-    }
+    },
+  {
+    "lexiconClass": "property",
+    "lexiconProperty": "property_type",
+    "enumValue": "SingleFamily",
+    "enumDescription": "Single Family Home"
+  },
+  {
+    "lexiconClass": "property",
+    "lexiconProperty": "property_type",
+    "enumValue": "DetachedCondominium",
+    "enumDescription": "Detached Condominium"
+  },
+  {
+    "lexiconClass": "property",
+    "lexiconProperty": "property_type",
+    "enumValue": "ManufacturedHousing",
+    "enumDescription": "Manufactured Home"
+  },
+  {
+    "lexiconClass": "property",
+    "lexiconProperty": "property_type",
+    "enumValue": "ManufacturedHousingDoubleWide",
+    "enumDescription": "Double Wide Manufactured Home"
+  },
+  {
+    "lexiconClass": "property",
+    "lexiconProperty": "property_type",
+    "enumValue": "ManufacturedHousingSingleWide",
+    "enumDescription": "Single Wide Manufactured Home"
+  },
+  {
+    "lexiconClass": "property",
+    "lexiconProperty": "property_type",
+    "enumValue": "MiscellaneousResidential",
+    "enumDescription": "Miscellaneous Residential"
+  },
+  {
+    "lexiconClass": "property",
+    "lexiconProperty": "property_type",
+    "enumValue": "MultipleFamily",
+    "enumDescription": "Multi-Family Home"
+  },
+  {
+    "lexiconClass": "property",
+    "lexiconProperty": "property_type",
+    "enumValue": "NonWarrantableCondo",
+    "enumDescription": "Non-Warrantable Condo"
+  },
+  {
+    "lexiconClass": "property",
+    "lexiconProperty": "property_type",
+    "enumValue": "ResidentialCommonElementsAreas",
+    "enumDescription": "Residential Common Elements Areas"
+  },
+  {
+    "lexiconClass": "property",
+    "lexiconProperty": "property_type",
+    "enumValue": "TwoToFourFamily",
+    "enumDescription": "Two to Four Family Home"
+  },
+  {
+    "lexiconClass": "property",
+    "lexiconProperty": "property_type",
+    "enumValue": "VacantLand",
+    "enumDescription": "Vacant Land"
+  }
+
   ]

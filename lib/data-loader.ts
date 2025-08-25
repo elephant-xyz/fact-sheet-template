@@ -203,6 +203,8 @@ export class DataLoader {
         : [],
       sectionVisibility: ipldData.sectionVisibility,
       dataLabel: ipldData.dataLabel,
+      mailing_address: ipldData.mailing_address || null,
+      flood_storm_information: ipldData.flood_storm_information || null,
     };
 
     return transformed as TemplateData;

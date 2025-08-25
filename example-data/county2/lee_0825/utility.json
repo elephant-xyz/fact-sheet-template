@@ -1,0 +1,52 @@
+{
+  "source_http_request": {
+    "method": "GET",
+    "url": "https://www.leepa.org/Display/DisplayParcel.aspx#ElevationDetails",
+    "multiValueQueryString": {
+      "FolioID": [
+        "10169614"
+      ],
+      "PropertyDetails": [
+        "True"
+      ],
+      "AuthDetails": [
+        "True"
+      ],
+      "SalesDetails": [
+        "True"
+      ],
+      "PermitDetails": [
+        "True"
+      ],
+      "RenumberDetails": [
+        "True"
+      ],
+      "GarbageDetails": [
+        "True"
+      ],
+      "ElevationDetails": [
+        "True"
+      ]
+    }
+  },
+  "request_identifier": "10169614",
+  "cooling_system_type": null,
+  "heating_system_type": null,
+  "public_utility_type": null,
+  "sewer_type": null,
+  "water_source_type": null,
+  "plumbing_system_type": null,
+  "plumbing_system_type_other_description": null,
+  "electrical_panel_capacity": null,
+  "electrical_wiring_type": null,
+  "hvac_condensing_unit_present": null,
+  "electrical_wiring_type_other_description": null,
+  "solar_panel_present": false,
+  "solar_panel_type": null,
+  "solar_panel_type_other_description": null,
+  "smart_home_features": null,
+  "smart_home_features_other_description": null,
+  "hvac_unit_condition": null,
+  "solar_inverter_visible": false,
+  "hvac_unit_issues": null
+}

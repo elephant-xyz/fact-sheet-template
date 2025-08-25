@@ -117,13 +117,13 @@ function updateSectionVisibility(label) {
             {{ renderSvg('elephant_logo-horizontal.svg', 'Elephant', 'logo-image') }}
         </div>
         
-        {% set has_sales_data_nav = false %}
-        {% for sale in homes[property_id].all_sales %}
-          {% if sale.data.purchase_price_amount %}
-            {% set has_sales_data_nav = true %}
-          {% endif %}
-        {% endfor %}
-        
+                {% set has_sales_data_nav = false %}
+                {% for sale in homes[property_id].all_sales %}
+                  {% if sale.data.purchase_price_amount %}
+                    {% set has_sales_data_nav = true %}
+                  {% endif %}
+                {% endfor %}
+                
         <!-- Data variables for navigation and comprehensive section -->
         {% set interior_features = homes[property_id].features.interior %}
         {% set exterior_features = homes[property_id].features.exterior %}
@@ -145,6 +145,10 @@ function updateSectionVisibility(label) {
                 
                 {% if interior_features | length > 0 or exterior_features | length > 0 or utilities or appliances | length > 0 or has_room_data %}
                 <a href="#comprehensive-details" class="nav-tab">Highlights</a>
+                {% endif %}
+                
+                {% if homes[property_id].flood_storm_information %}
+                <a href="#flood-storm-information" class="nav-tab">Flood & Storm</a>
                 {% endif %}
             </div>
         {% endif %}
@@ -192,7 +196,7 @@ function updateSectionVisibility(label) {
 
 <div class="container" id="main-content">
             <!-- Photos Section - First Section -->
-            {% if homes[property_id].carousel_images and homes[property_id].carousel_images | length > 0 %}
+                {% if homes[property_id].carousel_images and homes[property_id].carousel_images | length > 0 %}
             <section id="photos" class="section scroll-offset-section show" data-section="photo-gallery">
                 <div class="carousel-container">
                     {% for image in homes[property_id].carousel_images %}
@@ -229,10 +233,10 @@ function updateSectionVisibility(label) {
                   {{ sourceLink(homes[property_id].carousel_images[0], "Photo Source") }}
                 {% endif %}
             </section>
-            {% endif %}
-            
-            <!-- Property Header -->
-            <header class="property-header" data-section="property-header">
+                {% endif %}
+
+                <!-- Property Header -->
+                <header class="property-header" data-section="property-header">
 
                     <h1 class="property-address-title body-large-style">
                         {% if homes[property_id].address %}
@@ -272,14 +276,19 @@ function updateSectionVisibility(label) {
                     </div>
                     {% endif %}
                     
-                    {% if homes[property_id].address %}
-                        {% if homes[property_id].address.county_name or homes[property_id].address.latitude or homes[property_id].address.longitude or (homes[property_id].address.street_address and 'palm beach' in (homes[property_id].address.street_address | lower)) %}
+                    {% if homes[property_id].address or homes[property_id].unormalized_address or homes[property_id].mailing_address %}
+                        {% set has_county = (homes[property_id].address and homes[property_id].address.county_name and homes[property_id].address.county_name != '') or (homes[property_id].unormalized_address and (homes[property_id].unormalized_address.county_jurisdiction or homes[property_id].unormalized_address.county)) or (homes[property_id].mailing_address and (homes[property_id].mailing_address.county_name or homes[property_id].mailing_address.county_jurisdiction or homes[property_id].mailing_address.county)) %}
+                        {% if has_county or (homes[property_id].address and (homes[property_id].address.latitude or homes[property_id].address.longitude)) %}
                         <div class="location-details">
                             <!-- County Information -->
-                            {% if homes[property_id].address.county_name %}
+                            {% if homes[property_id].address and homes[property_id].address.county_name and homes[property_id].address.county_name != '' %}
                             <span class="county-info body-small-style">{{ homes[property_id].address.county_name }}{% if 'County' not in homes[property_id].address.county_name %} County{% endif %}</span>
-                            {% elif homes[property_id].address.street_address and 'palm beach' in (homes[property_id].address.street_address | lower) %}
-                            <span class="county-info body-small-style">Palm Beach County</span>
+                            {% elif homes[property_id].unormalized_address and (homes[property_id].unormalized_address.county_jurisdiction or homes[property_id].unormalized_address.county) %}
+                            {% set ucounty = homes[property_id].unormalized_address.county_jurisdiction or homes[property_id].unormalized_address.county %}
+                            <span class="county-info body-small-style">{{ ucounty }}{% if 'County' not in ucounty %} County{% endif %}</span>
+                            {% elif homes[property_id].mailing_address and (homes[property_id].mailing_address.county_name or homes[property_id].mailing_address.county_jurisdiction or homes[property_id].mailing_address.county) %}
+                            {% set mcounty = (homes[property_id].mailing_address.county_name or homes[property_id].mailing_address.county_jurisdiction or homes[property_id].mailing_address.county) | title %}
+                            <span class="county-info body-small-style">{{ mcounty }}{% if 'County' not in mcounty %} County{% endif %}</span>
                             {% endif %}
                             
                             <!-- Coordinates Information -->
@@ -352,7 +361,8 @@ function updateSectionVisibility(label) {
                                 <div class="property-overview-icon">
                                     {{ renderSvg('type=house.svg', 'Property Type') }}
                                 </div>
-                                <div class="property-overview-text">{{ homes[property_id].property.property_type | replace('_', ' ') }}</div>
+                                {% set ptype = homes[property_id].property.property_type %}
+                                <div class="property-overview-text">{% if ptype == 'SingleFamily' %}Single Family{% else %}{{ ptype | replace('_', ' ') }}{% endif %}</div>
                                 {% if homes[property_id].property.number_of_units_type and homes[property_id].property.number_of_units_type != 'null' %}
                                 <div class="property-overview-text">
                                     {% if homes[property_id].property.number_of_units_type == 'One' %}One Unit{% elif homes[property_id].property.number_of_units_type == 'Two' %}Two Units{% elif homes[property_id].property.number_of_units_type == 'Three' %}Three Units{% elif homes[property_id].property.number_of_units_type == 'Four' %}Four Units{% else %}{{ homes[property_id].property.number_of_units_type }} Units{% endif %}
@@ -451,7 +461,7 @@ function updateSectionVisibility(label) {
                    {{ sourceLink(homes[property_id].property, "County Appraiser") }}
                  {% endif %}
             </section>
-
+            
             {% if has_sales_data or (homes[property_id].all_taxes | length > 0) %}
                 <section id="property-history" class="property-history-section scroll-offset-section" data-section="property-history">
 
@@ -498,17 +508,17 @@ function updateSectionVisibility(label) {
               {% if (homes[property_id].all_sales | length >= 1) or (homes[property_id].all_taxes | length >= 1) %}
               <div class="chart-tabs-container">
                 <div class="chart-controls">
-                  <div class="chart-tabs">
+                <div class="chart-tabs">
                     {% if homes[property_id].all_sales | length >= 1 %}
-                    <button class="chart-tab active" data-tab="sales">
-                      <span>Sale History</span>
-                    </button>
-                    {% endif %}
-                    {% if homes[property_id].all_taxes | length >= 1 %}
+                  <button class="chart-tab active" data-tab="sales">
+                    <span>Sale History</span>
+                  </button>
+                  {% endif %}
+                  {% if homes[property_id].all_taxes | length >= 1 %}
                     <button class="chart-tab {% if homes[property_id].all_sales | length < 3 %}active{% endif %}" data-tab="tax">
-                      <span>Tax Information</span>
-                    </button>
-                    {% endif %}
+                    <span>Tax Information</span>
+                  </button>
+                  {% endif %}
                   </div>
                   
                   <!-- Time Range Selector -->
@@ -582,7 +592,7 @@ function updateSectionVisibility(label) {
                     {{ sourceLink(homes[property_id].all_sales[0].data, "County Appraiser") }}
                   {% elif homes[property_id].property and homes[property_id].property.source_http_request and homes[property_id].property.source_http_request.url %}
                     {{ sourceLink(homes[property_id].property, "County Appraiser") }}
-                  {% endif %}
+              {% endif %}
                 </section>
 
                 <!-- Tax Information Section -->
@@ -915,7 +925,7 @@ function updateSectionVisibility(label) {
             {% set has_room_data = (first_floor_rooms | length > 0 and first_floor_rooms | selectattr('space_type') | list | length > 0) or (second_floor_rooms | length > 0 and second_floor_rooms | selectattr('space_type') | list | length > 0) or (other_rooms | length > 0 and other_rooms | selectattr('space_type') | list | length > 0) %}
             {% set has_floorplan_data = has_room_data %}
             
-            {% macro floorRooms(roomList) %}
+                {% macro floorRooms(roomList) %}
                   <div class="floor-rooms collapsible-content">
                     {% for room in roomList %}
                       {% set roomProperties = [] %}
@@ -1006,8 +1016,8 @@ function updateSectionVisibility(label) {
                                     } %}
                                     {% set all_comprehensive_items = (all_comprehensive_items.push(item), all_comprehensive_items) %}
                                 {% endfor %}
-                            {% endif %}
-                            
+                    {% endif %}
+                    
                             <!-- Collect Appliances -->
                             {% for appliance in appliances %}
                                 {% set appliance_text = '' %}
@@ -1015,7 +1025,7 @@ function updateSectionVisibility(label) {
                                     {% set appliance_text = appliance.finish.enumDescription + ' ' + appliance.appliance_type.enumDescription %}
                                 {% else %}
                                     {% set appliance_text = appliance.appliance_type.enumDescription %}
-                                {% endif %}
+                    {% endif %}
                                 {% set item = {
                                     'iconName': appliance.appliance_type.iconName,
                                     'text': appliance_text,
@@ -1037,9 +1047,9 @@ function updateSectionVisibility(label) {
                                             'category': 'Room'
                                         } %}
                                         {% set all_comprehensive_items = (all_comprehensive_items.push(item), all_comprehensive_items) %}
-                                    {% endif %}
+                    {% endif %}
                                 {% endfor %}
-                            {% endif %}
+                {% endif %}
                             {% for room_collection in all_room_collections %}
                                 {% set room_counters = {} %}
                                 {% for room in room_collection %}
@@ -1061,14 +1071,14 @@ function updateSectionVisibility(label) {
                                                     'category': 'Property'
                                                 } %}
                                                 {% set all_comprehensive_items = (all_comprehensive_items.push(item), all_comprehensive_items) %}
-                                            {% endif %}
+            {% endif %}
                                         {% endfor %}
-                                    {% endif %}
+              {% endif %}
                                 {% endfor %}
                             {% endfor %}
                             
                             <!-- Display items with CSS-based positioning -->
-                            {% set seen_room_types = [] %}
+                            {% set seen_numbered_keys = [] %}
                             {% if all_comprehensive_items | length <= 10 %}
                                 <!-- 2-column layout: alternate between columns -->
                                 {% for item in all_comprehensive_items %}
@@ -1078,24 +1088,24 @@ function updateSectionVisibility(label) {
                                     {% for i in all_comprehensive_items %}
                                         {% if i.category == 'Room' and i.text == item.text %}
                                             {% set total_count = total_count + 1 %}
-                                        {% endif %}
+              {% endif %}
                                     {% endfor %}
                                     {% if total_count > 1 %}
                                         {% set seen_so_far = 0 %}
-                                        {% for t in seen_room_types %}
+                                        {% for t in seen_numbered_keys %}
                                             {% if t == item.text %}
                                                 {% set seen_so_far = seen_so_far + 1 %}
-                                            {% endif %}
+              {% endif %}
                                         {% endfor %}
                                         {% set display_text = item.text + ' ' + (seen_so_far + 1) %}
-                                    {% endif %}
-                                    {% set seen_room_types = (seen_room_types.push(item.text), seen_room_types) %}
-                                {% endif %}
+              {% endif %}
+                                    {% set seen_numbered_keys = (seen_numbered_keys.push(item.text), seen_numbered_keys) %}
+              {% endif %}
                                 <div class="feature-item-detailed col-{{ ((loop.index0 % 2) + 1) }} row-{{ ((loop.index0 // 2) + 1) }}">
                                     <div class="feature-row">
                                         {% if item.iconName %}
                                             {{ renderSvg(item.iconName, item.text, '') }}
-                                        {% endif %}
+              {% endif %}
                                         <div class="feature-text-content">
                                             <div class="feature-main-text">{{ display_text }}</div>
                                         </div>
@@ -1107,23 +1117,38 @@ function updateSectionVisibility(label) {
                                 {% for item in all_comprehensive_items %}
                                 {% if loop.index <= 15 %}
                                 {% set display_text = item.text %}
-                                {% if item.category == 'Room' %}
+                                {% set key_raw = (item.text or '') | lower | trim %}
+                                {% set base = key_raw %}
+                                {% if 'bed' in key_raw %}{% set base = 'bedroom' %}{% endif %}
+                                {% if 'bath' in key_raw %}{% set base = 'bathroom' %}{% endif %}
+                                {% if 'porch' in key_raw %}{% set base = 'porch' %}{% endif %}
+                                {% if 'garage' in key_raw %}{% set base = 'garage' %}{% endif %}
+                                {% if 'closet' in key_raw %}{% set base = 'closet' %}{% endif %}
+                                {% set should_number = (item.category == 'Room') or base != key_raw %}
+                                {% if should_number %}
                                     {% set total_count = 0 %}
                                     {% for i in all_comprehensive_items %}
-                                        {% if i.category == 'Room' and i.text == item.text %}
+                                        {% set i_key_raw = (i.text or '') | lower | trim %}
+                                        {% set i_base = i_key_raw %}
+                                        {% if 'bed' in i_key_raw %}{% set i_base = 'bedroom' %}{% endif %}
+                                        {% if 'bath' in i_key_raw %}{% set i_base = 'bathroom' %}{% endif %}
+                                        {% if 'porch' in i_key_raw %}{% set i_base = 'porch' %}{% endif %}
+                                        {% if 'garage' in i_key_raw %}{% set i_base = 'garage' %}{% endif %}
+                                        {% if 'closet' in i_key_raw %}{% set i_base = 'closet' %}{% endif %}
+                                        {% if i_base == base %}
                                             {% set total_count = total_count + 1 %}
                                         {% endif %}
                                     {% endfor %}
                                     {% if total_count > 1 %}
                                         {% set seen_so_far = 0 %}
-                                        {% for t in seen_room_types %}
-                                            {% if t == item.text %}
+                                        {% for t in seen_numbered_keys %}
+                                            {% if t == base %}
                                                 {% set seen_so_far = seen_so_far + 1 %}
-                                            {% endif %}
+                                    {% endif %}
                                         {% endfor %}
                                         {% set display_text = item.text + ' ' + (seen_so_far + 1) %}
                                     {% endif %}
-                                    {% set seen_room_types = (seen_room_types.push(item.text), seen_room_types) %}
+                                    {% set seen_numbered_keys = (seen_numbered_keys.push(base), seen_numbered_keys) %}
                                 {% endif %}
                                 <div class="feature-item-detailed{% if loop.index > 10 %} desktop-only{% endif %} col-{{ ((loop.index0 % 3) + 1) }} row-{{ ((loop.index0 // 3) + 1) }}">
                                     <div class="feature-row">
@@ -1133,9 +1158,9 @@ function updateSectionVisibility(label) {
                                         <div class="feature-text-content">
                                             <div class="feature-main-text">{{ display_text }}</div>
                                         </div>
-                                    </div>
                                 </div>
-                                {% endif %}
+                            </div>
+                            {% endif %}
                                 {% endfor %}
                             {% endif %}
                         </div>
@@ -1150,25 +1175,25 @@ function updateSectionVisibility(label) {
                             <button class="show-all-features-btn" onclick="openFeaturesModal()">
                                 Show all {{ all_comprehensive_items | length }} features
                             </button>
-                        </div>
-                        {% endif %}
-
+                            </div>
+                            {% endif %}
+                            
                         {% if all_comprehensive_items | length > 10 %}
                         <div class="show-all-features-container tablet-only">
                             <button class="show-all-features-btn" onclick="openFeaturesModal()">
                                 Show all {{ all_comprehensive_items | length }} highlights
                             </button>
-                        </div>
-                        {% endif %}
-
+                            </div>
+                            {% endif %}
+                                            
                         {% if all_comprehensive_items | length > 5 %}
                         <div class="show-all-features-container mobile-only">
                             <button class="show-all-features-btn" onclick="openFeaturesModal()">
                                 Show all {{ all_comprehensive_items | length }} highlights
                             </button>
-                        </div>
+                                </div>
                         {% endif %}
-                    </div>
+                            </div>
                 </div>
                 
                 <!-- Source Link -->
@@ -1179,7 +1204,103 @@ function updateSectionVisibility(label) {
                 {% endif %}
             </section>
             {% endif %}
-            
+                            
+            <!-- Flood & Storm Information -->
+            {% if homes[property_id].flood_storm_information %}
+            <section id="flood-storm-information" class="building-details-section scroll-offset-section">
+                <h3 class="section-subtitle">Flood & Storm Information</h3>
+                <!-- Flood Overview Row -->
+                <div class="property-overview-row">
+                    <!-- Evacuation Zone -->
+                    {% if homes[property_id].flood_storm_information.evacuation_zone %}
+                    <div class="property-overview-item">
+                        <div class="property-overview-icon">
+                            {{ renderSvg('type=emergency.svg', 'Evacuation Zone') }}
+                        </div>
+                        <div class="property-overview-text">Evacuation Zone {{ homes[property_id].flood_storm_information.evacuation_zone }}</div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Flood Insurance Required -->
+                    {% if homes[property_id].flood_storm_information.flood_insurance_required is not none %}
+                    <div class="property-overview-item">
+                        <div class="property-overview-icon">
+                            {{ renderSvg('type=insurance.svg', 'Flood Insurance') }}
+                        </div>
+                        <div class="property-overview-text">{% if homes[property_id].flood_storm_information.flood_insurance_required %}Yes{% else %}No{% endif %} Flood Insurance Required</div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Flood Zone -->
+                    {% if homes[property_id].flood_storm_information.flood_zone %}
+                    <div class="property-overview-item">
+                        <div class="property-overview-icon">
+                            {{ renderSvg('type=flood.svg', 'Flood Zone') }}
+                        </div>
+                        <div class="property-overview-text">Flood Zone {{ homes[property_id].flood_storm_information.flood_zone }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Find Your Flood Zone Button -->
+                {% if homes[property_id].flood_storm_information.fema_search_url %}
+                <div class="show-all-features-container">
+                    <a href="{{ homes[property_id].flood_storm_information.fema_search_url }}" target="_blank" class="show-all-features-btn">Find Your Flood Zone</a>
+                </div>
+                {% endif %}
+                
+                <!-- Flood Details -->
+                {% if homes[property_id].flood_storm_information.community_id or homes[property_id].flood_storm_information.effective_date or homes[property_id].flood_storm_information.map_version or homes[property_id].flood_storm_information.panel_number %}
+                <div class="legal-parcel-group">
+                    <!-- Community ID -->
+                    {% if homes[property_id].flood_storm_information.community_id %}
+                    <div class="building-spec-item">
+                        <div class="building-spec-label-h5">Community ID:</div>
+                        <div class="building-spec-value">
+                            <div class="building-spec-text-small">{{ homes[property_id].flood_storm_information.community_id }}</div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Effective Date -->
+                    {% if homes[property_id].flood_storm_information.effective_date %}
+                    <div class="building-spec-item">
+                        <div class="building-spec-label-h5">Effective Date:</div>
+                        <div class="building-spec-value">
+                            <div class="building-spec-text-small">{{ homes[property_id].flood_storm_information.effective_date }}</div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Map Version -->
+                    {% if homes[property_id].flood_storm_information.map_version %}
+                    <div class="building-spec-item">
+                        <div class="building-spec-label-h5">Map Version:</div>
+                        <div class="building-spec-value">
+                            <div class="building-spec-text-small">{{ homes[property_id].flood_storm_information.map_version }}</div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Panel Number -->
+                    {% if homes[property_id].flood_storm_information.panel_number %}
+                    <div class="building-spec-item">
+                        <div class="building-spec-label-h5">Panel Number:</div>
+                        <div class="building-spec-value">
+                            <div class="building-spec-text-small">{{ homes[property_id].flood_storm_information.panel_number }}</div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+                
+                <!-- Source Link -->
+                {% if homes[property_id].flood_storm_information.source_http_request and homes[property_id].flood_storm_information.source_http_request.url %}
+                {{ sourceLink(homes[property_id].flood_storm_information, "County Appraiser") }}
+                {% endif %}
+            </section>
+            {% endif %}
+                            
             <!-- Features Modal -->
             <div id="featuresModal" class="modal" style="display: none;">
                 <div class="modal-content">
@@ -1205,10 +1326,10 @@ function updateSectionVisibility(label) {
                                     </div>
                                 </div>
                                 {% endfor %}
+                                </div>
                             </div>
-                        </div>
-                        {% endif %}
-                        
+                            {% endif %}
+                            
                         <!-- Exterior Features (including rooms with no properties) -->
                         {% set exterior_room_features = [] %}
                         {% for room_collection in all_room_collections %}
@@ -1248,8 +1369,8 @@ function updateSectionVisibility(label) {
                                             {{ renderSvg(feature.iconName, feature.info.description, '') }}
                                         {% endif %}
                                         <span class="modal-feature-text">{{ feature.enumDescription }}</span>
-                                    </div>
                                 </div>
+                            </div>
                                 {% endfor %}
                                 
                                 <!-- Exterior rooms with no properties -->
@@ -1258,10 +1379,10 @@ function updateSectionVisibility(label) {
                                     <div class="modal-feature-row">
                                         {% if item.iconName %}
                                             {{ renderSvg(item.iconName, '', '') }}
-                                        {% endif %}
+                            {% endif %}
                                         <span class="modal-feature-text">{{ item.text }}</span>
-                                    </div>
-                                </div>
+                        </div>
+                    </div>
                                 {% endfor %}
                             </div>
                         </div>
@@ -1277,13 +1398,13 @@ function updateSectionVisibility(label) {
                                     <div class="modal-feature-row">
                                         {% if util.iconName %}
                                             {{ renderSvg(util.iconName, util.enumDescription, '') }}
-                                        {% endif %}
+                                {% endif %}
                                         <span class="modal-feature-text">{{ util.enumDescription }}</span>
-                                    </div>
-                                </div>
-                                {% endfor %}
                             </div>
                         </div>
+                                {% endfor %}
+                    </div>
+                </div>
                         {% endif %}
                         
                         <!-- Appliances -->
@@ -1296,15 +1417,15 @@ function updateSectionVisibility(label) {
                                     <div class="modal-feature-row">
                                         {% if appliance.appliance_type.iconName %}
                                             {{ renderSvg(appliance.appliance_type.iconName, appliance.appliance_type.enumDescription, '') }}
-                                        {% endif %}
+                        {% endif %}
                                         <span class="modal-feature-text">{% if appliance.finish %}{{ appliance.finish.enumDescription }} {% endif %}{{ appliance.appliance_type.enumDescription }}</span>
-                                    </div>
-                                </div>
-                                {% endfor %}
-                            </div>
+                      </div>
+                  </div>
+                  {% endfor %}
+              </div>
                         </div>
                         {% endif %}
-                        
+
                         <!-- Group rooms by categories - simplified approach -->
                         {% set all_room_data = [] %}
                         {% set bedroom_count = 0 %}
@@ -1330,7 +1451,7 @@ function updateSectionVisibility(label) {
                                     {% for key, value in room %}
                                         {% if key != 'space_type' and key != 'floor_level' and value and value.enumDescription %}
                                             {% set room_properties = (room_properties.push(value), room_properties) %}
-                                        {% endif %}
+                        {% endif %}
                                     {% endfor %}
                                     
                                     <!-- Get category from mapping lookup (undefined if not mapped) -->
@@ -1353,7 +1474,7 @@ function updateSectionVisibility(label) {
                                             {% set room_title = room_type + ' ' + closet_count | string %}
                                         {% else %}
                                             {% set room_title = room_type %}
-                                        {% endif %}
+                                      {% endif %}
                                         
                                         <!-- Create room data object -->
                                         {% set room_data = {
@@ -1405,12 +1526,12 @@ function updateSectionVisibility(label) {
                                                     {{ renderSvg(value.iconName, value.enumDescription, '') }}
                                                 {% endif %}
                                                 <span class="modal-feature-text">{{ value.enumDescription }}</span>
-                                            </div>
-                                        </div>
+                                      </div>
+                                    </div>
                                         {% endif %}
-                                    {% endfor %}
-                                </div>
+                                {% endfor %}
                             </div>
+                        </div>
                         {% endfor %}
                         
                         <!-- Display rooms without properties grouped by category -->
@@ -1426,8 +1547,8 @@ function updateSectionVisibility(label) {
                                     {% set category_title = 'Outdoor Spaces' %}
                                 {% elif room_data.category == 'exterior_feature' %}
                                     {% set category_title = 'Exterior Features' %}
-                                {% endif %}
-                                
+                        {% endif %}
+
                                 <div class="modal-category">
                                     <h3 class="modal-category-title">{{ category_title }}</h3>
                                     <div class="modal-features-grid">
@@ -1436,18 +1557,18 @@ function updateSectionVisibility(label) {
                                             <div class="modal-feature-row">
                                                 {% if category_room.icon %}
                                                     {{ renderSvg(category_room.icon, category_room.title, '') }}
-                                                {% endif %}
+                                      {% endif %}
                                                 <span class="modal-feature-text">{{ category_room.title }}</span>
-                                            </div>
-                                        </div>
-                                        {% endfor %}
                                     </div>
                                 </div>
-                            {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
                         {% endfor %}
                     </div>
                 </div>
-            </div>
+        </div>
 
         <!-- Sidebar -->
         <div class="sidebar">

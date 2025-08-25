@@ -490,6 +490,10 @@ export class TemplateRenderer {
           },
           // Add layouts array for new approach
           layouts: propertyData.layouts || [],
+          // Add mailing address data
+          mailing_address: propertyData.mailing_address || null,
+          // Add flood storm information data
+          flood_storm_information: propertyData.flood_storm_information || null,
         },
       }, // For template compatibility
       property_config: propertyConfig, // For floorplan section
