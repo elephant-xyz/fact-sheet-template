@@ -1169,7 +1169,8 @@ export class IPLDDataLoader {
     for (const groupName of countyGroups) {
       if (layoutsByDataGroup[groupName]) {
         for (const layout of layoutsByDataGroup[groupName]) {
-          const key = `${layout.space_type}_${layout.floor_level || 'unknown'}`;
+          const spaceIndex: any = (layout as any)['space_index'] ?? (layout as any)['spaceIndex'] ?? '';
+          const key = `${layout.space_type}_${layout.floor_level || 'unknown'}_${spaceIndex}`;
           layoutMap.set(key, layout);
         }
         console.log(`Added ${layoutsByDataGroup[groupName].length} layouts from ${groupName} group`);
@@ -1181,7 +1182,8 @@ export class IPLDDataLoader {
     for (const groupName of batchGroups) {
       if (layoutsByDataGroup[groupName]) {
         for (const layout of layoutsByDataGroup[groupName]) {
-          const key = `${layout.space_type}_${layout.floor_level || 'unknown'}`;
+          const spaceIndex: any = (layout as any)['space_index'] ?? (layout as any)['spaceIndex'] ?? '';
+          const key = `${layout.space_type}_${layout.floor_level || 'unknown'}_${spaceIndex}`;
           // More specific batch data overwrites county data
           layoutMap.set(key, layout);
         }
@@ -1194,7 +1196,8 @@ export class IPLDDataLoader {
       console.log('No county or batch data found, combining all available groups');
       for (const [groupName, groupLayouts] of Object.entries(layoutsByDataGroup)) {
         for (const layout of groupLayouts) {
-          const key = `${layout.space_type}_${layout.floor_level || 'unknown'}_${groupName}`;
+          const spaceIndex: any = (layout as any)['space_index'] ?? (layout as any)['spaceIndex'] ?? '';
+          const key = `${layout.space_type}_${layout.floor_level || 'unknown'}_${spaceIndex}_${groupName}`;
           layoutMap.set(key, layout);
         }
         console.log(`Added ${groupLayouts.length} layouts from ${groupName} group`);
