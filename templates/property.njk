@@ -2,7 +2,7 @@
 
 {# Macro for rendering SVG icons that can be either inlined or external #}
 {% macro renderSvg(filename, altText, className="") %}
-    {% if config.inlineSvg and (filename | isSvg) %}
+    {% if config.inlineSvg and (filename | isSvg) and not ('elephant_logo' in filename) and not ('favicon' in filename) %}
         <span class="{{ className }}" aria-label="{{ altText }}">{{ filename | assetUrl | safe }}</span>
     {% else %}
         <img src="{{ filename | assetUrl }}" alt="{{ altText }}" {% if className %}class="{{ className }}"{% endif %}>
