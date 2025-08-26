@@ -3194,9 +3194,32 @@ h1 {
   grid-row: auto !important;
 }
 
+/* Override grid positioning for two-column layouts - let items flow naturally */
+.comprehensive-details-grid.two-column-layout .col-1,
+.comprehensive-details-grid.two-column-layout .col-2,
+.comprehensive-details-grid.two-column-layout .col-3 {
+  grid-column: auto !important;
+}
+
+.comprehensive-details-grid.two-column-layout .row-1,
+.comprehensive-details-grid.two-column-layout .row-2,
+.comprehensive-details-grid.two-column-layout .row-3,
+.comprehensive-details-grid.two-column-layout .row-4,
+.comprehensive-details-grid.two-column-layout .row-5 {
+  grid-row: auto !important;
+}
+
 /* Ensure single-column layouts stack vertically and center properly */
 .comprehensive-details-grid.single-column-layout > * {
   grid-column: 1 !important;
+  grid-row: auto !important;
+  width: 100% !important;
+  align-self: stretch !important;
+}
+
+/* Ensure two-column layouts flow naturally in 2 columns */
+.comprehensive-details-grid.two-column-layout > * {
+  grid-column: auto !important;
   grid-row: auto !important;
   width: 100% !important;
   align-self: stretch !important;
@@ -3207,6 +3230,14 @@ h1 {
   align-items: center !important;
   width: 100% !important;
   max-width: 280px !important;
+  margin: 0 auto !important;
+}
+
+/* Center-align and size features sections within two-column layout */
+.comprehensive-details-grid.two-column-layout .features-section {
+  align-items: center !important;
+  width: 100% !important;
+  max-width: 600px !important;
   margin: 0 auto !important;
 }
 
