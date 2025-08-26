@@ -354,6 +354,17 @@ option {
   height: 24px !important;
   width: auto !important;
   max-height: 24px !important;
+  display: block !important;
+}
+
+/* Extra safety for elephant logo */
+img[src*="elephant_logo"],
+svg[class*="logo"],
+.nav-logo [aria-label*="Elephant"] {
+  height: 24px !important;
+  width: auto !important;
+  max-height: 24px !important;
+  display: block !important;
 }
 
 .nav-tabs {
@@ -3194,9 +3205,32 @@ h1 {
   grid-row: auto !important;
 }
 
+/* Override grid positioning for two-column layouts - let items flow naturally */
+.comprehensive-details-grid.two-column-layout .col-1,
+.comprehensive-details-grid.two-column-layout .col-2,
+.comprehensive-details-grid.two-column-layout .col-3 {
+  grid-column: auto !important;
+}
+
+.comprehensive-details-grid.two-column-layout .row-1,
+.comprehensive-details-grid.two-column-layout .row-2,
+.comprehensive-details-grid.two-column-layout .row-3,
+.comprehensive-details-grid.two-column-layout .row-4,
+.comprehensive-details-grid.two-column-layout .row-5 {
+  grid-row: auto !important;
+}
+
 /* Ensure single-column layouts stack vertically and center properly */
 .comprehensive-details-grid.single-column-layout > * {
   grid-column: 1 !important;
+  grid-row: auto !important;
+  width: 100% !important;
+  align-self: stretch !important;
+}
+
+/* Ensure two-column layouts flow naturally in 2 columns */
+.comprehensive-details-grid.two-column-layout > * {
+  grid-column: auto !important;
   grid-row: auto !important;
   width: 100% !important;
   align-self: stretch !important;
@@ -3207,6 +3241,14 @@ h1 {
   align-items: center !important;
   width: 100% !important;
   max-width: 280px !important;
+  margin: 0 auto !important;
+}
+
+/* Center-align and size features sections within two-column layout */
+.comprehensive-details-grid.two-column-layout .features-section {
+  align-items: center !important;
+  width: 100% !important;
+  max-width: 600px !important;
   margin: 0 auto !important;
 }
 
@@ -3383,8 +3425,10 @@ h1 {
 
 .modal-feature-row svg,
 .modal-feature-row img {
-  width: 24px;
-  height: 24px;
+  width: 24px !important;
+  height: 24px !important;
+  max-width: 24px !important;
+  max-height: 24px !important;
   flex-shrink: 0;
 }
 
@@ -3715,6 +3759,15 @@ img[src$=".svg"] {
   max-height: 100px !important;
 }
 
+/* Exception for logo files - don't constrain them */
+svg[class*="logo"],
+img[src*="elephant_logo"],
+.nav-logo svg,
+.nav-logo img {
+  max-width: none !important;
+  max-height: none !important;
+}
+
 /* Additional safety net for any SVGs that might bypass other rules */
 /* Force all SVGs to have reasonable default sizing */
 svg {
@@ -3733,10 +3786,33 @@ svg {
   height: 24px !important;
 }
 
+/* Extra safety for modal feature icons - highest priority */
+#featuresModal svg,
+#featuresModal img,
+.modal-body svg,
+.modal-body img,
+.modal-feature-row svg,
+.modal-feature-row img {
+  max-width: 24px !important;
+  max-height: 24px !important;
+  width: 24px !important;
+  height: 24px !important;
+}
+
+/* Ultimate fallback for modal icons - nuclear option (exclude close button) */
+div[id="featuresModal"] .modal-feature-row svg,
+div[id="featuresModal"] .modal-feature-row img,
+div[id="featuresModal"] .modal-body svg,
+div[id="featuresModal"] .modal-body img {
+  width: 24px !important;
+  height: 24px !important;
+  max-width: 24px !important;
+  max-height: 24px !important;
+}
+
 /* Reset SVG sizing within known containers to allow specific control */
 .property-overview-row svg,
-.floorplan-layout svg,
-.modal-body svg {
+.floorplan-layout svg {
   max-width: none;
   max-height: none;
 }
@@ -3775,8 +3851,6 @@ span.room-property-icon img,
 .room-header img,
 .modal-close svg,
 .modal-close img,
-.modal-feature-row svg,
-.modal-feature-row img,
 .carousel-arrow svg,
 .carousel-arrow img {
   /* Force all SVGs and SVG images to respect container/parent sizing */
@@ -3785,6 +3859,17 @@ span.room-property-icon img,
   max-width: 100% !important;
   max-height: 100% !important;
   /* Ensure content maintains aspect ratio while fitting container */
+  object-fit: contain;
+}
+
+/* Modal feature icons get specific 24px sizing (separate from container-based sizing) */
+.modal-feature-row svg,
+.modal-feature-row img {
+  /* Force modal feature icons to exact 24px size */
+  width: 24px !important;
+  height: 24px !important;
+  max-width: 24px !important;
+  max-height: 24px !important;
   object-fit: contain;
 }
 
