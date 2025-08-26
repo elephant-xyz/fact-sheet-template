@@ -1504,6 +1504,13 @@ option {
   color: #8e8b8b;
 }
 
+/* Ensure bullet SVGs in property specs maintain their small size */
+.property-specs svg {
+  width: 8px !important;
+  height: 8px !important;
+  flex-shrink: 0;
+}
+
 .property-specs-icon {
   width: 20px;
   height: 20px;
@@ -2653,6 +2660,7 @@ h1 {
 
   /* Hide view all button when expanded */
   .providers-list.mobile-expanded .view-all-providers-btn-mobile {
+    display: none;
   }
 }
 
@@ -3688,10 +3696,35 @@ h1 {
 }
 
 /* Universal icon vertical alignment fixes */
-/* Ensure all SVG icons are vertically centered */
+/* Ensure all SVG icons are vertically centered and sized consistently */
 svg {
   vertical-align: middle;
   display: inline-block;
+}
+
+/* Apply sizing rules only to SVGs inside icon containers, not decorative inline SVGs */
+.property-overview-icon svg,
+.room-icon-container svg,
+span[aria-label] svg,
+span.condensed-icon svg,
+span.provider-icon svg,
+span.furnished-icon svg,
+span.room-expand-icon svg,
+span.room-property-icon svg,
+.feature-row svg,
+.floor-header svg,
+.room-header svg,
+.modal-close svg,
+.modal-feature-row svg,
+.carousel-arrow svg,
+.nav-logo svg {
+  /* Force all SVGs to respect container/parent sizing */
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  /* Ensure SVG maintains aspect ratio while fitting container */
+  object-fit: contain;
 }
 
 /* Universal span fixes for icon containers - fallback for all browsers */
@@ -3715,13 +3748,33 @@ svg {
   display: inline-block;
 }
 
-/* Ensure spans containing SVG icons are vertically centered (modern browsers) */
+/* Ensure spans containing SVG icons are vertically centered and properly sized */
 span:has(svg) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   vertical-align: middle;
   line-height: 1;
+  /* Inherit parent sizing for inlined SVG containers */
+  width: inherit;
+  height: inherit;
+}
+
+/* Fallback for browsers that don't support :has() - target common icon container classes */
+span.condensed-icon,
+span.provider-icon,
+span.furnished-icon,
+span.room-expand-icon,
+span.room-property-icon,
+span[aria-label] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  line-height: 1;
+  /* Inherit parent sizing for inlined SVG containers */
+  width: inherit;
+  height: inherit;
 }
 
 

@@ -53,6 +53,12 @@ export class TemplateRenderer {
       if (fs.existsSync(staticPath)) {
         let svgContent = fs.readFileSync(staticPath, 'utf8');
 
+        // Remove intrinsic width/height attributes to allow CSS control
+        svgContent = svgContent
+          .replace(/\swidth="[^"]*"/gi, '') // Remove width attribute
+          .replace(/\sheight="[^"]*"/gi, '') // Remove height attribute
+          .trim();
+
         // Optionally minify SVG if minification is enabled
         if (this.options.minify) {
           // Basic SVG minification: remove comments and excessive whitespace
