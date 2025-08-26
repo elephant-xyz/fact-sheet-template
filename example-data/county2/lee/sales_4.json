@@ -1,0 +1,35 @@
+{
+  "ownership_transfer_date": "1990-10-01",
+  "purchase_price_amount": 155000.0,
+  "request_identifier": "10169614",
+  "source_http_request": {
+    "method": "GET",
+    "url": "https://www.leepa.org/Display/DisplayParcel.aspx#ElevationDetails",
+    "multiValueQueryString": {
+      "FolioID": [
+        "10169614"
+      ],
+      "PropertyDetails": [
+        "True"
+      ],
+      "AuthDetails": [
+        "True"
+      ],
+      "SalesDetails": [
+        "True"
+      ],
+      "PermitDetails": [
+        "True"
+      ],
+      "RenumberDetails": [
+        "True"
+      ],
+      "GarbageDetails": [
+        "True"
+      ],
+      "ElevationDetails": [
+        "True"
+      ]
+    }
+  }
+}

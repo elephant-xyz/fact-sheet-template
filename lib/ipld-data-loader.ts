@@ -29,6 +29,8 @@ interface PropertyInfo {
   type: string;
   yearBuilt: number;
   legalDescription: string;
+  subdivision: string;
+  zoning: string;
   lotArea: string;
   lotType: string;
   sourceUrl: string;
@@ -740,6 +742,9 @@ export class IPLDDataLoader {
     const unnormalizedAddressRenderItem = unnormalizedAddress?.data
       ? this.buildRenderItem(unnormalizedAddress.data, 'address')
       : null;
+    
+    // Use enum mapping for property data  
+    const propertyRenderItem = this.buildRenderItem(propertyData, 'property');
 
     return {
       address: fullAddress || addressData.street_address || '',
@@ -757,9 +762,11 @@ export class IPLDDataLoader {
       beds,
       baths,
       sqft,
-      type: propertyData.property_type || '',
+      type: propertyRenderItem.property_type?.enumDescription || propertyData.property_type || '',
       yearBuilt: propertyData.property_structure_built_year || '',
       legalDescription: propertyData.property_legal_description_text || '',
+      subdivision: propertyData.subdivision || '',
+      zoning: propertyData.zoning || '',
       lotArea: lotData.lot_size_sqft ? `${lotData.lot_size_sqft} sqft` : '',
       lotType: this.determineLotType(lotData.lot_size_sqft) || '',
       sourceUrl: url.toString(),
@@ -1162,8 +1169,7 @@ export class IPLDDataLoader {
     for (const groupName of countyGroups) {
       if (layoutsByDataGroup[groupName]) {
         for (const layout of layoutsByDataGroup[groupName]) {
-          const spaceIndex: any = (layout as any)['space_index'] ?? (layout as any)['spaceIndex'] ?? '';
-          const key = `${layout.space_type}_${layout.floor_level || 'unknown'}_${spaceIndex}`;
+          const key = `${layout.space_type}_${layout.floor_level || 'unknown'}`;
           layoutMap.set(key, layout);
         }
         console.log(`Added ${layoutsByDataGroup[groupName].length} layouts from ${groupName} group`);
@@ -1175,8 +1181,7 @@ export class IPLDDataLoader {
     for (const groupName of batchGroups) {
       if (layoutsByDataGroup[groupName]) {
         for (const layout of layoutsByDataGroup[groupName]) {
-          const spaceIndex: any = (layout as any)['space_index'] ?? (layout as any)['spaceIndex'] ?? '';
-          const key = `${layout.space_type}_${layout.floor_level || 'unknown'}_${spaceIndex}`;
+          const key = `${layout.space_type}_${layout.floor_level || 'unknown'}`;
           // More specific batch data overwrites county data
           layoutMap.set(key, layout);
         }
@@ -1189,8 +1194,7 @@ export class IPLDDataLoader {
       console.log('No county or batch data found, combining all available groups');
       for (const [groupName, groupLayouts] of Object.entries(layoutsByDataGroup)) {
         for (const layout of groupLayouts) {
-          const spaceIndex: any = (layout as any)['space_index'] ?? (layout as any)['spaceIndex'] ?? '';
-          const key = `${layout.space_type}_${layout.floor_level || 'unknown'}_${spaceIndex}_${groupName}`;
+          const key = `${layout.space_type}_${layout.floor_level || 'unknown'}_${groupName}`;
           layoutMap.set(key, layout);
         }
         console.log(`Added ${groupLayouts.length} layouts from ${groupName} group`);

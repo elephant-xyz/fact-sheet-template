@@ -1673,10 +1673,10 @@ h1 {
   }
 }
 
-/* Mobile highlights: 2 columns starting at 880px */
+/* Mobile highlights: respect our column configuration */
 @media (max-width: 880px) {
-  /* Mobile highlights: 2 columns, hide items 11-15, show mobile button text */
-  #comprehensive-details .comprehensive-details-grid {
+  /* Only apply 2-column override for grids with 10+ items (default behavior) */
+  #comprehensive-details .comprehensive-details-grid:not(.single-column-layout):not(.two-column-layout) {
     grid-template-columns: 1fr 1fr !important;
   }
   
@@ -2043,8 +2043,8 @@ h1 {
     left: 5vw !important;
   }
 
-  /* Responsive: 1 column on mobile (480px and below) */
-  #comprehensive-details .comprehensive-details-grid {
+  /* Responsive: 1 column on mobile (480px and below) - only for default grids */
+  #comprehensive-details .comprehensive-details-grid:not(.single-column-layout):not(.two-column-layout) {
     grid-template-columns: 1fr !important;
   }
 }
@@ -3008,9 +3008,9 @@ h1 {
   gap: 16px;
   align-self: stretch;
   border-radius: 6px;
-background: #FAFAFA;
-align-self: stretch;
-  
+  background: #FAFAFA;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .feature-row {
@@ -3059,9 +3059,67 @@ align-self: stretch;
   justify-items: stretch;
 }
 
-/* Two-column layout for 10 or fewer features */
+/* Single-column layout for less than 5 features */
+.comprehensive-details-grid.single-column-layout {
+  grid-template-columns: 280px;
+  justify-content: center;
+  margin: 0 auto;
+  max-width: 280px;
+  justify-items: stretch;
+  width: 280px;
+}
+
+/* Two-column layout for 5-9 features */
 .comprehensive-details-grid.two-column-layout {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, min(280px, 1fr)));
+  justify-content: center;
+  margin: 0 auto;
+  max-width: 600px;
+}
+
+/* Force single-column and two-column layouts to maintain structure at all breakpoints */
+@media (max-width: 880px) {
+  .comprehensive-details-grid.single-column-layout {
+    grid-template-columns: 280px !important;
+    justify-content: center !important;
+    justify-items: stretch !important;
+    margin: 0 auto !important;
+    max-width: 280px !important;
+    width: 280px !important;
+  }
+  .comprehensive-details-grid.two-column-layout {
+    grid-template-columns: repeat(2, minmax(0, min(280px, 1fr))) !important;
+    justify-content: center !important;
+    margin: 0 auto !important;
+    max-width: 600px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .comprehensive-details-grid.single-column-layout {
+    grid-template-columns: minmax(200px, 280px) !important;
+    justify-content: center !important;
+    justify-items: stretch !important;
+    margin: 0 auto !important;
+    max-width: calc(100vw - 32px) !important;
+    width: auto !important;
+  }
+  /* On very small screens, force two-column layouts to single column for better readability */
+  .comprehensive-details-grid.two-column-layout {
+    grid-template-columns: minmax(200px, 280px) !important;
+    justify-content: center !important;
+    justify-items: stretch !important;
+    margin: 0 auto !important;
+    max-width: calc(100vw - 32px) !important;
+    width: auto !important;
+  }
+  
+  /* Adjust features section on mobile */
+  .comprehensive-details-grid.single-column-layout .features-section,
+  .comprehensive-details-grid.two-column-layout .features-section {
+    max-width: calc(100vw - 32px) !important;
+    width: auto !important;
+  }
 }
 
 /* Ensure all feature items take full width of their grid cell */
@@ -3105,6 +3163,37 @@ align-self: stretch;
 .row-4 { grid-row: 4; }
 .row-5 { grid-row: 5; }
 
+/* Override grid positioning for single-column layouts */
+.comprehensive-details-grid.single-column-layout .col-1,
+.comprehensive-details-grid.single-column-layout .col-2,
+.comprehensive-details-grid.single-column-layout .col-3 {
+  grid-column: auto !important;
+}
+
+.comprehensive-details-grid.single-column-layout .row-1,
+.comprehensive-details-grid.single-column-layout .row-2,
+.comprehensive-details-grid.single-column-layout .row-3,
+.comprehensive-details-grid.single-column-layout .row-4,
+.comprehensive-details-grid.single-column-layout .row-5 {
+  grid-row: auto !important;
+}
+
+/* Ensure single-column layouts stack vertically and center properly */
+.comprehensive-details-grid.single-column-layout > * {
+  grid-column: 1 !important;
+  grid-row: auto !important;
+  width: 100% !important;
+  align-self: stretch !important;
+}
+
+/* Center-align and size features sections within single-column layout */
+.comprehensive-details-grid.single-column-layout .features-section {
+  align-items: center !important;
+  width: 100% !important;
+  max-width: 280px !important;
+  margin: 0 auto !important;
+}
+
 /* Desktop/Mobile text visibility for show all button */
 .show-all-features-btn .mobile-text {
   display: none;
@@ -3130,8 +3219,8 @@ align-self: stretch;
 @media (max-width: 880px) {
   .desktop-only { display: none !important; }
   .tablet-only { display: flex !important; }
-  /* Reset explicit grid positioning so items don't create a 3rd column */
-  #comprehensive-details .comprehensive-details-grid > .feature-item-detailed {
+  /* Reset explicit grid positioning so items don't create a 3rd column - only for default 3-column grids */
+  #comprehensive-details .comprehensive-details-grid:not(.single-column-layout):not(.two-column-layout) > .feature-item-detailed {
     grid-column: auto !important;
     grid-row: auto !important;
   }
@@ -3140,17 +3229,17 @@ align-self: stretch;
 @media (max-width: 480px) {
   .tablet-only { display: none !important; }
   .mobile-only { display: flex !important; }
-  /* Stack items to a single column by clearing manual positions */
-  #comprehensive-details .comprehensive-details-grid > .feature-item-detailed {
+  /* Stack items to a single column by clearing manual positions - but preserve forced layouts */
+  #comprehensive-details .comprehensive-details-grid:not(.single-column-layout):not(.two-column-layout) > .feature-item-detailed {
     grid-column: auto !important;
     grid-row: auto !important;
   }
 }
 
 .show-all-features-btn {
-  background-color: #ffffff;
+  background-color: rgba(43, 231, 134, .2);
+  border: 1px solid rgba(43, 231, 134, 1);
   color: #423e3e;
-  border: 1px solid #423e3e;
   border-radius: 8px;
   padding: 12px 24px;
   font-family: neue-haas-grotesk-display, system-ui, sans-serif;
@@ -3161,7 +3250,8 @@ align-self: stretch;
 }
 
 .show-all-features-btn:hover {
-  opacity: 0.7;
+  background-color: rgba(43, 231, 134, .6);
+  border: 1px solid rgba(43, 231, 134, 1);
 }
 
 /* Features Modal */
@@ -3666,6 +3756,15 @@ span:has(svg) {
   opacity: 1 !important;
   height: auto !important;
   overflow: visible !important;
+}
+
+/* Specific rules for parcel-id, subdivision, and zoning items */
+[data-section="parcel-id"].show,
+[data-section="subdivision"].show,
+[data-section="zoning"].show {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 4px !important;
 }
 
 /* Photos Section - Same styling as other sections */

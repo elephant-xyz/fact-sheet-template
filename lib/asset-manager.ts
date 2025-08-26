@@ -124,8 +124,9 @@ export class AssetManager {
       const files = await fs.readdir(staticSourceDir);
 
       for (const file of files) {
-        // Skip SVG files if we're inlining them
-        if (this.options.inlineSvg && file.endsWith('.svg')) {
+        // Skip SVG files if we're inlining them, BUT always copy favicon
+        const isFavicon = file.includes('favicon');
+        if (this.options.inlineSvg && file.endsWith('.svg') && !isFavicon) {
           this.logger.debug(`Skipping SVG file (will be inlined): ${file}`);
           continue;
         }

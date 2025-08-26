@@ -384,7 +384,12 @@ export class TemplateRenderer {
 
     // Add assetUrl filter for asset paths
     this.env.addFilter('assetUrl', (filename: string, propertyImages?: string[]) => {
-      // Handle SVG inlining if enabled
+      // Always use local paths for favicon files to ensure they work in standalone HTML
+      if (filename.includes('favicon')) {
+        return `./${filename}`;
+      }
+
+      // Handle SVG inlining if enabled (but not for favicon)
       if (this.options.inlineSvg && filename.endsWith('.svg')) {
         const svgContent = this.loadSvgContent(filename);
         if (svgContent) {
@@ -487,6 +492,8 @@ export class TemplateRenderer {
             property_type:
               propertyData.building?.property_type || propertyData.property?.property_type,
             number_of_units_type: propertyData.property?.number_of_units_type,
+            subdivision: propertyData.property?.subdivision || '',
+            zoning: propertyData.property?.zoning || '',
           },
           // Add layouts array for new approach
           layouts: propertyData.layouts || [],

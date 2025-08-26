@@ -17,7 +17,9 @@
       "photo-gallery",
       "building-details",
       "comprehensive-details",
-      "parcel-id"
+      "subdivision",
+      "parcel-id",
+      "zoning"
     ],
     "Photo": [
       "header-section",
@@ -28,7 +30,9 @@
       "photo-gallery",
       "building-details",
       "comprehensive-details",
-      "parcel-id"
+      "subdivision",
+      "parcel-id",
+      "zoning"
     ],
     "Photo Metadata": [
       "header-section",
@@ -39,7 +43,9 @@
       "photo-gallery",
       "building-details",
       "comprehensive-details",
-      "parcel-id"
+      "subdivision",
+      "parcel-id",
+      "zoning"
     ]
   }
 } 
