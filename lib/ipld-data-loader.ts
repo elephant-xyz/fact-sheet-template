@@ -29,6 +29,8 @@ interface PropertyInfo {
   type: string;
   yearBuilt: number;
   legalDescription: string;
+  subdivision: string;
+  zoning: string;
   lotArea: string;
   lotType: string;
   sourceUrl: string;
@@ -740,6 +742,9 @@ export class IPLDDataLoader {
     const unnormalizedAddressRenderItem = unnormalizedAddress?.data
       ? this.buildRenderItem(unnormalizedAddress.data, 'address')
       : null;
+    
+    // Use enum mapping for property data  
+    const propertyRenderItem = this.buildRenderItem(propertyData, 'property');
 
     return {
       address: fullAddress || addressData.street_address || '',
@@ -757,9 +762,11 @@ export class IPLDDataLoader {
       beds,
       baths,
       sqft,
-      type: propertyData.property_type || '',
+      type: propertyRenderItem.property_type?.enumDescription || propertyData.property_type || '',
       yearBuilt: propertyData.property_structure_built_year || '',
       legalDescription: propertyData.property_legal_description_text || '',
+      subdivision: propertyData.subdivision || '',
+      zoning: propertyData.zoning || '',
       lotArea: lotData.lot_size_sqft ? `${lotData.lot_size_sqft} sqft` : '',
       lotType: this.determineLotType(lotData.lot_size_sqft) || '',
       sourceUrl: url.toString(),

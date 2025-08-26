@@ -130,6 +130,8 @@ export class DataLoader {
         property_structure_built_year: property.yearBuilt || 0,
         parcel_identifier: property.parcelId || '',
         property_legal_description_text: property.legalDescription || '',
+        subdivision: property.subdivision || '',
+        zoning: property.zoning || '',
         sourceUrl: property.sourceUrl || '',
         source_http_request: property.source_http_request || null,
       },
