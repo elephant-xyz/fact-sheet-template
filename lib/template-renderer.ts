@@ -397,13 +397,13 @@ export class TemplateRenderer {
 
     // Add assetUrl filter for asset paths
     this.env.addFilter('assetUrl', (filename: string, propertyImages?: string[]) => {
-      // Always use local paths for favicon files to ensure they work in standalone HTML
-      if (filename.includes('favicon')) {
+      // Always use local paths for favicon and logo files to ensure they work in standalone HTML
+      if (filename.includes('favicon') || filename.includes('elephant_logo')) {
         return `./${filename}`;
       }
 
-      // Handle SVG inlining if enabled (but not for favicon)
-      if (this.options.inlineSvg && filename.endsWith('.svg')) {
+      // Handle SVG inlining if enabled (but not for favicon or logo)
+      if (this.options.inlineSvg && filename.endsWith('.svg') && !filename.includes('elephant_logo')) {
         const svgContent = this.loadSvgContent(filename);
         if (svgContent) {
           // Return the SVG content directly (dimensions already stripped at load time)
