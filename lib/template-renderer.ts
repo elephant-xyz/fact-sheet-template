@@ -20,6 +20,8 @@ export class TemplateRenderer {
   constructor(options: BuilderOptions) {
     this.options = options;
     this.svgCache = new Map();
+    
+    // SVG cache will be populated as needed with dimension-stripped content
 
     // Set up Nunjucks environment
     const templatesPath = path.join(__dirname, '..', '..', 'templates');
@@ -38,6 +40,11 @@ export class TemplateRenderer {
     this.minifier = new Minifier(options.minify || false, logger);
 
     this.setupFilters();
+  }
+
+  // Public method to clear SVG cache if needed
+  clearSvgCache(): void {
+    this.svgCache.clear();
   }
 
   private loadSvgContent(filename: string): string | null {
@@ -399,7 +406,7 @@ export class TemplateRenderer {
       if (this.options.inlineSvg && filename.endsWith('.svg')) {
         const svgContent = this.loadSvgContent(filename);
         if (svgContent) {
-          // Return the SVG content directly (will be rendered inline)
+          // Return the SVG content directly (dimensions already stripped at load time)
           return svgContent;
         }
       }
