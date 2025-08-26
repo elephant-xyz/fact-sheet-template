@@ -1431,12 +1431,35 @@ function updateSectionVisibility(label) {
                                 
                                 <!-- Exterior rooms with no properties -->
                                 {% for item in exterior_room_features %}
+                                {% set display_text = item.text %}
+                                {% set outer_index = loop.index0 %}
+                                {% if item.category == 'Room' %}
+                                    {% set total_count = 0 %}
+                                    {% for i in exterior_room_features %}
+                                        {% if i.category == 'Room' and i.text == item.text %}
+                                            {% set total_count = total_count + 1 %}
+              {% endif %}
+                                    {% endfor %}
+                                    {% if total_count > 1 %}
+                                        {% set current_index = 1 %}
+                                        {% for i in exterior_room_features %}
+                                            {% if i.category == 'Room' and i.text == item.text %}
+                                                {% if loop.index0 == outer_index %}
+                                                    {% set display_text = item.text + ' ' + current_index %}
+                                                {% endif %}
+                                                {% if loop.index0 < outer_index %}
+                                                    {% set current_index = current_index + 1 %}
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+              {% endif %}
+              {% endif %}
                                 <div class="modal-feature-item">
                                     <div class="modal-feature-row">
                                         {% if item.iconName %}
                                             {{ renderSvg(item.iconName, '', '') }}
                             {% endif %}
-                                        <span class="modal-feature-text">{{ item.text }}</span>
+                                        <span class="modal-feature-text">{{ display_text }}</span>
                         </div>
                     </div>
                                 {% endfor %}
@@ -1570,8 +1593,29 @@ function updateSectionVisibility(label) {
                         
                         <!-- Display rooms with properties as individual sections -->
                         {% for room_data in rooms_with_properties %}
+                        {% set display_title = room_data.title %}
+                        {% set outer_index = loop.index0 %}
+                        {% set total_count = 0 %}
+                        {% for i in rooms_with_properties %}
+                            {% if i.title == room_data.title %}
+                                {% set total_count = total_count + 1 %}
+                            {% endif %}
+                        {% endfor %}
+                        {% if total_count > 1 %}
+                            {% set current_index = 1 %}
+                            {% for i in rooms_with_properties %}
+                                {% if i.title == room_data.title %}
+                                    {% if loop.index0 == outer_index %}
+                                        {% set display_title = room_data.title + ' ' + current_index %}
+                                    {% endif %}
+                                    {% if loop.index0 < outer_index %}
+                                        {% set current_index = current_index + 1 %}
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
                             <div class="modal-category">
-                                <h3 class="modal-category-title">{{ room_data.title }}</h3>
+                                <h3 class="modal-category-title">{{ display_title }}</h3>
                                 <div class="modal-features-grid">
                                     <!-- Room properties -->
                                     {% for key, value in room_data.room %}
@@ -1609,12 +1653,33 @@ function updateSectionVisibility(label) {
                                     <h3 class="modal-category-title">{{ category_title }}</h3>
                                     <div class="modal-features-grid">
                                         {% for category_room in category_rooms %}
+                                        {% set display_title = category_room.title %}
+                                        {% set outer_index = loop.index0 %}
+                                        {% set total_count = 0 %}
+                                        {% for i in category_rooms %}
+                                            {% if i.title == category_room.title %}
+                                                {% set total_count = total_count + 1 %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        {% if total_count > 1 %}
+                                            {% set current_index = 1 %}
+                                            {% for i in category_rooms %}
+                                                {% if i.title == category_room.title %}
+                                                    {% if loop.index0 == outer_index %}
+                                                        {% set display_title = category_room.title + ' ' + current_index %}
+                                                    {% endif %}
+                                                    {% if loop.index0 < outer_index %}
+                                                        {% set current_index = current_index + 1 %}
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endif %}
                                         <div class="modal-feature-item">
                                             <div class="modal-feature-row">
                                                 {% if category_room.icon %}
                                                     {{ renderSvg(category_room.icon, category_room.title, '') }}
                                       {% endif %}
-                                                <span class="modal-feature-text">{{ category_room.title }}</span>
+                                                <span class="modal-feature-text">{{ display_title }}</span>
                                     </div>
                                 </div>
                                 {% endfor %}
