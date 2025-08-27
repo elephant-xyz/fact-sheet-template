@@ -40,11 +40,48 @@ export class TemplateRenderer {
     this.minifier = new Minifier(options.minify || false, logger);
 
     this.setupFilters();
+    
+    // Clear SVG cache to ensure mask removal changes take effect
+    this.clearSvgCache();
   }
 
   // Public method to clear SVG cache if needed
   clearSvgCache(): void {
     this.svgCache.clear();
+  }
+
+  private removeProblemMasks(svgContent: string): string {
+    // Remove mask elements that have problematic fills that interfere with visibility
+    // These masks can make icons invisible on certain backgrounds
+    
+    const problematicColors = ['#D9D9D9', '#423E3E']; // Light gray and dark gray
+    const maskIds: string[] = [];
+    
+    // For each problematic color, find and collect mask IDs
+    problematicColors.forEach(color => {
+      const maskRegex = new RegExp(`<mask[^>]*id="([^"]*)"[^>]*>[\\s\\S]*?<rect[^>]*fill="${color.replace('#', '\\#')}"[^>]*\\/>[\\s\\S]*?<\\/mask>`, 'gi');
+      
+      let match;
+      while ((match = maskRegex.exec(svgContent)) !== null) {
+        maskIds.push(match[1]);
+      }
+      
+      // Remove mask definitions with this color
+      svgContent = svgContent.replace(maskRegex, '');
+      
+      // Also handle alternative mask syntax variations  
+      const altMaskRegex = new RegExp(`<mask[^>]*>[\\s\\S]*?<rect[^>]*fill="${color.replace('#', '\\#')}"[\\s\\S]*?<\\/mask>`, 'gi');
+      svgContent = svgContent.replace(altMaskRegex, '');
+    });
+    
+    // For each removed mask, find and unwrap groups that use it
+    maskIds.forEach(maskId => {
+      // Find groups that use this mask and unwrap them
+      const groupRegex = new RegExp(`<g\\s+mask="url\\(#${maskId}\\)"[^>]*>([\\s\\S]*?)<\\/g>`, 'gi');
+      svgContent = svgContent.replace(groupRegex, '$1'); // Replace with just the content inside
+    });
+    
+    return svgContent;
   }
 
   private loadSvgContent(filename: string): string | null {
@@ -65,6 +102,10 @@ export class TemplateRenderer {
           .replace(/\swidth="[^"]*"/gi, '') // Remove width attribute
           .replace(/\sheight="[^"]*"/gi, '') // Remove height attribute
           .trim();
+
+        // Remove problematic mask elements that interfere with icon visibility
+        // These masks with gray fills can make icons invisible on certain backgrounds
+        svgContent = this.removeProblemMasks(svgContent);
 
         // Optionally minify SVG if minification is enabled
         if (this.options.minify) {
