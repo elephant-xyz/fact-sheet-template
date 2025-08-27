@@ -1881,9 +1881,16 @@
     {
       "lexiconClass": "appliance",
       "lexiconProperty": "appliance_type",
-      "iconName": "laundry",
+      "iconName": "washing-machine",
       "enumValue": "Washing Machine",
       "enumDescription": "Washing Machine"
+    },
+    {
+      "lexiconClass": "appliance",
+      "lexiconProperty": "appliance_type",
+      "iconName": "dryer",
+      "enumValue": "Dryer",
+      "enumDescription": "Dryer"
     },
     {
       "lexiconClass": "appliance",
