@@ -11,10 +11,10 @@
     <!-- 🔑 Fix URL before any relative assets load -->
     <script>
     (function() {
-        var p = window.location.pathname;
+        const p = window.location.pathname;
         // Only for property pages; ignore files (paths with a dot)
         if (p.startsWith('/properties/') && !p.endsWith('/') && p.indexOf('.') === -1) {
-        var newUrl = p + '/' + window.location.search + window.location.hash;
+        const newUrl = p + '/' + window.location.search + window.location.hash;
         window.history.replaceState({}, '', newUrl);
         }
     })();
