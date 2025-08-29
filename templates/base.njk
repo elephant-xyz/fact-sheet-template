@@ -5,8 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ title }}</title>
     <meta name="description" content="{{ description }}">
-    <meta name="robots" content="index, follow">
+    
     <link rel="canonical" href="{{ canonical }}">
+
+    <!-- 🔑 Fix URL before any relative assets load -->
+    <script>
+    (function() {
+        var p = window.location.pathname;
+        // Only for property pages; ignore files (paths with a dot)
+        if (p.startsWith('/properties/') && !p.endsWith('/') && p.indexOf('.') === -1) {
+        var newUrl = p + '/' + window.location.search + window.location.hash;
+        window.history.replaceState({}, '', newUrl);
+        }
+    })();
+    </script>
+
+    <meta name="robots" content="index, follow">
     <link rel="icon" type="image/svg+xml" href="{{ 'elephant_favicon-dark.svg' | assetUrl }}">
     <link rel="shortcut icon" href="{{ 'elephant_favicon-dark.svg' | assetUrl }}">
 
@@ -33,7 +47,7 @@
             <link rel="stylesheet" href="{{ 'css/root_style.css' | assetUrl }}">
         {% endif %}
     {% endif %}
-    
+
     <!-- Adobe Typekit fonts -->
     <link rel="stylesheet" href="https://use.typekit.net/vbh7qcn.css">
 </head>
@@ -52,4 +66,4 @@
         {% endif %}
     {% endif %}
 </body>
-</html> 
+</html>
