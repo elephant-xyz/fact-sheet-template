@@ -1,6 +1,6 @@
 {
-  "name": "@elephant/fact-sheet",
-  "version": "1.0.0",
+  "name": "@elephant-xyz/fact-sheet",
+  "version": "0.1.0",
   "description": "CLI tool to generate self-contained property fact sheet websites from JSON data, optimized for IPFS deployment",
   "type": "module",
   "main": "./dist/lib/builder.js",
@@ -19,7 +19,6 @@
     "dev": "node bin/fact-sheet.js generate",
     "dev:server": "node bin/fact-sheet.js dev",
     "dev:watch": "npm run build && node -e \"const chokidar = require('chokidar'); const { exec } = require('child_process'); console.log('Watching for changes...'); chokidar.watch(['templates/**/*.css', 'templates/**/*.njk'], {ignored: /node_modules/}).on('change', (path) => { console.log('File changed:', path); exec('npm run dev -- -i ./example-data/seed-data/ -o ./websites --inline-css --inline-js', (err, stdout) => { if (err) console.error(err); else console.log('Rebuild complete'); }); });\"",
-    "postinstall": "npm run build",
     "prepare": "npm run build",
     "prepublishOnly": "npm run clean && npm run build && npm run test",
     "example": "node bin/fact-sheet.js generate --input ./example-data --output ./example-output --verbose",
@@ -28,10 +27,8 @@
   },
   "files": [
     "bin/",
-    "lib/",
-    "types/",
+    "dist/",
     "templates/",
-    "tsconfig.json",
     "README.md"
   ],
   "keywords": [
@@ -59,16 +56,17 @@
     "commander": "^11.1.0",
     "cssnano": "^7.1.0",
     "fs-extra": "^11.2.0",
-    "glob": "^10.3.10",
     "html-minifier-terser": "^7.2.0",
     "luxon": "^3.6.1",
     "multiformats": "^13.4.0",
     "nunjucks": "^3.2.4",
     "postcss": "^8.4.49",
-    "terser": "^5.43.1",
-    "typescript": "^5.8.3"
+    "terser": "^5.43.1"
   },
   "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^10.1.3",
     "@types/cssnano": "^5.1.3",
     "@types/express": "^5.0.3",
     "@types/fs-extra": "^11.0.4",
@@ -80,16 +78,13 @@
     "@typescript-eslint/eslint-plugin": "^8.39.1",
     "@typescript-eslint/parser": "^8.39.1",
     "chokidar": "^3.6.0",
+    "conventional-changelog-conventionalcommits": "^8.0.0",
     "eslint": "^8.57.1",
     "express": "^5.1.0",
     "open": "^10.2.0",
     "prettier": "^3.6.2",
-    "ws": "^8.18.3"
-  },
-  "optionalDependencies": {
-    "chokidar": "^3.6.0",
-    "express": "^5.1.0",
-    "open": "^10.2.0",
+    "semantic-release": "^24.0.1",
+    "typescript": "^5.8.3",
     "ws": "^8.18.3"
   }
 }

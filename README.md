@@ -4,42 +4,8 @@ Generate beautiful, self-contained property fact sheets from your real estate da
 
 ## 🚀 Quick Start
 
-### Option 1: Install Globally (Recommended)
-
-Use our install script for a one-command setup:
-
 ```bash
-# Download and run the installer
-curl -fsSL https://raw.githubusercontent.com/elephant-xyz/fact-sheet-template/main/install.sh | bash
-
-# After installation, use the command anywhere
-fact-sheet generate --input ./data --output ./websites
-
-
-The installer will:
-- Clone the repository to `~/.elephant-fact-sheet`
-- Install dependencies and build the project
-- Create a global `fact-sheet` command
-- Add `~/.local/bin` to your PATH if needed
-
-### Option 2: Manual Installation
-
-Clone and build manually for development:
-
-```bash
-# Clone the repository
-git clone https://github.com/elephant-xyz/fact-sheet-template.git
-cd fact-sheet-template
-
-# Install dependencies and build
-npm install
-npm run build
-
-# Run directly
-node bin/fact-sheet.js generate --input ./data --output ./websites
-
-# Or start development server
-npm run dev:server -- --input ./example-data --output ./dev-output --open
+npx @elephant-xyz/fact-sheet generate --input ./data --output ./websites
 ```
 
 ## 📋 What You'll Need
@@ -59,174 +25,14 @@ data/
 
 The JSON files should follow the [Elephant Lexicon](https://lexicon.elephant.xyz/) schema.
 
-## 🎨 Template Development Guide
+## Usage
 
-This repository is designed for developers who want to customize the property fact sheet templates. Here's everything you need to know:
+### Generate Command
 
-### Project Structure
-
-```
-fact-sheet-template/
-├── templates/              # Nunjucks templates
-│   ├── base.njk           # Base HTML layout
-│   ├── property.njk       # Property page template
-│   └── assets/            # Static assets
-│       ├── css/           # Stylesheets
-│       ├── js/            # JavaScript files
-│       └── static/        # Icons and images
-├── lib/                   # TypeScript source files
-│   ├── builder.ts         # Main build logic
-│   ├── dev-server.ts      # Development server
-│   └── ...
-├── example-data/          # Sample property data
-└── bin/                   # CLI executable
-```
-
-### Setting Up Development Environment
-
-1. **Clone the repository:**
-
-   ```bash
-   git clone https://github.com/elephant-xyz/fact-sheet-template.git
-   cd fact-sheet-template
-   ```
-
-2. **Install dependencies:**
-
-   ```bash
-   npm install
-   ```
-
-3. **Build the TypeScript files:**
-
-   ```bash
-   npm run build
-   ```
-
-4. **Start development with hot reload:**
-   ```bash
-   npm run dev:server -- --input ./example-data --output ./dev-output --port 3000 --open
-   ```
-
-### Development Workflow
-
-#### 1. Live Development Server
-
-The development server provides instant feedback as you modify templates:
+The main command to generate the fact sheets is `generate`:
 
 ```bash
-# Start dev server with live reload
-npm run dev:server -- --input ./example-data --output ./dev-output --open
-
-# Custom port
-npm run dev:server -- --input ./example-data --output ./dev-output --port 8080
-
-# Without auto-opening browser
-npm run dev:server -- --input ./example-data --output ./dev-output --no-open
-```
-
-Features:
-
-- 🔄 **Hot reload** - Changes to templates instantly refresh the browser
-- 📁 **File watching** - Monitors both templates and data files
-- 🚀 **Fast rebuilds** - Only rebuilds affected properties
-- 🔍 **Error display** - Shows template errors in the browser
-
-#### 2. Customizing Templates
-
-The templates use [Nunjucks](https://mozilla.github.io/nunjucks/) templating engine.
-
-**Main template files:**
-
-- `templates/base.njk` - Base HTML structure, meta tags, and common elements
-- `templates/property.njk` - Property-specific layout and data display
-- `templates/assets/css/root_style.css` - Main stylesheet
-- `templates/assets/js/property.js` - Client-side JavaScript
-
-**Template variables available:**
-
-```nunjucks
-{# Property data #}
-{{ homes[property_id].address }}           # Address information
-{{ homes[property_id].building }}          # Building details
-{{ homes[property_id].all_sales }}         # Sales history array
-{{ homes[property_id].all_taxes }}         # Tax records array
-{{ homes[property_id].rent }}              # Rental information
-
-{# Configuration #}
-{{ config.domain }}                        # Asset domain
-{{ config.inlineCss }}                     # CSS inlining flag
-{{ config.inlineJs }}                      # JS inlining flag
-
-{# Helpers #}
-{{ 'filename.svg' | assetUrl }}            # Generate asset URL
-{{ value | number }}                       # Format numbers with commas
-{{ date | date('MMMM YYYY') }}            # Format dates
-```
-
-**Example template modification:**
-
-```nunjucks
-{# Add a new section to property.njk #}
-<section class="property-amenities">
-  <h2>Amenities</h2>
-  {% if homes[property_id].amenities %}
-    <ul>
-    {% for amenity in homes[property_id].amenities %}
-      <li>{{ amenity.name }}</li>
-    {% endfor %}
-    </ul>
-  {% else %}
-    <p>No amenities data available</p>
-  {% endif %}
-</section>
-```
-
-#### 3. Styling Your Templates
-
-Modify `templates/assets/css/root_style.css` to customize the appearance:
-
-```css
-/* Add custom styles */
-.property-amenities {
-  margin-top: 2rem;
-  padding: 1.5rem;
-  background: #f5f5f5;
-  border-radius: 8px;
-}
-
-.property-amenities h2 {
-  color: #333;
-  margin-bottom: 1rem;
-}
-```
-
-#### 4. Adding JavaScript Functionality
-
-Edit `templates/assets/js/property.js` to add interactive features:
-
-```javascript
-// Add interactive map
-document.addEventListener("DOMContentLoaded", function () {
-  const mapContainer = document.getElementById("property-map");
-  if (mapContainer && window.propertyData.latitude) {
-    // Initialize your map library here
-    initializeMap(window.propertyData.latitude, window.propertyData.longitude);
-  }
-});
-```
-
-#### 5. Testing Your Changes
-
-```bash
-# Run with sample data
-npm run example
-
-# Run with your own data
-npm run dev -- --input ./my-data --output ./test-output --verbose
-
-# Test IPFS-optimized build (with inlined assets)
-npm run example-inline
+fact-sheet generate --input <your-data-directory> --output <your-output-directory>
 ```
 
 ### Build Options
@@ -242,198 +48,53 @@ npm run example-inline
 | `--minify`      | Minify HTML, CSS, and JavaScript   | false                |
 | `--verbose, -v` | Show detailed build information    | false                |
 
-### Advanced Usage
+## Advanced Usage
 
-#### Custom Asset Domain
+### Custom Asset Domain
 
 ```bash
 # Use your own CDN
-npx github:elephant-xyz/fact-sheet-template generate \
+npx @elephant-xyz/fact-sheet generate \
   --input ./data \
   --output ./websites \
   --domain https://cdn.mysite.com
 ```
 
-#### IPFS-Optimized Build
+### IPFS-Optimized Build
+
+For IPFS, it's best to inline all assets to create a single, self-contained HTML file.
 
 ```bash
 # Inline all assets for IPFS deployment
-npx github:elephant-xyz/fact-sheet-template generate \
+npx @elephant-xyz/fact-sheet generate \
   --input ./data \
   --output ./ipfs-ready \
   --inline-css \
   --inline-js \
   --inline-svg
-
-# Production build with minification
-npx github:elephant-xyz/fact-sheet-template generate \
-  --input ./data \
-  --output ./production \
-  --minify \
-  --inline-css \
-  --inline-js \
-  --inline-svg
 ```
 
-#### Programmatic Usage
+For a production-ready build, you can also add the `--minify` flag.
 
-```javascript
-import { Builder } from "./lib/builder.js";
-
-const builder = new Builder({
-  input: "./data",
-  output: "./websites",
-  domain: "https://my-domain.com",
-  inlineCss: true,
-  inlineJs: true,
-  inlineSvg: true,
-  verbose: true,
-});
-
-await builder.build();
-```
-
-### Data Schema
-
-Your property data should follow the [Elephant Lexicon](https://lexicon.elephant.xyz/) schema. Here's a minimal example:
-
-**address.json:**
-
-```json
-{
-  "street_number": "123",
-  "street_name": "Main",
-  "street_suffix_type": "Street",
-  "city_name": "Springfield",
-  "state_code": "IL",
-  "postal_code": "62701",
-  "latitude": 39.7817,
-  "longitude": -89.6501
-}
-```
-
-**building.json:**
-
-```json
-{
-  "property_type": "Single Family",
-  "bedrooms": 3,
-  "bathrooms": 2,
-  "total_sqft": 1850,
-  "year_built": 1995
-}
-```
-
-### Deployment
+## Deployment
 
 Generated websites are self-contained and can be deployed anywhere:
 
-- **IPFS**: Use `--inline-css --inline-js --inline-svg` for best results (reduces external dependencies)
-- **Static hosting**: Upload the output directory to any web server
-- **CDN**: Each property folder is independent and cacheable
-- **Local viewing**: Open `index.html` directly in a browser
+- **IPFS**: Use `--inline-css --inline-js --inline-svg` for best results.
+- **Static hosting**: Upload the output directory to any web server (e.g., Netlify, Vercel, AWS S3).
+- **CDN**: Each property folder is independent and cacheable.
 
-### Testing
+## Troubleshooting
 
-The project includes comprehensive testing to ensure HTML generation works correctly for all example data:
+*   **Assets not loading**: Verify the `--domain` option matches your deployment URL. For local viewing, use `--inline-css` and `--inline-js`.
+*   **Data not appearing correctly**: Ensure your JSON data conforms to the [Elephant Lexicon](https://lexicon.elephant.xyz/) schema.
 
-#### Local Testing
+## License
 
-```bash
-# Run the comprehensive test for all example-data folders
-npm run test:generate-all
+AGPL-3.0-or-later
 
-# Or run the test directly
-node test-generate-all.js
-```
-
-This test will:
-- Generate HTML for all directories in `example-data/`
-- Validate HTML structure and content
-- Check that all assets are properly copied
-- Provide a detailed summary of results
-
-#### GitHub Actions
-
-The project includes automated CI/CD workflows:
-
-- **`test-generate-all.yml`**: Runs the comprehensive HTML generation test
-- **`ci.yml`**: Full CI pipeline with build, test, and validation
-
-These workflows run on:
-- Every push to `main`/`master` branches
-- Every pull request
-- Manual triggering via GitHub Actions UI
-
-#### Test Coverage
-
-The tests verify:
-- ✅ HTML generation for all example-data directories
-- ✅ Proper HTML structure (DOCTYPE, html, head, body tags)
-- ✅ Asset copying (CSS, JS, SVG icons, images)
-- ✅ File size validation
-- ✅ Cross-platform compatibility
-
-### Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Make your changes
-4. Test thoroughly with `npm run test:generate-all`
-5. Commit your changes (`git commit -m 'Add amazing feature'`)
-6. Push to the branch (`git push origin feature/amazing-feature`)
-7. Open a Pull Request
-
-### Troubleshooting
-
-**Build fails with "Template not found"**
-
-- Ensure you've run `npm run build` after cloning
-- Check that template files exist in `templates/` directory
-
-**Development server not reloading**
-
-- Check console for WebSocket connection errors
-- Try a different port if 3000 is in use
-- Ensure your browser allows WebSocket connections
-
-**Assets not loading**
-
-- Verify the `--domain` option matches your deployment URL
-- Use `--inline-css` and `--inline-js` for local file:// viewing
-
-### Updating
-
-To update to the latest version:
-
-```bash
-# If installed with the install script
-curl -fsSL https://raw.githubusercontent.com/elephant-xyz/fact-sheet-template/main/update.sh | bash
-
-# Or manually
-cd ~/.elephant-fact-sheet
-git pull origin main
-npm install
-npm run build
-```
-
-### Uninstalling
-
-If you installed using the install script:
-
-```bash
-# Remove the installation
-rm -rf ~/.elephant-fact-sheet
-rm ~/.local/bin/fact-sheet
-```
-
-### License
-
-AGPL-3.0-or-later - See LICENSE file for details
-
-### Support
+## Support
 
 - 📖 [Documentation](https://lexicon.elephant.xyz/)
 - 🐛 [Report Issues](https://github.com/elephant-xyz/fact-sheet-template/issues)
 - 💬 [Discussions](https://github.com/elephant-xyz/fact-sheet-template/discussions)
-
