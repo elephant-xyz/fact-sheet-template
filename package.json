@@ -5,7 +5,7 @@
   "type": "module",
   "main": "./dist/lib/builder.js",
   "bin": {
-    "fact-sheet": "./bin/fact-sheet.js"
+    "fact-sheet": "bin/fact-sheet.js"
   },
   "scripts": {
     "build": "tsc",
@@ -20,7 +20,6 @@
     "dev:server": "node bin/fact-sheet.js dev",
     "dev:watch": "npm run build && node -e \"const chokidar = require('chokidar'); const { exec } = require('child_process'); console.log('Watching for changes...'); chokidar.watch(['templates/**/*.css', 'templates/**/*.njk'], {ignored: /node_modules/}).on('change', (path) => { console.log('File changed:', path); exec('npm run dev -- -i ./example-data/seed-data/ -o ./websites --inline-css --inline-js', (err, stdout) => { if (err) console.error(err); else console.log('Rebuild complete'); }); });\"",
     "prepare": "npm run build",
-    "prepublishOnly": "npm run clean && npm run build && npm run test",
     "example": "node bin/fact-sheet.js generate --input ./example-data --output ./example-output --verbose",
     "example-inline": "fact-sheet.js generate --input ./example-data --output ./example-output-inline --inline-css --inline-js --verbose",
     "test:generate-all": "node test-generate-all.js"
@@ -46,7 +45,7 @@
   "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
-    "url": "https://github.com/elephant-xyz/fact-sheet-template.git"
+    "url": "git+https://github.com/elephant-xyz/fact-sheet-template.git"
   },
   "homepage": "https://elephant.xyz",
   "engines": {
