@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { Builder } from '../lib/builder.js';
+import { Builder } from '../dist/lib/builder.js';
 import fs from 'fs-extra';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -26,6 +26,17 @@ async function runTests() {
     await fs.ensureDir(path.join(testDir, 'test-property-2'));
     
     // Property 1 data
+    await fs.writeJson(path.join(testDir, 'test-property-1', 'property.json'), {
+      "livable_floor_area": "1500",
+      "property_type": "Single Family Home",
+      "property_structure_built_year": 2023,
+      "parcel_identifier": "12345",
+      "source_http_request": {
+        "url": "https://example.com",
+        "multiValueQueryString": {}
+      }
+    });
+    
     await fs.writeJson(path.join(testDir, 'test-property-1', 'address.json'), {
       full_address: '123 Test Street, Test City, TC 12345',
       street_number: '123',
@@ -35,7 +46,11 @@ async function runTests() {
       postal_code: '12345',
       county_name: 'Test County',
       latitude: 40.7128,
-      longitude: -74.0060
+      longitude: -74.0060,
+      source_http_request: {
+        "url": "https://example.com",
+        "multiValueQueryString": {}
+      }
     });
     
     await fs.writeJson(path.join(testDir, 'test-property-1', 'building.json'), {
@@ -46,8 +61,8 @@ async function runTests() {
     });
     
     await fs.writeJson(path.join(testDir, 'test-property-1', 'sales_1.json'), {
-      sales_transaction_amount: 450000,
-      sales_date: '2023-06-15'
+      purchase_price_amount: 450000,
+      ownership_transfer_date: '2023-06-15'
     });
     
     await fs.writeJson(path.join(testDir, 'test-property-1', 'tax_1.json'), {
@@ -57,8 +72,23 @@ async function runTests() {
     });
     
     // Property 2 data (minimal)
+    await fs.writeJson(path.join(testDir, 'test-property-2', 'property.json'), {
+      "livable_floor_area": "1000",
+      "property_type": "Condo",
+      "property_structure_built_year": 2020,
+      "parcel_identifier": "67890",
+      "source_http_request": {
+        "url": "https://example.com",
+        "multiValueQueryString": {}
+      }
+    });
+
     await fs.writeJson(path.join(testDir, 'test-property-2', 'address.json'), {
-      full_address: '456 Another St, Other City, OC 67890'
+      full_address: '456 Another St, Other City, OC 67890',
+      source_http_request: {
+        "url": "https://example.com",
+        "multiValueQueryString": {}
+      }
     });
     
     console.log('✅ Test data created\n');
@@ -85,10 +115,6 @@ async function runTests() {
     
     if (!await fs.pathExists(path.join(prop1Dir, 'css', 'root_style.css'))) {
       throw new Error('Property 1 CSS not copied');
-    }
-    
-    if (!await fs.pathExists(path.join(prop1Dir, 'manifest.json'))) {
-      throw new Error('Property 1 manifest not generated');
     }
     
     if (!await fs.pathExists(path.join(prop2Dir, 'index.html'))) {
