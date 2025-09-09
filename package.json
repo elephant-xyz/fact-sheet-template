@@ -7,6 +7,9 @@
   "bin": {
     "fact-sheet": "bin/fact-sheet.js"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
