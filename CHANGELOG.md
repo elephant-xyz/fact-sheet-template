@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/elephant-xyz/fact-sheet-template/compare/v1.0.0...v1.0.1) (2025-09-09)
+
+
+### Bug Fixes
+
+* update npm access ([#69](https://github.com/elephant-xyz/fact-sheet-template/issues/69)) ([4b175e8](https://github.com/elephant-xyz/fact-sheet-template/commit/4b175e819b6a9c817d5e3e887e2e2b1a867e6a30))
+
 # 1.0.0 (2025-09-09)
 
 
