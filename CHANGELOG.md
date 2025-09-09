@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/elephant-xyz/fact-sheet-template/compare/v1.0.1...v1.1.0) (2025-09-09)
+
+
+### Features
+
+* trigger release ([edbdeab](https://github.com/elephant-xyz/fact-sheet-template/commit/edbdeabdcfbac00c06da0e7c2cf7da9c7cf881b2))
+
 ## [1.0.1](https://github.com/elephant-xyz/fact-sheet-template/compare/v1.0.0...v1.0.1) (2025-09-09)
 
 

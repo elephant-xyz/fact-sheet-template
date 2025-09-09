@@ -1,6 +1,6 @@
 {
   "name": "@elephant-xyz/fact-sheet",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "CLI tool to generate self-contained property fact sheet websites from JSON data, optimized for IPFS deployment",
   "type": "module",
   "main": "./dist/lib/builder.js",
