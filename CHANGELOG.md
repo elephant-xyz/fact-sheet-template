@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/elephant-xyz/fact-sheet-template/compare/v1.1.0...v1.2.0) (2025-09-09)
+
+
+### Features
+
+* **bin:** read version from package.json ([0fdc417](https://github.com/elephant-xyz/fact-sheet-template/commit/0fdc417211d576e317cfd3ecf67dfa118a1612b8))
+
 # [1.1.0](https://github.com/elephant-xyz/fact-sheet-template/compare/v1.0.1...v1.1.0) (2025-09-09)
 
 
