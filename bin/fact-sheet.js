@@ -3,16 +3,24 @@
 import { Command } from 'commander';
 import { Builder } from '../dist/lib/builder.js';
 import { ConfigLoader } from '../dist/lib/config-loader.js';
-import { resolve } from 'path';
+import { resolve, dirname, join } from 'path';
+import { fileURLToPath } from 'url';
 import fs from 'fs-extra';
 import { Logger } from '../dist/lib/logger.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Read version from package.json
+const packagePath = join(__dirname, '..', 'package.json');
+const packageJson = await fs.readJson(packagePath);
 
 const program = new Command();
 
 program
   .name('fact-sheet')
   .description('Generate self-contained property fact sheet websites from JSON data')
-  .version('1.0.0');
+  .version(packageJson.version);
 
 // Generate command
 program
@@ -40,19 +48,21 @@ program
       quiet: options.quiet,
       verbose: options.verbose,
       ci: options.ci,
-      logFile: options.logFile
+      logFile: options.logFile,
     });
 
     try {
       // Validate required options
       if (!options.input || !options.output) {
-        logger.error('Input and output directories are required. Use -i and -o options or set in config file.');
+        logger.error(
+          'Input and output directories are required. Use -i and -o options or set in config file.',
+        );
         logger.finalize();
         process.exit(1);
       }
 
       // Validate input directory exists
-      if (!await fs.pathExists(options.input)) {
+      if (!(await fs.pathExists(options.input))) {
         logger.error(`Input directory does not exist: ${options.input}`);
         logger.finalize();
         process.exit(1);
@@ -72,16 +82,15 @@ program
         inlineCss: options.inlineCss || false,
         inlineJs: options.inlineJs || false,
         inlineSvg: options.inlineSvg || false,
-        minify: true
+        minify: true,
       });
 
       options.minify = true;
       const builder = new Builder(options);
       await builder.build();
-
     } catch (error) {
       logger.error(`Build failed: ${error.message}`, {
-        error: error.stack
+        error: error.stack,
       });
       logger.finalize();
       process.exit(1);
@@ -111,7 +120,7 @@ program
         process.exit(1);
       }
 
-      if (!await fs.pathExists(options.input)) {
+      if (!(await fs.pathExists(options.input))) {
         console.error(`Input directory does not exist: ${options.input}`);
         process.exit(1);
       }
@@ -140,7 +149,6 @@ program
       });
 
       await devServer.start();
-
     } catch (error) {
       console.error('Dev server failed:', error.message);
       if (options.verbose) {
@@ -167,7 +175,6 @@ program
       await configLoader.createDefaultConfig();
       console.log('Created .factsheetrc.json with default configuration.');
       console.log('Edit this file to customize your project settings.');
-
     } catch (error) {
       console.error('Failed to create config file:', error.message);
       process.exit(1);
@@ -180,7 +187,7 @@ program
   .description('Display help for command')
   .action((command) => {
     if (command) {
-      program.commands.find(cmd => cmd.name() === command)?.help();
+      program.commands.find((cmd) => cmd.name() === command)?.help();
     } else {
       program.help();
     }
