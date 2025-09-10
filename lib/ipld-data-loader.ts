@@ -520,23 +520,19 @@ export class IPLDDataLoader {
       // Consider it a structure node if it has at least 2 structure fields
       if (matchCount >= 2) {
         structureNodes.push(node);
-        console.log('Found structure node:', node.cid, 'with', matchCount, 'structure fields');
       }
     }
 
     if (structureNodes.length === 0) {
-      console.log('No structure nodes found');
       return undefined;
     }
 
     // If we found multiple structure nodes, merge them into one
     if (structureNodes.length > 1) {
-      console.log('Found', structureNodes.length, 'structure nodes, merging data...');
       return this.mergeStructureNodes(structureNodes);
     }
 
     // If only one structure node, return it
-    console.log('Selected single structure node:', structureNodes[0].cid);
     return structureNodes[0];
   }
 
@@ -566,7 +562,6 @@ export class IPLDDataLoader {
       relationships: new Map(),
     };
 
-    console.log('Merged structure data with', Object.keys(mergedData).length, 'fields');
     return mergedNode;
   }
 
@@ -1102,8 +1097,6 @@ export class IPLDDataLoader {
         // This node contains property_has_layout relationships
         const propertyHasLayoutLinks = node.data.relationships.property_has_layout;
 
-        console.log('Found property_has_layout relationships:', propertyHasLayoutLinks.length);
-
         // Process each relationship link
         for (const relationshipLink of propertyHasLayoutLinks) {
           if (this.isIPLDLink(relationshipLink)) {
@@ -1111,7 +1104,6 @@ export class IPLDDataLoader {
             const relationshipNode = this.resolveNodeFromLink(relationshipLink, graph);
 
             if (!relationshipNode) {
-              console.log('Could not resolve relationship node for:', relationshipLink);
               continue;
             }
 
@@ -1120,13 +1112,11 @@ export class IPLDDataLoader {
               const layoutNode = this.resolveNodeFromLink(relationshipNode.data.to, graph);
 
               if (!layoutNode) {
-                console.log('Could not resolve layout node for:', relationshipNode.data.to);
                 continue;
               }
 
               // Extract layout data
               if (layoutNode?.data?.space_type) {
-                console.log('Loaded layout:', layoutNode.data.space_type);
                 (layoutsByDataGroup[node.data.label] ??= []).push(layoutNode.data as LayoutInfo);
               }
             }
@@ -1137,7 +1127,6 @@ export class IPLDDataLoader {
     
     // Method 2: Look for layout nodes directly in the graph (for county level data)
     if (Object.keys(layoutsByDataGroup).length === 0) {
-      console.log('No relationships found, looking for direct layout nodes...');
       for (const node of graph.values()) {
         // More flexible check - look for any node that looks like layout data
         if (node.data?.space_type || 
@@ -1145,7 +1134,6 @@ export class IPLDDataLoader {
              ('Bedroom' in node.data || 'Bathroom' in node.data || 'Kitchen' in node.data ||
               'Living Room' in node.data || 'Dining Room' in node.data || 'Office' in node.data))) {
           // This looks like a layout node
-          console.log('Found potential layout node:', node.data);
           const dataGroup = node.data.label || 'County';
           (layoutsByDataGroup[dataGroup] ??= []).push(node.data as LayoutInfo);
         }
@@ -1153,13 +1141,6 @@ export class IPLDDataLoader {
     }
 
     let layouts: LayoutInfo[] = [];
-    console.log('Available data groups:', Object.keys(layoutsByDataGroup));
-    console.log(
-      'Data groups with layout counts:',
-      Object.entries(layoutsByDataGroup).map(
-        ([group, layouts]) => `${group}: ${layouts.length} layouts`,
-      ),
-    );
 
     // Combine all layout data sources, with more specific data taking precedence
     const layoutMap: Map<string, LayoutInfo> = new Map();
@@ -1173,7 +1154,6 @@ export class IPLDDataLoader {
           const key = `${layout.space_type}_${layout.floor_level || 'unknown'}_${spaceIndex}`;
           layoutMap.set(key, layout);
         }
-        console.log(`Added ${layoutsByDataGroup[groupName].length} layouts from ${groupName} group`);
       }
     }
     
@@ -1187,39 +1167,26 @@ export class IPLDDataLoader {
           // More specific batch data overwrites county data
           layoutMap.set(key, layout);
         }
-        console.log(`Layered ${layoutsByDataGroup[groupName].length} layouts from ${groupName} group`);
       }
     }
     
     // If no county or batch data found, combine all available data groups
     if (layoutMap.size === 0) {
-      console.log('No county or batch data found, combining all available groups');
       for (const [groupName, groupLayouts] of Object.entries(layoutsByDataGroup)) {
         for (const layout of groupLayouts) {
           const spaceIndex: any = (layout as any)['space_index'] ?? (layout as any)['spaceIndex'] ?? '';
           const key = `${layout.space_type}_${layout.floor_level || 'unknown'}_${spaceIndex}_${groupName}`;
           layoutMap.set(key, layout);
         }
-        console.log(`Added ${groupLayouts.length} layouts from ${groupName} group`);
       }
     }
     
     layouts = Array.from(layoutMap.values());
-    console.log('Combined layout data from multiple sources:', layouts.length, 'total layouts');
 
-    console.log('Final layouts count:', layouts.length);
-    console.log(
-      'Final layouts:',
-      layouts.map((l) => l.space_type),
-    );
 
     // Check if any layouts have floor level information
     const hasFloorLevels = layouts.some((layout) => layout['floor_level'] && layout['floor_level'] !== null);
     
-    console.log('Layout processing debug:');
-    console.log('  Total layouts found:', layouts.length);
-    console.log('  Has floor levels:', hasFloorLevels);
-    console.log('  Layout sample:', layouts.slice(0, 3));
     
     let firstFloorLayouts: any[] = [];
     let secondFloorLayouts: any[] = [];
@@ -1244,21 +1211,12 @@ export class IPLDDataLoader {
         .sort((a, b) => a.space_type.localeCompare(b.space_type))
         .map((layout) => this.buildRenderItem(layout, 'layout'));
         
-      console.log('  Floor-based grouping:', {
-        firstFloor: firstFloorLayouts.length,
-        secondFloor: secondFloorLayouts.length,
-        other: otherLayouts.length
-      });
     } else {
       // When no floor level data, put all layouts in otherLayouts for single section display
-      console.log('No floor level data found, grouping all layouts together');
       otherLayouts = layouts
         .sort((a, b) => a.space_type.localeCompare(b.space_type))
         .map((layout) => this.buildRenderItem(layout, 'layout'));
         
-      console.log('  Single section grouping:', {
-        total: otherLayouts.length
-      });
     }
 
     return {
@@ -1309,7 +1267,6 @@ export class IPLDDataLoader {
     const labels: string[] = [];
     for (const node of graph.values()) {
       if (node.data && node.data.label) {
-        console.log('Found explicit label:', node.data.label, 'in node:', node.cid);
         labels.push(node.data.label);
       }
     }
@@ -1319,7 +1276,6 @@ export class IPLDDataLoader {
       if (node.data) {
         for (const [key, value] of Object.entries(node.data)) {
           if (key.toLowerCase() === 'label' && typeof value === 'string') {
-            console.log('Found label in field:', key, 'value:', value, 'in node:', node.cid);
             labels.push(value);
           }
         }
@@ -1328,25 +1284,20 @@ export class IPLDDataLoader {
 
     // Prioritize labels: Photo Metadata > Photo > County > Seed
     if (labels.includes('Photo Metadata')) {
-      console.log('Found Photo Metadata label, returning Photo Metadata');
       return 'Photo Metadata';
     }
     if (labels.includes('Photo')) {
-      console.log('Found Photo label, returning Photo');
       return 'Photo';
     }
     if (labels.includes('County')) {
-      console.log('Found County label, returning County');
       return 'County';
     }
     if (labels.includes('Seed')) {
-      console.log('Found Seed label, returning Seed');
       return 'Seed';
     }
 
     // Check for photo metadata (most comprehensive data)
     if (carousel_images.length > 0) {
-      console.log('No explicit label found, but has carousel images, returning Photo Metadata');
       return 'Photo Metadata';
     }
 
@@ -1360,7 +1311,6 @@ export class IPLDDataLoader {
           node.data.file_format === 'png'),
     );
     if (hasPhotoData) {
-      console.log('No explicit label found, but has photo data, returning Photo');
       return 'Photo';
     }
 
@@ -1374,12 +1324,10 @@ export class IPLDDataLoader {
           node.data.exterior_wall_material_primary),
     );
     if (hasCountyData) {
-      console.log('No explicit label found, but has county data, returning County');
       return 'County';
     }
 
     // Default to Seed for basic property data
-    console.log('No explicit label found, defaulting to Seed');
     return 'Seed';
   }
 }
