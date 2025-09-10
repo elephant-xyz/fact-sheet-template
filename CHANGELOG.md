@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/elephant-xyz/fact-sheet-template/compare/v1.2.0...v1.2.1) (2025-09-10)
+
+
+### Bug Fixes
+
+* add package export for `package.json` ([#71](https://github.com/elephant-xyz/fact-sheet-template/issues/71)) ([d749e3f](https://github.com/elephant-xyz/fact-sheet-template/commit/d749e3f31b42c7a97b5ac72357807a3c17e55304))
+
 # [1.2.0](https://github.com/elephant-xyz/fact-sheet-template/compare/v1.1.0...v1.2.0) (2025-09-09)
 
 
