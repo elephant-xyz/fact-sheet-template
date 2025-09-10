@@ -75,7 +75,7 @@ web_modules/
 *.tsbuildinfo
 
 # TypeScript build output
-dist/
+# dist/ - Keeping dist in repo for fast GitHub installations
 
 # Optional npm cache directory
 .npm
@@ -110,7 +110,7 @@ out
 
 # Nuxt.js build / generate output
 .nuxt
-dist
+# dist - Keeping in repo for GitHub installs
 
 # Gatsby files
 .cache/

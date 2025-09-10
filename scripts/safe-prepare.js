@@ -3,30 +3,31 @@
 import { execSync } from 'child_process';
 import fs from 'fs';
 
-// Check if we're in a git install context without devDependencies
-const hasTypeScript = fs.existsSync('node_modules/typescript/bin/tsc');
+// Check if dist folder already exists (from git)
 const hasDistFolder = fs.existsSync('dist');
 
-if (!hasTypeScript && !hasDistFolder) {
+if (hasDistFolder) {
+  console.log('✓ Using pre-built dist folder from repository');
+  process.exit(0);
+}
+
+// Check if we can build
+const hasTypeScript = fs.existsSync('node_modules/typescript/bin/tsc');
+
+if (!hasTypeScript) {
   console.warn('⚠️  TypeScript not found and dist/ folder missing.');
-  console.warn('⚠️  This package requires building from source.');
-  console.warn('⚠️  Please install from npm registry or clone and build manually:');
-  console.warn('    git clone https://github.com/elephant-xyz/fact-sheet-template.git');
-  console.warn('    cd fact-sheet-template');
-  console.warn('    npm install');
-  console.warn('    npm run build');
-  console.warn('    npm link');
+  console.warn('⚠️  Cannot build the package. Please either:');
+  console.warn('    1. Install from npm registry: npm install @elephant-xyz/fact-sheet');
+  console.warn('    2. Clone and build manually with devDependencies');
   process.exit(0); // Exit gracefully to not break installation
 }
 
-if (hasTypeScript) {
-  try {
-    console.log('Building TypeScript files...');
-    execSync('npm run build', { stdio: 'inherit' });
-  } catch (error) {
-    console.error('Build failed:', error.message);
-    process.exit(1);
-  }
-} else if (hasDistFolder) {
-  console.log('Using pre-built dist folder');
+// Build the project
+try {
+  console.log('Building TypeScript files...');
+  execSync('npm run build', { stdio: 'inherit' });
+  console.log('✓ Build completed successfully');
+} catch (error) {
+  console.error('Build failed:', error.message);
+  process.exit(1);
 }
