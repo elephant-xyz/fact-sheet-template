@@ -3,7 +3,18 @@
   "version": "1.2.0",
   "description": "CLI tool to generate self-contained property fact sheet websites from JSON data, optimized for IPFS deployment",
   "type": "module",
-  "main": "./dist/lib/builder.js",
+  "main": "./dist/lib/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/lib/index.js",
+      "types": "./dist/lib/index.d.ts"
+    },
+    "./builder": {
+      "import": "./dist/lib/builder.js",
+      "types": "./dist/lib/builder.d.ts"
+    }
+  },
+  "types": "./dist/lib/index.d.ts",
   "bin": {
     "fact-sheet": "bin/fact-sheet.js"
   },
