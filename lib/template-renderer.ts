@@ -570,8 +570,6 @@ export class TemplateRenderer {
       flattenedData: propertyData.flattenedData,
     };
 
-    console.log('propertyData', propertyData);
-
     // Handle inline CSS if requested
     if (this.options.inlineCss) {
       const cssFiles = ['root_style.css', 'property.css'];
