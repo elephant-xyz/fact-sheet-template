@@ -1,3 +1,10 @@
+## [1.2.2](https://github.com/elephant-xyz/fact-sheet-template/compare/v1.2.1...v1.2.2) (2025-09-10)
+
+
+### Bug Fixes
+
+* Remove unnecessary console.log() logging ([#72](https://github.com/elephant-xyz/fact-sheet-template/issues/72)) ([86e20fb](https://github.com/elephant-xyz/fact-sheet-template/commit/86e20fbc8a2aa6dcf15031563202d4c4cdc3f928))
+
 ## [1.2.1](https://github.com/elephant-xyz/fact-sheet-template/compare/v1.2.0...v1.2.1) (2025-09-10)
 
 
