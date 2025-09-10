@@ -33,7 +33,7 @@
     "dev": "node bin/fact-sheet.js generate",
     "dev:server": "node bin/fact-sheet.js dev",
     "dev:watch": "npm run build && node -e \"const chokidar = require('chokidar'); const { exec } = require('child_process'); console.log('Watching for changes...'); chokidar.watch(['templates/**/*.css', 'templates/**/*.njk'], {ignored: /node_modules/}).on('change', (path) => { console.log('File changed:', path); exec('npm run dev -- -i ./example-data/seed-data/ -o ./websites --inline-css --inline-js', (err, stdout) => { if (err) console.error(err); else console.log('Rebuild complete'); }); });\"",
-    "prepare": "npm run build",
+    "prepare": "node scripts/safe-prepare.js",
     "example": "node bin/fact-sheet.js generate --input ./example-data --output ./example-output --verbose",
     "example-inline": "fact-sheet.js generate --input ./example-data --output ./example-output-inline --inline-css --inline-js --verbose",
     "test:generate-all": "node test-generate-all.js"
@@ -41,6 +41,7 @@
   "files": [
     "bin/",
     "dist/",
+    "scripts/",
     "templates/",
     "README.md"
   ],
