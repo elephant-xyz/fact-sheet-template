@@ -12,7 +12,8 @@
     "./builder": {
       "import": "./dist/lib/builder.js",
       "types": "./dist/lib/builder.d.ts"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "types": "./dist/lib/index.d.ts",
   "bin": {
