@@ -1,3 +1,10 @@
+## [1.2.3](https://github.com/elephant-xyz/fact-sheet-template/compare/v1.2.2...v1.2.3) (2025-09-12)
+
+
+### Bug Fixes
+
+* update image URLs to use absolute paths for assets in templates ([#73](https://github.com/elephant-xyz/fact-sheet-template/issues/73)) ([afcddfd](https://github.com/elephant-xyz/fact-sheet-template/commit/afcddfd8b113bcd3ff758827d77fb6583efebc6b))
+
 ## [1.2.2](https://github.com/elephant-xyz/fact-sheet-template/compare/v1.2.1...v1.2.2) (2025-09-10)
 
 
