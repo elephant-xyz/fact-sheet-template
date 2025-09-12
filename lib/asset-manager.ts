@@ -123,11 +123,34 @@ export class AssetManager {
     if (await fs.pathExists(staticSourceDir)) {
       const files = await fs.readdir(staticSourceDir);
 
+      // Define images that are now served from remote URLs
+      const remoteImages = [
+        'annette.jpg',
+        'david_headshot.png',
+        'jennifer_headshot.png',
+        'lisa_headshot.png',
+        'michael_headshot.png',
+        'robert_headshot.png',
+        'sarah_headshot.png',
+        'elephant_favicon-dark.svg',
+        'elephant_logo-horizontal.svg',
+      ];
+
       for (const file of files) {
-        // Skip SVG files if we're inlining them, BUT always copy favicon and logo
-        const isFavicon = file.includes('favicon');
-        const isLogo = file.includes('elephant_logo');
-        if (this.options.inlineSvg && file.endsWith('.svg') && !isFavicon && !isLogo) {
+        // Skip backup files
+        if (file.endsWith('.backup')) {
+          this.logger.debug(`Skipping backup file: ${file}`);
+          continue;
+        }
+
+        // Skip files that are now served from remote URLs
+        if (remoteImages.includes(file)) {
+          this.logger.debug(`Skipping remote image: ${file}`);
+          continue;
+        }
+
+        // Skip SVG files if we're inlining them
+        if (this.options.inlineSvg && file.endsWith('.svg')) {
           this.logger.debug(`Skipping SVG file (will be inlined): ${file}`);
           continue;
         }

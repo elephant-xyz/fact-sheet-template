@@ -20,7 +20,7 @@ export class TemplateRenderer {
   constructor(options: BuilderOptions) {
     this.options = options;
     this.svgCache = new Map();
-    
+
     // SVG cache will be populated as needed with dimension-stripped content
 
     // Set up Nunjucks environment
@@ -40,7 +40,7 @@ export class TemplateRenderer {
     this.minifier = new Minifier(options.minify || false, logger);
 
     this.setupFilters();
-    
+
     // Clear SVG cache to ensure mask removal changes take effect
     this.clearSvgCache();
   }
@@ -53,34 +53,43 @@ export class TemplateRenderer {
   private removeProblemMasks(svgContent: string): string {
     // Remove mask elements that have problematic fills that interfere with visibility
     // These masks can make icons invisible on certain backgrounds
-    
+
     const problematicColors = ['#D9D9D9', '#423E3E']; // Light gray and dark gray
     const maskIds: string[] = [];
-    
+
     // For each problematic color, find and collect mask IDs
-    problematicColors.forEach(color => {
-      const maskRegex = new RegExp(`<mask[^>]*id="([^"]*)"[^>]*>[\\s\\S]*?<rect[^>]*fill="${color.replace('#', '\\#')}"[^>]*\\/>[\\s\\S]*?<\\/mask>`, 'gi');
-      
+    problematicColors.forEach((color) => {
+      const maskRegex = new RegExp(
+        `<mask[^>]*id="([^"]*)"[^>]*>[\\s\\S]*?<rect[^>]*fill="${color.replace('#', '\\#')}"[^>]*\\/>[\\s\\S]*?<\\/mask>`,
+        'gi',
+      );
+
       let match;
       while ((match = maskRegex.exec(svgContent)) !== null) {
         maskIds.push(match[1]);
       }
-      
+
       // Remove mask definitions with this color
       svgContent = svgContent.replace(maskRegex, '');
-      
-      // Also handle alternative mask syntax variations  
-      const altMaskRegex = new RegExp(`<mask[^>]*>[\\s\\S]*?<rect[^>]*fill="${color.replace('#', '\\#')}"[\\s\\S]*?<\\/mask>`, 'gi');
+
+      // Also handle alternative mask syntax variations
+      const altMaskRegex = new RegExp(
+        `<mask[^>]*>[\\s\\S]*?<rect[^>]*fill="${color.replace('#', '\\#')}"[\\s\\S]*?<\\/mask>`,
+        'gi',
+      );
       svgContent = svgContent.replace(altMaskRegex, '');
     });
-    
+
     // For each removed mask, find and unwrap groups that use it
-    maskIds.forEach(maskId => {
+    maskIds.forEach((maskId) => {
       // Find groups that use this mask and unwrap them
-      const groupRegex = new RegExp(`<g\\s+mask="url\\(#${maskId}\\)"[^>]*>([\\s\\S]*?)<\\/g>`, 'gi');
+      const groupRegex = new RegExp(
+        `<g\\s+mask="url\\(#${maskId}\\)"[^>]*>([\\s\\S]*?)<\\/g>`,
+        'gi',
+      );
       svgContent = svgContent.replace(groupRegex, '$1'); // Replace with just the content inside
     });
-    
+
     return svgContent;
   }
 
@@ -438,13 +447,26 @@ export class TemplateRenderer {
 
     // Add assetUrl filter for asset paths
     this.env.addFilter('assetUrl', (filename: string, propertyImages?: string[]) => {
+      // If the filename is already a full URL, return it as-is
+      if (
+        filename.startsWith('http://') ||
+        filename.startsWith('https://') ||
+        filename.startsWith('//')
+      ) {
+        return filename;
+      }
+
       // Always use local paths for favicon and logo files to ensure they work in standalone HTML
       if (filename.includes('favicon') || filename.includes('elephant_logo')) {
         return `./${filename}`;
       }
 
       // Handle SVG inlining if enabled (but not for favicon or logo)
-      if (this.options.inlineSvg && filename.endsWith('.svg') && !filename.includes('elephant_logo')) {
+      if (
+        this.options.inlineSvg &&
+        filename.endsWith('.svg') &&
+        !filename.includes('elephant_logo')
+      ) {
         const svgContent = this.loadSvgContent(filename);
         if (svgContent) {
           // Return the SVG content directly (dimensions already stripped at load time)

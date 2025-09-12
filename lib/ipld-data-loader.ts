@@ -342,15 +342,16 @@ export class IPLDDataLoader {
     const unnormalizedAddressNode = this.findNodeByContent(graph, 'full_address');
     const applianceNodes = this.findNodesByContent(graph, 'appliance_type');
     // Find mailing address nodes by looking for nodes with specific mailing address characteristics
-    const mailingAddressNodes = Array.from(graph.values()).filter(node => 
-      node.filePath && node.filePath.includes('mailing_address') && node.data.county_name
+    const mailingAddressNodes = Array.from(graph.values()).filter(
+      (node) => node.filePath && node.filePath.includes('mailing_address') && node.data.county_name,
     );
     // Find flood storm information node by filename pattern
-    const floodStormNode = Array.from(graph.values()).find(node => 
-      node.filePath && node.filePath.includes('flood_storm_information')
-    ) || this.findNodeByContent(graph, 'evacuation_zone') || this.findNodeByContent(graph, 'flood_zone');
-    
-
+    const floodStormNode =
+      Array.from(graph.values()).find(
+        (node) => node.filePath && node.filePath.includes('flood_storm_information'),
+      ) ||
+      this.findNodeByContent(graph, 'evacuation_zone') ||
+      this.findNodeByContent(graph, 'flood_zone');
 
     const layouts = this.loadLayoutData(graph);
 
@@ -414,7 +415,7 @@ export class IPLDDataLoader {
     if (mailingAddressNodes && mailingAddressNodes.length > 0) {
       // Use the first mailing address node found
       const mailingAddressNode = mailingAddressNodes[0];
-      
+
       if (mailingAddressNode && mailingAddressNode.data.county_name) {
         mailingAddressData = {
           street_number: mailingAddressNode.data.street_number,
@@ -644,13 +645,15 @@ export class IPLDDataLoader {
               const spaceType = layoutNode?.data?.space_type;
               if (spaceType && typeof spaceType === 'string') {
                 const lower = spaceType.toLowerCase();
-                if (lower.includes('bedroom') || lower.includes('primary bedroom')) bedsFromCounty += 1;
+                if (lower.includes('bedroom') || lower.includes('primary bedroom'))
+                  bedsFromCounty += 1;
                 if (lower.includes('full bathroom')) bathsFromCounty += 1;
                 else if (
                   lower.includes('half bathroom') ||
                   lower.includes('half bath') ||
                   lower.includes('powder room')
-                ) bathsFromCounty += 0.5;
+                )
+                  bathsFromCounty += 0.5;
               }
             }
           }
@@ -678,7 +681,8 @@ export class IPLDDataLoader {
                 lower.includes('half bathroom') ||
                 lower.includes('half bath') ||
                 lower.includes('powder room')
-              ) bathsFromRoot += 0.5;
+              )
+                bathsFromRoot += 0.5;
             }
           }
         }
@@ -737,8 +741,8 @@ export class IPLDDataLoader {
     const unnormalizedAddressRenderItem = unnormalizedAddress?.data
       ? this.buildRenderItem(unnormalizedAddress.data, 'address')
       : null;
-    
-    // Use enum mapping for property data  
+
+    // Use enum mapping for property data
     const propertyRenderItem = this.buildRenderItem(propertyData, 'property');
 
     return {
@@ -1090,7 +1094,7 @@ export class IPLDDataLoader {
 
   private loadLayoutData(graph: Map<string, DataNode>): LayoutSummary {
     const layoutsByDataGroup: Record<string, LayoutInfo[]> = {};
-    
+
     // Method 1: Find nodes that have relationships.property_has_layout
     for (const node of graph.values()) {
       if (node.data?.relationships?.property_has_layout) {
@@ -1124,15 +1128,22 @@ export class IPLDDataLoader {
         }
       }
     }
-    
+
     // Method 2: Look for layout nodes directly in the graph (for county level data)
     if (Object.keys(layoutsByDataGroup).length === 0) {
       for (const node of graph.values()) {
         // More flexible check - look for any node that looks like layout data
-        if (node.data?.space_type || 
-            (node.data && typeof node.data === 'object' && 
-             ('Bedroom' in node.data || 'Bathroom' in node.data || 'Kitchen' in node.data ||
-              'Living Room' in node.data || 'Dining Room' in node.data || 'Office' in node.data))) {
+        if (
+          node.data?.space_type ||
+          (node.data &&
+            typeof node.data === 'object' &&
+            ('Bedroom' in node.data ||
+              'Bathroom' in node.data ||
+              'Kitchen' in node.data ||
+              'Living Room' in node.data ||
+              'Dining Room' in node.data ||
+              'Office' in node.data))
+        ) {
           // This looks like a layout node
           const dataGroup = node.data.label || 'County';
           (layoutsByDataGroup[dataGroup] ??= []).push(node.data as LayoutInfo);
@@ -1144,54 +1155,57 @@ export class IPLDDataLoader {
 
     // Combine all layout data sources, with more specific data taking precedence
     const layoutMap: Map<string, LayoutInfo> = new Map();
-    
+
     // First, add county layouts (layouts 1-4) as base data
     const countyGroups = ['County', 'county'];
     for (const groupName of countyGroups) {
       if (layoutsByDataGroup[groupName]) {
         for (const layout of layoutsByDataGroup[groupName]) {
-          const spaceIndex: any = (layout as any)['space_index'] ?? (layout as any)['spaceIndex'] ?? '';
+          const spaceIndex: any =
+            (layout as any)['space_index'] ?? (layout as any)['spaceIndex'] ?? '';
           const key = `${layout.space_type}_${layout.floor_level || 'unknown'}_${spaceIndex}`;
           layoutMap.set(key, layout);
         }
       }
     }
-    
+
     // Then, layer on batch layout data (more specific data takes precedence)
     const batchGroups = ['Photo Metadata', 'Batch', 'batch'];
     for (const groupName of batchGroups) {
       if (layoutsByDataGroup[groupName]) {
         for (const layout of layoutsByDataGroup[groupName]) {
-          const spaceIndex: any = (layout as any)['space_index'] ?? (layout as any)['spaceIndex'] ?? '';
+          const spaceIndex: any =
+            (layout as any)['space_index'] ?? (layout as any)['spaceIndex'] ?? '';
           const key = `${layout.space_type}_${layout.floor_level || 'unknown'}_${spaceIndex}`;
           // More specific batch data overwrites county data
           layoutMap.set(key, layout);
         }
       }
     }
-    
+
     // If no county or batch data found, combine all available data groups
     if (layoutMap.size === 0) {
       for (const [groupName, groupLayouts] of Object.entries(layoutsByDataGroup)) {
         for (const layout of groupLayouts) {
-          const spaceIndex: any = (layout as any)['space_index'] ?? (layout as any)['spaceIndex'] ?? '';
+          const spaceIndex: any =
+            (layout as any)['space_index'] ?? (layout as any)['spaceIndex'] ?? '';
           const key = `${layout.space_type}_${layout.floor_level || 'unknown'}_${spaceIndex}_${groupName}`;
           layoutMap.set(key, layout);
         }
       }
     }
-    
+
     layouts = Array.from(layoutMap.values());
 
-
     // Check if any layouts have floor level information
-    const hasFloorLevels = layouts.some((layout) => layout['floor_level'] && layout['floor_level'] !== null);
-    
-    
+    const hasFloorLevels = layouts.some(
+      (layout) => layout['floor_level'] && layout['floor_level'] !== null,
+    );
+
     let firstFloorLayouts: any[] = [];
     let secondFloorLayouts: any[] = [];
     let otherLayouts: any[] = [];
-    
+
     if (hasFloorLevels) {
       // Use floor-based organization when floor level data is available
       firstFloorLayouts = layouts
@@ -1206,17 +1220,16 @@ export class IPLDDataLoader {
 
       otherLayouts = layouts
         .filter(
-          (layout) => layout['floor_level'] !== '1st Floor' && layout['floor_level'] !== '2nd Floor',
+          (layout) =>
+            layout['floor_level'] !== '1st Floor' && layout['floor_level'] !== '2nd Floor',
         )
         .sort((a, b) => a.space_type.localeCompare(b.space_type))
         .map((layout) => this.buildRenderItem(layout, 'layout'));
-        
     } else {
       // When no floor level data, put all layouts in otherLayouts for single section display
       otherLayouts = layouts
         .sort((a, b) => a.space_type.localeCompare(b.space_type))
         .map((layout) => this.buildRenderItem(layout, 'layout'));
-        
     }
 
     return {
