@@ -736,7 +736,7 @@ export class IPLDDataLoader {
     for (const [key, raw] of Object.entries(multiValueQueryString)) {
       const values = Array.isArray(raw) ? raw : [String(raw)];
       for (const value of values) {
-        url.searchParams.append(key as string, value);
+        url.searchParams.append(key, value);
       }
     }
     // Use enum mapping for address data
