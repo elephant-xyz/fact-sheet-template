@@ -733,7 +733,7 @@ export class IPLDDataLoader {
     }: { url: string; multiValueQueryString?: Record<string, string | string[]> } =
       propertyData.source_http_request;
     const url: URL = new URL(baseUrl);
-    for (const [key, raw] of Object.entries(multiValueQueryString || {})) {
+    for (const [key, raw] of Object.entries(multiValueQueryString)) {
       const values = Array.isArray(raw) ? raw : [String(raw)];
       for (const value of values) {
         url.searchParams.append(key as string, value);
