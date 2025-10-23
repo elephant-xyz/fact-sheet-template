@@ -103,11 +103,11 @@ async function runTests() {
       }
     });
     await fs.writeJson(path.join(testDir, 'test-property-3', 'address.json'), {
-      street_name: 'OptionalParam Ave',
-      city_name: 'Testville',
-      state_code: 'TS',
-      postal_code: '00003',
-      source_http_request: {
+      "street_name": 'OptionalParam Ave',
+      "city_name": 'Testville',
+      "state_code": 'TS',
+      "postal_code": '00003',
+      "source_http_request": {
         "url": "https://example.com",
         "multiValueQueryString": {}
       }
