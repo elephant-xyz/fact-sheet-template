@@ -734,7 +734,17 @@ export class IPLDDataLoader {
       propertyData.source_http_request;
     const url: URL = new URL(baseUrl);
     for (const [key, raw] of Object.entries(multiValueQueryString)) {
-      const values = Array.isArray(raw) ? raw : [String(raw)];
+      let values: string[];
+      if (Array.isArray(raw)) {
+        if (!raw.every(v => typeof v === 'string')) {
+          throw new Error(`Invalid value for query param "${key}": array contains non-string elements`);
+        }
+        values = raw;
+      } else if (typeof raw === 'string') {
+        values = [raw];
+      } else {
+        throw new Error(`Invalid value for query param "${key}": expected string or array of strings`);
+      }
       for (const value of values) {
         url.searchParams.append(key, value);
       }
