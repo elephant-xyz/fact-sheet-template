@@ -91,6 +91,54 @@ async function runTests() {
       }
     });
     
+    // Property 3 data: missing multiValueQueryString (should be optional)
+    await fs.ensureDir(path.join(testDir, 'test-property-3'));
+    await fs.writeJson(path.join(testDir, 'test-property-3', 'property.json'), {
+      "livable_floor_area": "900",
+      "property_type": "Townhouse",
+      "property_structure_built_year": 2010,
+      "parcel_identifier": "33333",
+      "source_http_request": {
+        "url": "https://example.com/details"
+      }
+    });
+    await fs.writeJson(path.join(testDir, 'test-property-3', 'address.json'), {
+      "street_name": 'OptionalParam Ave',
+      "city_name": 'Testville',
+      "state_code": 'TS',
+      "postal_code": '00003',
+      "source_http_request": {
+        "url": "https://example.com",
+        "multiValueQueryString": {}
+      }
+    });
+
+    // Property 4 data: multiValueQueryString contains string and array values
+    await fs.ensureDir(path.join(testDir, 'test-property-4'));
+    await fs.writeJson(path.join(testDir, 'test-property-4', 'property.json'), {
+      "livable_floor_area": "800",
+      "property_type": "Condo",
+      "property_structure_built_year": 2015,
+      "parcel_identifier": "44444",
+      "source_http_request": {
+        "url": "https://example.com/details",
+        "multiValueQueryString": {
+          "parcelId": "44444",
+          "foo": ["bar", "baz"]
+        }
+      }
+    });
+    await fs.writeJson(path.join(testDir, 'test-property-4', 'address.json'), {
+      street_name: 'StringVsArray Blvd',
+      city_name: 'Arraytown',
+      state_code: 'AR',
+      postal_code: '00004',
+      source_http_request: {
+        "url": "https://example.com",
+        "multiValueQueryString": {}
+      }
+    });
+    
     console.log('✅ Test data created\n');
     
     // Test 1: Basic build
@@ -108,6 +156,8 @@ async function runTests() {
     const basicOutput = path.join(outputDir, 'basic');
     const prop1Dir = path.join(basicOutput, 'test-property-1');
     const prop2Dir = path.join(basicOutput, 'test-property-2');
+    const prop3Dir = path.join(basicOutput, 'test-property-3');
+    const prop4Dir = path.join(basicOutput, 'test-property-4');
     
     if (!await fs.pathExists(path.join(prop1Dir, 'index.html'))) {
       throw new Error('Property 1 HTML not generated');
@@ -119,6 +169,15 @@ async function runTests() {
     
     if (!await fs.pathExists(path.join(prop2Dir, 'index.html'))) {
       throw new Error('Property 2 HTML not generated');
+    }
+
+    // New assertions: properties with optional and string-valued query params build
+    if (!await fs.pathExists(path.join(prop3Dir, 'index.html'))) {
+      throw new Error('Property 3 HTML not generated (missing multiValueQueryString should be allowed)');
+    }
+
+    if (!await fs.pathExists(path.join(prop4Dir, 'index.html'))) {
+      throw new Error('Property 4 HTML not generated (string/array multiValueQueryString should be allowed)');
     }
     
     console.log('✅ Basic build test passed\n');

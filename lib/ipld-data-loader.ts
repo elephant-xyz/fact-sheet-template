@@ -729,12 +729,25 @@ export class IPLDDataLoader {
     }
     const {
       url: baseUrl,
-      multiValueQueryString,
-    }: { url: string; multiValueQueryString: { [key: string]: string[] } } =
+      multiValueQueryString = {},
+    }: { url: string; multiValueQueryString?: Record<string, string | string[]> } =
       propertyData.source_http_request;
     const url: URL = new URL(baseUrl);
-    for (const [key, values] of Object.entries(multiValueQueryString)) {
-      values.forEach((value: string) => url.searchParams.append(key as string, value));
+    for (const [key, raw] of Object.entries(multiValueQueryString)) {
+      let values: string[];
+      if (Array.isArray(raw)) {
+        if (!raw.every(v => typeof v === 'string')) {
+          throw new Error(`Invalid value for query param "${key}": array contains non-string elements`);
+        }
+        values = raw;
+      } else if (typeof raw === 'string') {
+        values = [raw];
+      } else {
+        throw new Error(`Invalid value for query param "${key}": expected string or array of strings`);
+      }
+      for (const value of values) {
+        url.searchParams.append(key, value);
+      }
     }
     // Use enum mapping for address data
     const addressRenderItem = this.buildRenderItem(addressData, 'address');
