@@ -1,3 +1,10 @@
+## [1.2.4](https://github.com/elephant-xyz/fact-sheet-template/compare/v1.2.3...v1.2.4) (2025-10-24)
+
+
+### Bug Fixes
+
+* making the multiValueQueryString as optional field ([#75](https://github.com/elephant-xyz/fact-sheet-template/issues/75)) ([a163090](https://github.com/elephant-xyz/fact-sheet-template/commit/a16309034cd6c10d5c5f02644543a4c30404a9ac))
+
 ## [1.2.3](https://github.com/elephant-xyz/fact-sheet-template/compare/v1.2.2...v1.2.3) (2025-09-12)
 
 
