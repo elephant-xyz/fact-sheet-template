@@ -386,7 +386,66 @@ export class TemplateRenderer {
 
     this.env.addFilter('titleCase', (str: string) => {
       if (typeof str !== 'string') return str;
+      // List of US state codes that should remain uppercase
+      const stateCodes = [
+        'AL',
+        'AK',
+        'AZ',
+        'AR',
+        'CA',
+        'CO',
+        'CT',
+        'DE',
+        'FL',
+        'GA',
+        'HI',
+        'ID',
+        'IL',
+        'IN',
+        'IA',
+        'KS',
+        'KY',
+        'LA',
+        'ME',
+        'MD',
+        'MA',
+        'MI',
+        'MN',
+        'MS',
+        'MO',
+        'MT',
+        'NE',
+        'NV',
+        'NH',
+        'NJ',
+        'NM',
+        'NY',
+        'NC',
+        'ND',
+        'OH',
+        'OK',
+        'OR',
+        'PA',
+        'RI',
+        'SC',
+        'SD',
+        'TN',
+        'TX',
+        'UT',
+        'VT',
+        'VA',
+        'WA',
+        'WV',
+        'WI',
+        'WY',
+        'DC',
+      ];
       return str.replace(/\w\S*/g, (txt) => {
+        // Keep state codes uppercase
+        if (stateCodes.includes(txt.toUpperCase())) {
+          return txt.toUpperCase();
+        }
+        // Title case for other words
         return txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase();
       });
     });
